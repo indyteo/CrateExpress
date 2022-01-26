@@ -1,0 +1,71 @@
+name: CrateExpress
+version: "${project.version}"
+main: fr.theoszanto.mc.crateexpress.CrateExpress
+api-version: 1.16
+prefix: CrateExpress
+authors: [ indyteo ]
+description: "Make crates easily using in-game interface to manage items"
+website: "https://theoszanto.fr/"
+commands:
+  crateexpress:
+    aliases: [ ce, crate ]
+    description: "Base command to manage crates"
+    permission: crateexpress.command.access
+permissions:
+  crateexpress.*:
+    description: "Grant all permissions about CrateExpress"
+    default: op
+    children:
+      crateexpress.command.*: true
+  crateexpress.command.*:
+    description: "Grant access to all /crateexpress subcommands"
+    default: op
+    children:
+      crateexpress.command.access: true
+      crateexpress.command.claim: true
+      crateexpress.command.create: true
+      crateexpress.command.delete: true
+      crateexpress.command.edit: true
+      crateexpress.command.give: true
+      crateexpress.command.list: true
+      crateexpress.command.open: true
+      crateexpress.command.preview: true
+      crateexpress.command.reload: true
+      crateexpress.command.teleport: true
+      crateexpress.command.version: true
+  crateexpress.command.access:
+    description: "Grant access to basic /crateexpress (help|info) commands"
+    default: true
+  crateexpress.command.claim:
+    description: "Grant access to /crateexpress claim command"
+    default: true
+  crateexpress.command.create:
+    description: "Grant access to /crateexpress create command"
+    default: op
+  crateexpress.command.delete:
+    description: "Grant access to /crateexpress delete command"
+    default: op
+  crateexpress.command.edit:
+    description: "Grant access to /crateexpress edit command"
+    default: op
+  crateexpress.command.give:
+    description: "Grant access to /crateexpress give command"
+    default: op
+  crateexpress.command.list:
+    description: "Grant access to /crateexpress list command"
+    default: op
+  crateexpress.command.open:
+    description: "Grant access to /crateexpress open command"
+    default: op
+  crateexpress.command.preview:
+    description: "Grant access to /crateexpress preview command"
+    default: op
+  crateexpress.command.reload:
+    description: "Grant access to /crateexpress reload command"
+    default: op
+  crateexpress.command.teleport:
+    description: "Grant access to /crateexpress teleport command"
+    default: op
+  crateexpress.command.version:
+    description: "Grant access to /crateexpress version command"
+    default: op

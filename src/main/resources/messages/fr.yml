@@ -1,0 +1,381 @@
+prefix: "§8[§3CrateExpress§8]§r "
+crate:
+  preview:
+    reward-chance: "§7Chance : §e#{chance}%"
+    unknown-key: "§cClé inconnue : §4#{key}"
+    money-name: "§bArgent : §3#{amount}"
+    money-lore: ""
+  reward:
+    give: "§7Vous avez reçu : §e#{reward}"
+    save: "§cVotre inventaire est plein. Récompense stockée : §4#{reward}"
+    error: "§cUne erreur est survenue. Récompense stockée : §4#{reward}"
+    type:
+      CrateItemReward: "Objet"
+      CrateKeyReward: "Clé"
+      CrateMoneyReward: "Argent"
+      CrateCommandReward: "Commande"
+      CrateOtherReward: "Autre caisse"
+action:
+  crate:
+    open: "§7Vous venez d'ouvrir une caisse §e#{crate}"
+    need-key: "§cVous devez posséder la clé pour ouvrir une caisse §4#{crate}"
+    too-much-rewards: "§cVous devez faire de la place dans votre §4/crate claim§c pour ouvrir la caisse §4#{crate}"
+  key:
+    receive: "§7Vous venez de recevoir une clé §e#{key}"
+    use: "§cVous devez utiliser cette clé sur la caisse §4#{crate}"
+menu:
+  title-style: "§8» #{title}§8 «"
+  previous: "§7Page précédente (§e#{page}§7/#{total})"
+  next: "§7Page suivante (§e#{page}§7/#{total})"
+  page: "§7Page §e#{page}§7/#{total}"
+  close: "§cFermer"
+  back: "§7Revenir en arrière"
+  claim:
+    title: "Récompenses en attente"
+    empty: "§cAucune récompense en attente..."
+  preview:
+    title: "Prévisualisation : #{crate}"
+    empty: "§cCette caisse est vide"
+    no-key: "§cAucune clé pour cette caisse"
+    edit: "§7Éditer la caisse"
+    give-key: "§6»§e Clic pour obtenir une clé"
+  list:
+    title: "Liste des caisses"
+    empty: "§cAucune caisse n'a été créée. §4/crate create"
+    no-key: "§cAucune clé définie"
+    no-location: "§cAucune position définie"
+    location: |-
+      §7Monde : §e#{world}
+      §7X : §e#{x}
+      §7Y : §e#{y}
+      §7Z : §e#{z}
+    edit: "§6»§e Clic gauche pour éditer"
+    give: "§6»§e Clic molette pour obtenir une clé"
+    teleport: "§6»§e Clic droit pour se téléporter"
+  edit:
+    title: "Édition : #{crate}"
+    add:
+      name: "§bAjouter une récompense"
+      lore: |-
+        §7Vous pouvez choisir parmi 5 types de récompenses :
+        §7- §eObjet
+        §7- §eClé
+        §7- §eArgent
+        §7- §eCommande
+        §7- §eAutre caisse
+    manage:
+      name: "§bGérer la caisse"
+      lore: |-
+        §7Contrôlez les paramètres de la caisse
+    empty: "§cAucune récompense pour l'instant"
+    reward:
+      info: |-
+        §7Poids : §e#{weight}§7/#{total}
+        §7Type : §e#{type}
+        §6»§e Clic gauche pour déplacer
+        §6»§e Clic droit pour éditer
+        §6»§e Clic molette pour obtenir
+        §6»§e Drop pour supprimer
+  delete:
+    title: "Suppression : #{crate}"
+    warning:
+      name: "§aÊtes-vous sûr ?"
+      lore: "§7Cette action est irréversible !"
+    confirm:
+      name: "§bConfirmer la suppression"
+      lore: ""
+    cancel:
+      name: "§cAnnuler la suppression"
+      lore: ""
+    success: "§7Vous avez supprimé la caisse §e#{crate}§7 avec succès"
+  manage:
+    title: "Gestion : #{crate}"
+    header:
+      name: "§aGestion des paramètres de la caisse"
+      lore: |-
+        §7Nombre de récompenses : §e#{min}§7 à §e#{max}
+        §7Clé : §e#{key}
+        §7Nom : §e#{name}
+        §7Message : §e#{message}
+        §7Position : §e#{location}
+      no-key: "§cAucune"
+      no-message: "§cAucun"
+      no-location: "§cAucune"
+      location: "#{world}§7 (§e#{x}§7, §e#{y}§7, §e#{z}§7)"
+    min:
+      name: "§bNombre minimum de récompenses : §3#{min}"
+      lore: |-
+        §7Ce paramètre défini la borne inférieure du nombre de
+        §7récompenses données au joueur à l'ouverture (max 10)
+      decrease: "§6»§e Clic droit pour diminuer"
+      increase: "§6»§e Clic gauche pour augmenter"
+    max:
+      name: "§bNombre maximum de récompenses : §3#{max}"
+      lore: |-
+        §7Ce paramètre défini la borne supérieure du nombre de
+        §7récompenses données au joueur à l'ouverture (max 10)
+      decrease: "§6»§e Clic droit pour diminuer"
+      increase: "§6»§e Clic gauche pour augmenter"
+    key:
+      name: "§bClé de la caisse : §3#{key}"
+      lore: |-
+        §7Ce paramètre défini la clé à utiliser pour ouvrir cette
+        §7caisse
+        §6»§e Déposez l'objet correspondant ici pour la définir
+        §6»§e Clic droit pour supprimer
+        §6»§e Clic molette pour obtenir un exemplaire
+    name:
+      name: "§bNom de la caisse : §3#{name}"
+      lore: |-
+        §7Ce paramètre défini le nom d'affichage de la caisse,
+        §7indépendant de son identifiant dans les commandes
+        §6»§e Clic pour définir dans le chat
+      request: "§7Veuillez écrire le nouveau nom de la caisse dans le chat :"
+      timeout: "§cLe délais d'attente a été dépassé..."
+    message:
+      name: "§bMessage d'ouverture de la caisse : §3#{message}"
+      lore: |-
+        §7Message actuel :
+        §e#{message}
+        §7Ce paramètre défini le message affiché à tous les
+        §7joueurs lors de l'ouverture de la caisse, avec :
+        §7- §e<player>§7 : Pseudo du joueur
+        §7- §e<display>§7 : Nom d'affichage du joueur
+        §6»§e Clic gauche pour définir dans le chat
+        §6»§e Clic droit pour supprimer
+      none: "§cAucun message défini"
+      request: "§7Veuillez écrire le nouveau message d'ouverture de la caisse dans le chat :"
+      timeout: "§cLe délais d'attente a été dépassé..."
+    location:
+      name: "§bPosition de la caisse : §3#{location}"
+      lore: |-
+        §7Position actuelle : §e#{location}
+        §7Ce paramètre défini la position de la caisse, ou si
+        §7non défini, la capacité à ouvrir depuis n'importe où
+        §6»§e Clic gauche pour définir à la position actuelle
+        §6»§e Clic droit pour supprimer
+        §6»§e Clic molette pour s'y téléporter
+      none: "§cAucune position définie"
+      value: "#{world}§7 (§e#{x}§7, §e#{y}§7, §e#{z}§7)"
+    delete:
+      name: "§bSupprimer la caisse"
+      lore: |-
+        §7Permet de supprimer la caisse totalement
+        §6»§e Clic pour supprimer la caisse
+  select:
+    title: "Sélection d'une caisse"
+    empty: "§cAucune caisse n'a été créée. §4/crate create"
+    no-key: "§7Aucune clé définie pour cette caisse"
+    lore: "§6»§e Clic pour sélectionner cette caisse"
+  reward:
+    title: "Récompense de la caisse #{crate}"
+    weight:
+      name: "§bPoids de la récompense : §3#{weight}"
+      lore: |-
+        §7Poids total actuel de la caisse : §e#{total}
+        §7Ce paramètre défini la probabilité de tirer
+        §7cette récompense par rapport à la caisse
+      decrease: "§6»§e Clic droit pour diminuer"
+      increase: "§6»§e Clic gauche pour augmenter"
+    confirm: "§bValider la création de la récompense"
+    no-confirm: "§cVous devez paramétrer la récompense pour valider"
+    delete-button: "§bSupprimer la récompense"
+    new:
+      title: "Nouvelle récompense pour #{crate}"
+      header:
+        name: "§aSélection du type de récompense"
+        lore: |-
+          §7Vous pouvez choisir parmi 5 types de récompenses :
+          §7- §eObjet
+          §7- §eClé
+          §7- §eArgent
+          §7- §eCommande
+          §7- §eAutre caisse
+      item:
+        name: "§bObjet"
+        lore: |-
+          §7Le joueur recevra directement l'objet défini
+          §6»§e Clic pour ajouter ce type de récompense
+      key:
+        name: "§bClé"
+        lore: |-
+          §7Le joueur recevra une clé d'une autre caisse
+          §6»§e Clic pour ajouter ce type de récompense
+      money:
+        name: "§bArgent"
+        lore: |-
+          §7Le joueur recevra une somme d'argent
+          §6»§e Clic pour ajouter ce type de récompense
+      command:
+        name: "§bCommande"
+        lore: |-
+          §7Le serveur executera une commande pour le joueur
+          §6»§e Clic pour ajouter ce type de récompense
+      other:
+        name: "§bAutre caisse"
+        lore: |-
+          §7Le joueur recevra des récompenses d'une autre caisse
+          §6»§e Clic pour ajouter ce type de récompense
+    item:
+      header:
+        name: "§eGestion de la récompense de type objet"
+        lore: |-
+          §7Contrôlez les paramètres de la récompense
+          §7Vous pouvez modifier le poids mais pas l'objet
+      item:
+        name: "§bObjet donné : §3#{item}"
+        lore: |-
+          §7Ce paramètre défini l'objet donné au joueur
+          §7Ce paramètre n'est modifiable qu'à la création de la
+          §7récompense
+          §6»§e Déposez l'objet correspondant ici pour le définir
+        none: "§cAucun"
+    key:
+      header:
+        name: "§eGestion de la récompense de type clé"
+        lore: |-
+          §7Contrôlez les paramètres de la récompense
+          §7Vous pouvez modifier le poids et la quantité
+          §7mais pas l'objet
+      key:
+        name: "§bClé donnée : §3#{key}"
+        lore: |-
+          §7Ce paramètre défini la clé donnée au joueur
+          §7Ce paramètre n'est modifiable qu'à la création de la
+          §7récompense
+          §6»§e Clic pour sélectionner la caisse
+        none: "§cAucune"
+      amount:
+        name: "§bQuantité de clé : §b#{amount}"
+        lore: |-
+          §7Ce paramètre défini le nombre de clés données au joueur
+        decrease: "§6»§e Clic droit pour diminuer"
+        increase: "§6»§e Clic gauche pour augmenter"
+    money:
+      header:
+        name: "§eGestion de la récompense de type argent"
+        lore: |-
+          §7Contrôlez les paramètres de la récompense
+          §7Vous pouvez modifier le poids mais pas le montant
+      amount:
+        name: "§bMontant donné : §b#{amount}"
+        lore: |-
+          §7Ce paramètre défini la somme d'argent donnée au joueur
+          §7Ce paramètre n'est modifiable qu'à la création de la
+          §7récompense
+          §6»§e Clic pour saisir le montant dans le chat
+      request: "§7Veuillez écrire le montant de la récompense dans le chat :"
+      invalid: "§cLe montant saisi n'est pas valide"
+      timeout: "§cLe délais d'attente a été dépassé..."
+    command:
+      header:
+        name: "§eGestion de la récompense de type commande"
+        lore: |-
+          §7Contrôlez les paramètres de la récompense
+          §7Vous pouvez modifier l'icône, le poids et si la
+          §7récompense est physique ou non, mais pas la commande
+      icon:
+        name: "§bIcône de la récompense : §3#{icon}"
+        lore: |-
+          §7Ce paramètre défini l'apparence de cette récompense
+          §7lors de la prévisualisation de la caisse
+          §6»§e Déposez l'objet correspondant ici pour la définir
+      command:
+        name: "§bCommande exécutée : §3#{command}"
+        lore: |-
+          §7Ce paramètre défini la commande à exécuter lorsqu'un
+          §7joueur obtient cette récompense
+          §7Ce paramètre n'est modifiable qu'à la création de la
+          §7récompense
+        set: "§6»§e Clic en étant sur le bloc de commande pour définir"
+      physical:
+        name: "§bRécompense physique : §3#{physical}"
+        lore: |-
+          §7Ce paramètre défini si la récompense est physique ou
+          §7non, c'est à dire si elle occupe une place dans
+          §7l'inventaire du joueur ou pas
+          §6»§e Clic pour inverser l'état
+    other:
+      header:
+        name: "§eGestion de la récompense de type autre caisse"
+        lore: |-
+          §7Contrôlez les paramètres de la récompense
+          §7Vous pouvez modifier l'icône, le poids et si la
+          §7récompense est aléatoire ou non, mais pas l'autre caisse
+      icon:
+        name: "§bIcône de la récompense : §3#{icon}"
+        lore: |-
+          §7Ce paramètre défini l'apparence de cette récompense
+          §7lors de la prévisualisation de la caisse
+          §6»§e Déposez l'objet correspondant ici pour la définir
+      crate:
+        name: "§bAutre caisse sélectionnée : §3#{crate}"
+        lore: |-
+          §7Ce paramètre défini la caisse donnée au joueur
+          §7Ce paramètre n'est modifiable qu'à la création de la
+          §7récompense
+          §6»§e Clic pour sélectionner la caisse
+        none: "§cAucune"
+      random:
+        name: "§bRécompense aléatoire : §3#{random}"
+        lore: |-
+          §7Ce paramètre défini si la récompense est aléatoire ou
+          §7non, c'est à dire si on choisi aléatoirement des
+          §7récompenses dans la caisse à donner au joueur ou bien
+          §7si on donne l'intégralitée des récompenses
+          §6»§e Clic pour inverser l'état
+    delete:
+      title: "Suppression d'une récompense pour #{crate}"
+      warning:
+        name: "§aÊtes-vous sûr ?"
+        lore: "§7Cette action est irréversible !"
+      confirm:
+        name: "§bConfirmer la suppression"
+        lore: ""
+      cancel:
+        name: "§cAnnuler la suppression"
+        lore: ""
+command:
+  unknown-subcommand: "§cSous-commande inconnue : §4#{subcommand}§c. Essayez §4/#{command} help"
+  not-access: "§cVous n'avez pas accès à la sous-commande §4#{subcommand}§c. Essayez §4/#{command} help"
+  invalid-usage: "§cUsage incorrect :"
+  unknown-player: "§cJoueur inconnu : §4#{player}"
+  unknown-crate: "§cCaisse inconnue : §4#{crate}"
+  invalid-int: "§cValeur entière invalide : §4#{value}"
+  info: |-
+    §bPlugin : §e#{plugin}
+    §bAuteur(s) : §e#{authors}
+    §bSite web : §e#{website}
+  version: "§bVersion : §e#{version}"
+  open: "§7Vous avez forcé l'ouverture d'une caisse §e#{crate}§7 à §e#{player}"
+  give:
+    no-key: "§cLa caisse §4#{crate}§c n'a pas de clé associée"
+    success: "§aVous avez donné des clés avec succès"
+  reload: "§aPlugin rechargé avec succès"
+  create:
+    already-exists: "§cUne caisse avec le nom §4#{crate}§c existe déjà"
+    success: "§aCaisse #{crate} créée avec succès"
+  teleport:
+    no-location: "§cAucune position définie"
+    success: "§aVous avez été téléporté à la caisse #{crate}"
+  help:
+    all-commands: "§bListe des commandes disponibles :"
+    claim: "§e/#{alias} #{subcommand}§8 » §7Ouvre le menu des récompenses en attente"
+    create: "§e/#{alias} #{subcommand} <caisse>§8 » §7Crée une nouvelle caisse et ouvre son menu d'édition"
+    delete: "§e/#{alias} #{subcommand} <caisse>§8 » §7Supprime une caisse existante (nécessite une confirmation)"
+    edit: "§e/#{alias} #{subcommand} <caisse>§8 » §7Ouvre le menu d'édition d'une caisse"
+    give: "§e/#{alias} #{subcommand} (to <joueur>|all) <crate> <quantité>§8 » §7Donne des clés à un joueur / tous les joueurs"
+    help: "§e/#{alias} #{subcommand} [<commande>]§8 » §7Affiche ce message d'aide ou l'aide sur une commande"
+    info: "§e/#{alias} #{subcommand}§8 » §7Affiche les informations sur le plugin"
+    list: "§e/#{alias} #{subcommand}§8 » §7Affiche la liste des caisses existantes"
+    open: "§e/#{alias} #{subcommand} <joueur> <caisse>§8 » §7Fait ouvrir une caisse à un joueur, sans utiliser de clé"
+    preview: "§e/#{alias} #{subcommand} <caisse>§8 » §7Prévisualise le contenu d'une caisse"
+    reload: "§e/#{alias} #{subcommand}§8 » §7Recharge le plugin (configuration et récompenses)"
+    teleport: "§e/#{alias} #{subcommand} <caisse>§8 » §7Se téléporter à une caisse"
+    version: "§e/#{alias} #{subcommand}§8 » §7Affiche la version du plugin"
+misc:
+  "yes": "§aOui§r"
+  "no": "§cNon§r"
+  unloaded-world: "§cMonde non-chargé§r"
+  default-cmd-icon-name: "§7Commande"
+  default-other-icon-name: "§7Caisse"
