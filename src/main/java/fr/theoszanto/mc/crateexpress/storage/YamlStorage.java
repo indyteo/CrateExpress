@@ -15,7 +15,7 @@ import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
 import fr.theoszanto.mc.crateexpress.utils.LocationUtils;
 import fr.theoszanto.mc.crateexpress.utils.MathUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
-import org.bukkit.Location;
+import fr.theoszanto.mc.crateexpress.utils.UnloadableWorldLocation;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -59,7 +59,7 @@ public class YamlStorage extends PluginObject implements Storage {
 				String name = data.getString("name", id);
 				String message = data.getString("message", null);
 				String crateLocation = data.getString("location", null);
-				Location location = crateLocation == null ? null : LocationUtils.fromString(crateLocation);
+				UnloadableWorldLocation location = crateLocation == null ? null : LocationUtils.fromString(crateLocation);
 				Crate crate = new Crate(this.plugin, id, min, max, key, name, message, location);
 				ConfigurationSection items = data.getConfigurationSection("items");
 				if (items != null) {

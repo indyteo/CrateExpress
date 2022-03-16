@@ -7,9 +7,8 @@ import fr.theoszanto.mc.crateexpress.utils.CratePermission;
 import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
 import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
 import fr.theoszanto.mc.crateexpress.utils.MathUtils;
-import org.bukkit.Location;
+import fr.theoszanto.mc.crateexpress.utils.UnloadableWorldLocation;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -44,20 +43,16 @@ public class CrateListGUI extends CratePaginatedGUI<Crate> {
 			item = new ItemBuilder(Material.CHEST, 1, crate.getName(), this.i18nLines("menu.list.no-key")).build();
 		else
 			item = key.getItem().clone();
-		Location location = crate.getLocation();
-		if (location == null)
-			ItemUtils.addLore(item, this.i18nLines("menu.list.no-location"));
-		else {
-			World world;
-			if (location.isWorldLoaded())
-				world = location.getWorld();
-			else
-				world = null;
-			ItemUtils.addLore(item, this.i18nLines("menu.list.location", "world", world == null ? this.i18n("misc.unloaded-world") : world.getName(), "x", location.getBlockX(), "y", location.getBlockY(), "z", location.getBlockZ()));
-		}
+		UnloadableWorldLocation location = crate.getLocation();
+		ItemUtils.addLore(item, location == null ? this.i18nLines("menu.list.no-location") : this.i18nLines("menu.list.location",
+				"world", location.getWorldName(),
+				"x", location.getBlockX(),
+				"y", location.getBlockY(),
+				"z", location.getBlockZ()
+		));
 		ItemUtils.addLoreConditionally(player.hasPermission(CratePermission.Command.EDIT), item, this.i18n("menu.list.edit"));
-		ItemUtils.addLoreConditionally(crate.getKey() != null && player.hasPermission(CratePermission.Command.GIVE), item, this.i18n("menu.list.give"));
-		ItemUtils.addLoreConditionally(crate.getLocation() != null && player.hasPermission(CratePermission.Command.TELEPORT), item, this.i18n("menu.list.teleport"));
+		ItemUtils.addLoreConditionally(key != null && player.hasPermission(CratePermission.Command.GIVE), item, this.i18n("menu.list.give"));
+		ItemUtils.addLoreConditionally(location != null && player.hasPermission(CratePermission.Command.TELEPORT), item, this.i18n("menu.list.teleport"));
 		return item;
 	}
 
@@ -74,10 +69,14 @@ public class CrateListGUI extends CratePaginatedGUI<Crate> {
 			}
 		} else if (click.isRightClick()) {
 			if (player.hasPermission(CratePermission.Command.TELEPORT)) {
-				Location location = crate.getLocation();
+				UnloadableWorldLocation location = crate.getLocation();
 				if (location != null) {
-					player.closeInventory();
-					player.teleport(location);
+					if (location.isWorldLoaded()) {
+						player.closeInventory();
+						player.teleport(location);
+						this.i18nMessage(player, "command.teleport.success", "crate", crate.getName());
+					} else
+						this.i18nMessage(player, "command.teleport.unloaded-world", "world", location.getWorldName());
 				}
 			}
 		}

@@ -6,10 +6,10 @@ import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
 import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
 import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
+import fr.theoszanto.mc.crateexpress.utils.UnloadableWorldLocation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -38,8 +38,7 @@ public class CrateManageGUI extends CrateGUI {
 		// Crate options header
 		CrateKey key = this.crate.getKey();
 		String message = this.crate.getMessage();
-		Location location = this.crate.getLocation();
-		World world = location == null || !location.isWorldLoaded() ? null : location.getWorld();
+		UnloadableWorldLocation location = this.crate.getLocation();
 		this.set(slot(0, 4), new ItemBuilder(Material.CHEST, 1, this.i18n("menu.manage.header.name"), this.i18nLines("menu.manage.header.lore",
 				"min", this.crate.getMin(),
 				"max", this.crate.getMax(),
@@ -47,7 +46,7 @@ public class CrateManageGUI extends CrateGUI {
 				"name", this.crate.getName(),
 				"message", message == null ? this.i18n("menu.manage.header.no-message") : message,
 				"location", location == null ? this.i18n("menu.manage.header.no-location") : this.i18n("menu.manage.header.location",
-						"world", world == null ? this.i18n("misc.unloaded-world") : world.getName(),
+						"world", location.getWorldName(),
 						"x", location.getBlockX(),
 						"y", location.getBlockY(),
 						"z", location.getBlockZ()
@@ -69,7 +68,7 @@ public class CrateManageGUI extends CrateGUI {
 		this.set(slot(1, 4), new ItemBuilder(Material.NAME_TAG, 1, this.i18n("menu.manage.name.name", "name", this.crate.getName()), this.i18nLines("menu.manage.name.lore")), "name");
 		this.set(slot(1, 5), new ItemBuilder(Material.BIRCH_SIGN, 1, this.i18n("menu.manage.message.name", "message", this.i18n(message == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.message.lore", "message", message == null ? this.i18n("menu.manage.message.none") : message)), "message");
 		this.set(slot(1, 6), new ItemBuilder(Material.COMPASS, 1, this.i18n("menu.manage.location.name", "location", this.i18n(location == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.location.lore", "location", location == null ? this.i18n("menu.manage.location.none") : this.i18n("menu.manage.location.value",
-				"world", world == null ? this.i18n("misc.unloaded-world") : world.getName(),
+				"world", location.getWorldName(),
 				"x", location.getBlockX(),
 				"y", location.getBlockY(),
 				"z", location.getBlockZ()
@@ -161,7 +160,7 @@ public class CrateManageGUI extends CrateGUI {
 		case "location":
 			if (click.isLeftClick()) {
 				Location location = player.getLocation();
-				this.crate.setLocation(new Location(location.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
+				this.crate.setLocation(new UnloadableWorldLocation(player.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
 				this.refresh(player);
 			} else if (click.isRightClick()) {
 				if (this.crate.getLocation() != null) {
@@ -169,10 +168,14 @@ public class CrateManageGUI extends CrateGUI {
 					this.refresh(player);
 				}
 			} else if (click == ClickType.MIDDLE && player.hasPermission(CratePermission.Command.TELEPORT)) {
-				Location location = crate.getLocation();
+				UnloadableWorldLocation location = this.crate.getLocation();
 				if (location != null) {
-					player.closeInventory();
-					player.teleport(location);
+					if (location.isWorldLoaded()) {
+						player.closeInventory();
+						player.teleport(location);
+						this.i18nMessage(player, "command.teleport.success", "crate", this.crate.getName());
+					} else
+						this.i18nMessage(player, "command.teleport.unloaded-world", "world", location.getWorldName());
 				}
 			}
 			break;

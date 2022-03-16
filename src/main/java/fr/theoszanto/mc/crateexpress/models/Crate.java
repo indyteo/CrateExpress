@@ -5,7 +5,7 @@ import fr.theoszanto.mc.crateexpress.models.gui.CratePreviewGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.utils.MathUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
-import org.bukkit.Location;
+import fr.theoszanto.mc.crateexpress.utils.UnloadableWorldLocation;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -25,14 +25,14 @@ public class Crate extends PluginObject implements Iterable<CrateReward> {
 	private @Nullable CrateKey key;
 	private @NotNull String name;
 	private @Nullable String message;
-	private @Nullable Location location;
+	private @Nullable UnloadableWorldLocation location;
 
 	@UnmodifiableView
 	private final @NotNull Map<@NotNull Integer, @NotNull CrateReward> rewardsUnmodifiable = Collections.unmodifiableMap(this.rewards);
 	@UnmodifiableView
 	private final @NotNull Collection<@NotNull CrateReward> rewardsValuesUnmodifiable = Collections.unmodifiableCollection(this.rewards.values());
 
-	public Crate(@NotNull CrateExpress plugin, @NotNull String id, int min, int max, @Nullable CrateKey key, @NotNull String name, @Nullable String message, @Nullable Location location) {
+	public Crate(@NotNull CrateExpress plugin, @NotNull String id, int min, int max, @Nullable CrateKey key, @NotNull String name, @Nullable String message, @Nullable UnloadableWorldLocation location) {
 		super(plugin);
 		this.id = id;
 		this.min = min;
@@ -138,11 +138,11 @@ public class Crate extends PluginObject implements Iterable<CrateReward> {
 		this.message = message;
 	}
 
-	public @Nullable Location getLocation() {
+	public @Nullable UnloadableWorldLocation getLocation() {
 		return this.location;
 	}
 
-	public void setLocation(@Nullable Location location) {
+	public void setLocation(@Nullable UnloadableWorldLocation location) {
 		this.location = location;
 	}
 }

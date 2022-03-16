@@ -4,7 +4,7 @@ import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.commands.CrateExpressCommand;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
-import org.bukkit.Location;
+import fr.theoszanto.mc.crateexpress.utils.UnloadableWorldLocation;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -30,12 +30,15 @@ public class CrateExpressTeleportSubCommand extends CrateExpressSubCommand {
 		String crateId = args[0];
 		try {
 			Crate crate = this.crates().get(crateId);
-			Location location = crate.getLocation();
+			UnloadableWorldLocation location = crate.getLocation();
 			if (location == null)
 				this.i18nMessage(sender, "command.teleport.no-location");
 			else {
-				((Player) sender).teleport(location);
-				this.i18nMessage(sender, "command.teleport.success", "crate", crate.getName());
+				if (location.isWorldLoaded()) {
+					((Player) sender).teleport(location);
+					this.i18nMessage(sender, "command.teleport.success", "crate", crate.getName());
+				} else
+					this.i18nMessage(sender, "command.teleport.unloaded-world", "world", location.getWorldName());
 			}
 		} catch (IllegalArgumentException e) {
 			this.i18nMessage(sender, "command.unknown-crate", "crate", crateId);

@@ -357,6 +357,7 @@ command:
     success: "§aCaisse #{crate} créée avec succès"
   teleport:
     no-location: "§cAucune position définie"
+    unloaded-world: "§cLe monde #{world} n'est pas chargé"
     success: "§aVous avez été téléporté à la caisse #{crate}"
   help:
     all-commands: "§bListe des commandes disponibles :"
@@ -376,6 +377,5 @@ command:
 misc:
   "yes": "§aOui§r"
   "no": "§cNon§r"
-  unloaded-world: "§cMonde non-chargé§r"
   default-cmd-icon-name: "§7Commande"
   default-other-icon-name: "§7Caisse"
