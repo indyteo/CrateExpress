@@ -1,6 +1,7 @@
 package fr.theoszanto.mc.crateexpress.models;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
+import fr.theoszanto.mc.crateexpress.events.CrateOpenEvent;
 import fr.theoszanto.mc.crateexpress.models.gui.CratePreviewGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.utils.MathUtils;
@@ -11,10 +12,12 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 public class Crate extends PluginObject implements Iterable<CrateReward> {
@@ -44,11 +47,14 @@ public class Crate extends PluginObject implements Iterable<CrateReward> {
 	}
 
 	public void open(@NotNull Player player) {
-		if (this.isEmpty())
-			return;
-		int rewardCount = MathUtils.random(this.min, this.max);
-		for (int i = 0; i < rewardCount; i++)
-			this.randomReward().giveRewardTo(player);
+		List<CrateReward> rewards = new ArrayList<>();
+		if (!this.isEmpty()) {
+			int rewardCount = MathUtils.random(this.min, this.max);
+			for (int i = 0; i < rewardCount; i++)
+				rewards.add(this.randomReward());
+		}
+		if (this.event(new CrateOpenEvent(this, player, rewards)))
+			rewards.forEach(reward -> reward.giveRewardTo(player));
 	}
 
 	public void show(@NotNull Player player) {

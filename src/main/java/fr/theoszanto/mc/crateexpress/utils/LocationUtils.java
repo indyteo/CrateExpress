@@ -32,12 +32,35 @@ public class LocationUtils {
 
 	public static @NotNull String toString(@NotNull Location location) {
 		String worldName;
-		if (location instanceof UnloadableWorldLocation)
-			worldName = ((UnloadableWorldLocation) location).getWorldName();
-		else {
-			World world = location.getWorld();
-			worldName = world == null ? "world" : world.getName();
+		try {
+			worldName = worldName(location);
+		} catch (IllegalStateException e) {
+			worldName = "world";
 		}
 		return worldName + ":" + location.getX() + "," + location.getY() + "," + location.getZ() + "," + location.getYaw() + "," + location.getPitch();
+	}
+
+	public static boolean blockEquals(@NotNull Location loc1, @NotNull Location loc2) {
+		String worldName1, worldName2;
+		try {
+			worldName1 = worldName(loc1);
+			worldName2 = worldName(loc2);
+		} catch (IllegalStateException e) {
+			return false;
+		}
+		return worldName1.equalsIgnoreCase(worldName2) && loc1.getBlockX() == loc2.getBlockX() && loc1.getBlockY() == loc2.getBlockY() && loc1.getBlockZ() == loc2.getBlockZ();
+	}
+
+	private static @NotNull String worldName(@NotNull Location location) throws IllegalStateException {
+		if (location instanceof UnloadableWorldLocation)
+			return ((UnloadableWorldLocation) location).getWorldName();
+		else if (location.isWorldLoaded()) {
+			World world = location.getWorld();
+			if (world == null)
+				throw new IllegalStateException();
+			else
+				return world.getName();
+		} else
+			throw new IllegalStateException();
 	}
 }

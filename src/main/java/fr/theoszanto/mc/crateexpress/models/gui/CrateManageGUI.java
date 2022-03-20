@@ -172,7 +172,7 @@ public class CrateManageGUI extends CrateGUI {
 				if (location != null) {
 					if (location.isWorldLoaded()) {
 						player.closeInventory();
-						player.teleport(location);
+						player.teleport(location.clone().add(0.5, 0, 0.5));
 						this.i18nMessage(player, "command.teleport.success", "crate", this.crate.getName());
 					} else
 						this.i18nMessage(player, "command.teleport.unloaded-world", "world", location.getWorldName());

@@ -1,8 +1,12 @@
 package fr.theoszanto.mc.crateexpress.listeners;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
+import fr.theoszanto.mc.crateexpress.events.interaction.CrateOpenInteractEvent;
+import fr.theoszanto.mc.crateexpress.events.interaction.CratePreviewInteractEvent;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.gui.CratePreviewGUI;
+import fr.theoszanto.mc.crateexpress.utils.CratePermission;
+import fr.theoszanto.mc.crateexpress.utils.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -34,16 +38,21 @@ public class CrateInteractionListener extends CrateListener {
 				assert item != null;
 				Crate crate = usedKeyCrate.get();
 				Location crateLocation = crate.getLocation();
-				if (crateLocation == null || (block != null && block.getLocation().equals(crateLocation))) {
-					if (this.crates().noLimitToPlayerRewards() || this.storage().countRewards(player) <= this.crates().getMaximumPlayerRewards()) {
-						item.setAmount(item.getAmount() - 1);
-						crate.open(player);
-						this.i18nMessage(player, "action.crate.open", "crate", crate.getName());
-						String message = crate.getMessage();
-						if (message != null) {
-							String formatted = message.replaceAll("<player>", player.getName()).replaceAll("<display>", player.getDisplayName());
-							for (Player p : Bukkit.getOnlinePlayers())
-								p.sendMessage(this.prefix() + formatted);
+				if (crateLocation == null || (block != null && LocationUtils.blockEquals(block.getLocation(), crateLocation))) {
+					if (this.crates().noLimitToPlayerRewards() || player.hasPermission(CratePermission.UNLIMITED_CLAIM)
+							|| this.storage().countRewards(player) <= this.crates().getMaximumPlayerRewards()) {
+						CrateOpenInteractEvent e = new CrateOpenInteractEvent(crate, player);
+						if (this.event(e)) {
+							if (e.doesConsumingKey())
+								item.setAmount(item.getAmount() - 1);
+							crate.open(player);
+							this.i18nMessage(player, "action.crate.open", "crate", crate.getName());
+							String message = crate.getMessage();
+							if (e.doesBroadcastMessage() && message != null) {
+								String formatted = message.replaceAll("<player>", player.getName()).replaceAll("<display>", player.getDisplayName());
+								for (Player p : Bukkit.getOnlinePlayers())
+									p.sendMessage(this.prefix() + formatted);
+							}
 						}
 					} else
 						this.i18nMessage(player, "action.crate.too-much-rewards", "crate", crate.getName());
@@ -56,10 +65,14 @@ public class CrateInteractionListener extends CrateListener {
 			}
 		} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 			if (clickedCrate.isPresent()) {
-				new CratePreviewGUI(this.plugin, clickedCrate.get()).showToPlayer(player);
+				Crate crate = clickedCrate.get();
+				if (this.event(new CratePreviewInteractEvent(crate, player, true)))
+					new CratePreviewGUI(this.plugin, crate).showToPlayer(player);
 				event.setCancelled(true);
 			} else if (usedKeyCrate.isPresent()) {
-				new CratePreviewGUI(this.plugin, usedKeyCrate.get()).showToPlayer(player);
+				Crate crate = usedKeyCrate.get();
+				if (this.event(new CratePreviewInteractEvent(crate, player, false)))
+					new CratePreviewGUI(this.plugin, crate).showToPlayer(player);
 				event.setCancelled(true);
 			}
 		}

@@ -1,6 +1,7 @@
 package fr.theoszanto.mc.crateexpress.models.reward;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
+import fr.theoszanto.mc.crateexpress.events.CrateRewardGiveEvent;
 import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
 import fr.theoszanto.mc.crateexpress.utils.MathUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
@@ -22,18 +23,21 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 	}
 
 	public boolean giveRewardTo(@NotNull Player player) {
-		if (this.physicalReward && player.getInventory().firstEmpty() == -1) {
-			this.save(player);
-			this.i18nMessage(player, "crate.reward.save", "reward", this.describe());
+		boolean savingReward = this.physicalReward && player.getInventory().firstEmpty() == -1;
+		CrateRewardGiveEvent event = new CrateRewardGiveEvent(player, this, savingReward);
+		CrateReward reward = event.getReward();
+		if (event.isSavingReward()) {
+			reward.save(player);
+			this.i18nMessage(player, "crate.reward.save", "reward", reward.describe());
 			return false;
 		} else {
 			try {
-				this.reward(player);
+				reward.reward(player);
 				return true;
 			} catch (RewardGiveException e) {
 				this.getLogger().warning("Unable to reward player " + player.getName() + " (" + player.getUniqueId() + "): " + e.getMessage() + "! Saving reward instead");
-				this.save(player);
-				this.i18nMessage(player, "crate.reward.error", "reward", this.describe());
+				reward.save(player);
+				this.i18nMessage(player, "crate.reward.error", "reward", reward.describe());
 				return false;
 			}
 		}
@@ -64,6 +68,7 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 		this.icon = icon;
 	}
 
+	@Override
 	public int getWeight() {
 		return this.weight;
 	}

@@ -2,12 +2,16 @@ package fr.theoszanto.mc.crateexpress.models.gui;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
+import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
 import fr.theoszanto.mc.crateexpress.utils.MathUtils;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
@@ -20,8 +24,10 @@ public class CrateClaimGUI extends CratePaginatedGUI<ClaimableReward> {
 
 	@Override
 	protected void prepareGUI() {
-		this.setButtons(slot(5, 0), slot(5, 8), slot(5, 3), slot(5, 5));
+		this.setButtons(slot(5, 0), slot(5, 8), slot(5, 2), slot(5, 6));
 		this.setEmptyIndicator(slot(2, 4), "menu.claim.empty");
+		if (!this.list.isEmpty())
+			this.set(slot(5, 4), new ItemBuilder(Material.HOPPER, 1, this.i18n("menu.claim.all.name"), this.i18nLines("menu.claim.all.lore")), "all");
 	}
 
 	@Override
@@ -36,13 +42,27 @@ public class CrateClaimGUI extends CratePaginatedGUI<ClaimableReward> {
 
 	@Override
 	public boolean onClickOnElement(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull ClaimableReward element) {
-		// Remove stored pending reward
-		this.storage().deleteReward(player, element.getId());
-		// Try to give it to player and remove it from current pending rewards if successful
-		if (element.getReward().giveRewardTo(player))
-			this.list.remove(element);
-		// Update GUI
+		this.claimReward(player, element);
 		this.refresh(player);
 		return true;
+	}
+
+	@Override
+	protected boolean onOtherClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
+		if (data != null && data.getName().equalsIgnoreCase("all")) {
+			PlayerInventory inventory = player.getInventory();
+			while (inventory.firstEmpty() != -1 && !this.list.isEmpty())
+				this.claimReward(player, this.list.get(0));
+			this.refresh(player);
+		}
+		return true;
+	}
+
+	private void claimReward(@NotNull Player player, @NotNull ClaimableReward reward) {
+		// Remove stored pending reward
+		this.storage().deleteReward(player, reward.getId());
+		// Try to give it to player and remove it from current pending rewards if successful
+		if (reward.getReward().giveRewardTo(player))
+			this.list.remove(reward);
 	}
 }

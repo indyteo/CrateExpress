@@ -33,6 +33,12 @@ menu:
   claim:
     title: "Récompenses en attente"
     empty: "§cAucune récompense en attente..."
+    all:
+      name: "§bTout récupérer"
+      lore: |-
+        §7Récupérer autant de récompenses en attente
+        §7que possible (remplit l'inventaire)
+        §6»§e Clic pour récupérer
   preview:
     title: "Prévisualisation : #{crate}"
     empty: "§cCette caisse est vide"

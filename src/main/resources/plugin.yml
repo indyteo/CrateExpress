@@ -16,7 +16,11 @@ permissions:
     description: "Grant all permissions about CrateExpress"
     default: op
     children:
+      crateexpress.unlimited-claim: true
       crateexpress.command.*: true
+  crateexpress.unlimited-claim:
+    description: "Grant permission to bypass claim size limit"
+    default: op
   crateexpress.command.*:
     description: "Grant access to all /crateexpress subcommands"
     default: op

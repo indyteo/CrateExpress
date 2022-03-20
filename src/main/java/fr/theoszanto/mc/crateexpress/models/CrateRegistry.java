@@ -1,6 +1,8 @@
 package fr.theoszanto.mc.crateexpress.models;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
+import fr.theoszanto.mc.crateexpress.events.CrateLoadEvent;
+import fr.theoszanto.mc.crateexpress.utils.LocationUtils;
 import fr.theoszanto.mc.crateexpress.utils.Registry;
 import org.bukkit.Location;
 import org.bukkit.configuration.ConfigurationSection;
@@ -19,6 +21,8 @@ public class CrateRegistry extends Registry<String, Crate> {
 
 	public void load(@NotNull ConfigurationSection config) {
 		this.storage().loadCrates(this);
+		for (Crate crate : this)
+			this.event(new CrateLoadEvent(crate));
 		this.maximumPlayerRewards = config.getInt("maximum-player-rewards", -1);
 	}
 
@@ -43,7 +47,7 @@ public class CrateRegistry extends Registry<String, Crate> {
 	public @NotNull Optional<@NotNull Crate> byLocation(@Nullable Location location) {
 		return location == null ? Optional.empty() : this.list().stream().filter(crate -> {
 			Location loc = crate.getLocation();
-			return loc != null && loc.equals(location);
+			return loc != null && LocationUtils.blockEquals(loc, location);
 		}).findAny();
 	}
 

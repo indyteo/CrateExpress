@@ -35,7 +35,7 @@ public class CrateExpressTeleportSubCommand extends CrateExpressSubCommand {
 				this.i18nMessage(sender, "command.teleport.no-location");
 			else {
 				if (location.isWorldLoaded()) {
-					((Player) sender).teleport(location);
+					((Player) sender).teleport(location.clone().add(0.5, 0, 0.5));
 					this.i18nMessage(sender, "command.teleport.success", "crate", crate.getName());
 				} else
 					this.i18nMessage(sender, "command.teleport.unloaded-world", "world", location.getWorldName());
