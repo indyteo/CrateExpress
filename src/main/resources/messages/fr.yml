@@ -58,6 +58,7 @@ menu:
     edit: "§6»§e Clic gauche pour éditer"
     give: "§6»§e Clic molette pour obtenir une clé"
     teleport: "§6»§e Clic droit pour se téléporter"
+    crate-id: "§8##{id}"
   edit:
     title: "Édition : #{crate}"
     add:
@@ -173,6 +174,7 @@ menu:
     empty: "§cAucune caisse n'a été créée. §4/crate create"
     no-key: "§7Aucune clé définie pour cette caisse"
     lore: "§6»§e Clic pour sélectionner cette caisse"
+    crate-id: "§8##{id}"
   reward:
     title: "Récompense de la caisse #{crate}"
     weight:

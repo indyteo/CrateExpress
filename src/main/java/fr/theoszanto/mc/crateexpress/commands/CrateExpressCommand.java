@@ -61,8 +61,8 @@ public class CrateExpressCommand extends PluginObject implements TabExecutor {
 		}
 		if (result == null)
 			return Collections.emptyList();
-		String lastArg = args[args.length - 1];
-		return result.stream().filter(name -> name.startsWith(lastArg)).collect(Collectors.toList());
+		String lastArg = args[args.length - 1].toLowerCase();
+		return result.stream().filter(name -> name.toLowerCase().startsWith(lastArg)).collect(Collectors.toList());
 	}
 
 	public @Nullable CrateExpressSubCommand subCommandByName(@NotNull String name) {

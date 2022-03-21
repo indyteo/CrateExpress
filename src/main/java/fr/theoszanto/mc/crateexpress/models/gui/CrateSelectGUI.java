@@ -53,6 +53,7 @@ public class CrateSelectGUI extends CratePaginatedGUI<Crate> {
 		} else
 			item = key.getItem().clone();
 		ItemUtils.addLore(item, this.i18nLines("menu.select.lore"));
+		ItemUtils.addLore(item, this.i18n("menu.select.crate-id", "id", crate.getId()));
 		return item;
 	}
 

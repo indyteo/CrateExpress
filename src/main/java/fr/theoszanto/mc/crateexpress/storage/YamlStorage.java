@@ -25,6 +25,9 @@ import org.jetbrains.annotations.NotNull;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -44,41 +47,43 @@ public class YamlStorage extends PluginObject implements Storage {
 
 	@Override
 	public void loadCrates(@NotNull CrateRegistry registry) throws IllegalStateException {
-		File[] files = this.cratesDir.listFiles((dir, name) -> name.matches("^.*\\.ya?ml$"));
-		if (files == null)
-			throw new IllegalStateException("Could not list files from YamlStorage crates directory: " + this.cratesDir);
-		for (File file : files) {
-			String id = crateIdFromFileName(file.getName());
-			try {
-				YamlConfiguration data = new YamlConfiguration();
-				data.load(file);
-				int min = data.getInt("min", 1);
-				int max = data.getInt("max", 1);
-				String crateKey = data.getString("key", null);
-				CrateKey key = crateKey == null ? null : new CrateKey(this.plugin, id, ItemUtils.fromString(crateKey));
-				String name = data.getString("name", id);
-				String message = data.getString("message", null);
-				String crateLocation = data.getString("location", null);
-				UnloadableWorldLocation location = crateLocation == null ? null : LocationUtils.fromString(crateLocation);
-				Crate crate = new Crate(this.plugin, id, min, max, key, name, message, location);
-				ConfigurationSection items = data.getConfigurationSection("items");
-				if (items != null) {
-					for (String item : items.getKeys(false)) {
-						int slot;
-						try {
-							slot = Integer.parseInt(item);
-						} catch (NumberFormatException e) {
-							throw new InvalidConfigurationException("Could not parse crate item slot number: " + item, e);
+		try {
+			Path cratePath = this.cratesDir.toPath();
+			Files.find(cratePath, 10, YamlStorage::crateFilesFilter).forEach(path -> {
+				String id = crateIdFromFileName(cratePath.relativize(path).toString());
+				try {
+					YamlConfiguration data = new YamlConfiguration();
+					data.load(path.toFile());
+					int min = data.getInt("min", 1);
+					int max = data.getInt("max", 1);
+					String crateKey = data.getString("key", null);
+					CrateKey key = crateKey == null ? null : new CrateKey(this.plugin, id, ItemUtils.fromString(crateKey));
+					String name = data.getString("name", id);
+					String message = data.getString("message", null);
+					String crateLocation = data.getString("location", null);
+					UnloadableWorldLocation location = crateLocation == null ? null : LocationUtils.fromString(crateLocation);
+					Crate crate = new Crate(this.plugin, id, min, max, key, name, message, location);
+					ConfigurationSection items = data.getConfigurationSection("items");
+					if (items != null) {
+						for (String item : items.getKeys(false)) {
+							int slot;
+							try {
+								slot = Integer.parseInt(item);
+							} catch (NumberFormatException e) {
+								throw new InvalidConfigurationException("Could not parse crate item slot number: " + item, e);
+							}
+							ConfigurationSection reward = items.getConfigurationSection(item);
+							assert reward != null;
+							crate.addReward(slot, deserializeReward(reward, this.plugin));
 						}
-						ConfigurationSection reward = items.getConfigurationSection(item);
-						assert reward != null;
-						crate.addReward(slot, deserializeReward(reward, this.plugin));
 					}
+					registry.register(id, crate);
+				} catch (IOException | InvalidConfigurationException | IllegalArgumentException e) {
+					this.error("Could not load crate: " + id, e);
 				}
-				registry.register(id, crate);
-			} catch (IOException | InvalidConfigurationException | IllegalArgumentException e) {
-				this.error("Could not load crate: " + id, e);
-			}
+			});
+		} catch (IOException e) {
+			throw new IllegalStateException("Could not list files from YamlStorage crates directory: " + this.cratesDir);
 		}
 	}
 
@@ -114,6 +119,13 @@ public class YamlStorage extends PluginObject implements Storage {
 		File file = new File(this.cratesDir, fileNameFromCrateId(id));
 		if (file.exists() && !file.delete())
 			throw new IllegalStateException("Could not delete crate data file: " + file);
+		File parent = file.getParentFile();
+		while (!this.cratesDir.equals(parent)) {
+			String[] list = parent.list();
+			if ((list == null || list.length == 0) && !parent.delete())
+				throw new IllegalStateException("Could not cleanup crate data parent dir: " + parent);
+			parent = parent.getParentFile();
+		}
 	}
 
 	@Override
@@ -264,5 +276,9 @@ public class YamlStorage extends PluginObject implements Storage {
 
 	private static @NotNull String fileNameFromCrateId(@NotNull String crateId) {
 		return crateId + ".yml";
+	}
+
+	private static boolean crateFilesFilter(@NotNull Path path, @NotNull BasicFileAttributes attributes) {
+		return attributes.isRegularFile() && path.toString().matches("^.*\\.ya?ml$");
 	}
 }
