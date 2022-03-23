@@ -16,6 +16,8 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class CrateClaimGUI extends CratePaginatedGUI<ClaimableReward> {
+	private boolean processing = false;
+
 	private static final int[] contentSlots = MathUtils.numbers(0, 5 * 9);
 
 	public CrateClaimGUI(@NotNull CrateExpress plugin, @NotNull List<@NotNull ClaimableReward> rewards) {
@@ -42,19 +44,33 @@ public class CrateClaimGUI extends CratePaginatedGUI<ClaimableReward> {
 
 	@Override
 	public boolean onClickOnElement(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull ClaimableReward element) {
-		this.claimReward(player, element);
+		if (this.processing) {
+			this.i18nMessage(player, "menu.claim.slow-down");
+			return true;
+		}
+		this.processing = true;
+		PlayerInventory inventory = player.getInventory();
+		if (inventory.firstEmpty() != -1 || !element.getReward().isPhysicalReward())
+			this.claimReward(player, element);
 		this.refresh(player);
+		this.processing = false;
 		return true;
 	}
 
 	@Override
 	protected boolean onOtherClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
+		if (this.processing) {
+			this.i18nMessage(player, "menu.claim.slow-down");
+			return true;
+		}
+		this.processing = true;
 		if (data != null && data.getName().equalsIgnoreCase("all")) {
 			PlayerInventory inventory = player.getInventory();
 			while (inventory.firstEmpty() != -1 && !this.list.isEmpty())
 				this.claimReward(player, this.list.get(0));
 			this.refresh(player);
 		}
+		this.processing = false;
 		return true;
 	}
 

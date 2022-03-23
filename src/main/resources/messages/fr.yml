@@ -33,6 +33,7 @@ menu:
   claim:
     title: "Récompenses en attente"
     empty: "§cAucune récompense en attente..."
+    slow-down: "§cVeuillez cliquer moins vite, une opération est déjà en cours..."
     all:
       name: "§bTout récupérer"
       lore: |-

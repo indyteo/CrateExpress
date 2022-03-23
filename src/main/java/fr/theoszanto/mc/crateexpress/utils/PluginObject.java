@@ -12,6 +12,8 @@ import org.bukkit.event.Event;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.logging.Logger;
 
 public abstract class PluginObject implements Logged {
@@ -74,5 +76,15 @@ public abstract class PluginObject implements Logged {
 
 	public final void run(@NotNull Runnable task) {
 		Bukkit.getScheduler().runTask(this.plugin, task);
+	}
+
+	public final @NotNull PluginObject instanciate(@NotNull String className, @Nullable List<?> args) {
+		if (args == null)
+			args = Collections.emptyList();
+		Object[] params = new Object[args.size() + 1];
+		params[0] = this.plugin;
+		for (int i = 0; i < args.size(); i++)
+			params[i + 1] = args.get(i);
+		return JavaUtils.instanciateClass(className, params);
 	}
 }

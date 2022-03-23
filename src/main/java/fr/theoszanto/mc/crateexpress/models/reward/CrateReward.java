@@ -10,6 +10,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.logging.Level;
+
 public abstract class CrateReward extends PluginObject implements Weighted {
 	private @NotNull ItemStack icon;
 	private int weight;
@@ -35,7 +37,7 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 				reward.reward(player);
 				return true;
 			} catch (RewardGiveException e) {
-				this.getLogger().warning("Unable to reward player " + player.getName() + " (" + player.getUniqueId() + "): " + e.getMessage() + "! Saving reward instead");
+				this.getLogger().log(Level.WARNING, "Unable to reward player " + player.getName() + " (" + player.getUniqueId() + "): " + e.getMessage() + "! Saving reward instead", e);
 				reward.save(player);
 				this.i18nMessage(player, "crate.reward.error", "reward", reward.describe());
 				return false;

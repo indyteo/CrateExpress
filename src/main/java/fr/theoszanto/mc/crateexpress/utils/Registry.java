@@ -2,16 +2,17 @@ package fr.theoszanto.mc.crateexpress.utils;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.UnmodifiableView;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
-public class Registry<K, V> extends PluginObject implements Iterable<V> {
-	private final @NotNull Map<@NotNull K, @NotNull V> values = new HashMap<>();
+public class Registry<K extends Comparable<K>, V> extends PluginObject implements Iterable<V> {
+	private final @NotNull SortedMap<@NotNull K, @NotNull V> values = new TreeMap<>();
 	@UnmodifiableView
 	private final @NotNull Collection<@NotNull V> unmodifiableValues = Collections.unmodifiableCollection(this.values.values());
 	private final @NotNull String name;
@@ -47,8 +48,12 @@ public class Registry<K, V> extends PluginObject implements Iterable<V> {
 		this.set(key, value);
 	}
 
+	protected @Nullable V getRaw(@NotNull K key) {
+		return this.values.get(key);
+	}
+
 	public @NotNull V get(@NotNull K key) throws IllegalArgumentException {
-		V value = this.values.get(key);
+		V value = this.getRaw(key);
 		if (value == null)
 			throw new IllegalArgumentException("No value was registered for this key");
 		return value;

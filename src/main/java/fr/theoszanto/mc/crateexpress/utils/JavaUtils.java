@@ -60,6 +60,17 @@ public class JavaUtils {
 		return instances;
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> @NotNull T instanciateClass(@NotNull String className, @NotNull Object @NotNull... initArgs) {
+		try {
+			Class<? extends T> clazz = (Class<? extends T>) Class.forName(className);
+			Class<?>[] types = extractTypes(initArgs);
+			return clazz.getDeclaredConstructor(types).newInstance(initArgs);
+		} catch (ReflectiveOperationException e) {
+			throw new IllegalArgumentException("Failed to instanciate: " + className, e);
+		}
+	}
+
 	public static class Null<T> {
 		private final @NotNull Class<T> type;
 

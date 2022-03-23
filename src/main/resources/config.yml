@@ -1,6 +1,21 @@
 locale: "fr"
 crates:
   maximum-player-rewards: 135
+  resolvers:
+    0: # This resolver should always be present to ensure basic "by-name" resolving
+      class: fr.theoszanto.mc.crateexpress.models.resolver.SimpleCrateResolver
+      options: []
+    1:
+      class: fr.theoszanto.mc.crateexpress.models.resolver.CaseInsensitiveCrateResolver
+      options: []
+    2:
+      class: fr.theoszanto.mc.crateexpress.models.resolver.UpperNamespaceCrateResolver
+      options: []
+#    3:
+#      class: fr.theoszanto.mc.crateexpress.models.resolver.BindingsCrateResolver
+#      options:
+#        - alias1: KeyName1
+#          alias2: KeyName2
 storage:
   class: fr.theoszanto.mc.crateexpress.storage.YamlStorage
   options:
