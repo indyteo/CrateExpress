@@ -1,11 +1,12 @@
 package fr.theoszanto.mc.crateexpress;
 
+import fr.theoszanto.mc.crateexpress.managers.ExportManager;
 import fr.theoszanto.mc.crateexpress.managers.I18nManager;
 import fr.theoszanto.mc.crateexpress.managers.MoneyManager;
 import fr.theoszanto.mc.crateexpress.managers.SpigotManager;
 import fr.theoszanto.mc.crateexpress.managers.StorageManager;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
-import fr.theoszanto.mc.crateexpress.storage.Storage;
+import fr.theoszanto.mc.crateexpress.storage.CrateStorage;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -19,6 +20,7 @@ public final class CrateExpress extends JavaPlugin {
 	private final @NotNull StorageManager storage = new StorageManager(this);
 	private final @NotNull MoneyManager money = new MoneyManager(this);
 	private final @NotNull CrateRegistry crates = new CrateRegistry(this);
+	private final @NotNull ExportManager export = new ExportManager(this);
 	private final @NotNull SpigotManager spigot = new SpigotManager(this);
 
 	@Override
@@ -52,6 +54,11 @@ public final class CrateExpress extends JavaPlugin {
 			cratesConfig = config.createSection("crates");
 		this.crates.load(cratesConfig);
 
+		// Initializing export module
+		ConfigurationSection exportConfig = config.getConfigurationSection("export");
+		if (exportConfig != null)
+			this.export.loadExporters(exportConfig);
+
 		// Initializing Spigot plugin stuff
 		this.spigot.init();
 	}
@@ -66,6 +73,7 @@ public final class CrateExpress extends JavaPlugin {
 		this.storage.resetStorageSource();
 		this.money.reset();
 		this.crates.reset();
+		this.export.reset();
 		this.spigot.reset();
 	}
 
@@ -79,7 +87,7 @@ public final class CrateExpress extends JavaPlugin {
 		return this.i18n.getMessage(key, format);
 	}
 
-	public @NotNull Storage storage() {
+	public @NotNull CrateStorage storage() {
 		return this.storage.getStorage();
 	}
 
@@ -89,6 +97,10 @@ public final class CrateExpress extends JavaPlugin {
 
 	public @NotNull CrateRegistry crates() {
 		return this.crates;
+	}
+
+	public @NotNull ExportManager export() {
+		return this.export;
 	}
 
 	public @NotNull SpigotManager spigot() {

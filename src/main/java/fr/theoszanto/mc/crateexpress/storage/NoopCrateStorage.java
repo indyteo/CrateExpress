@@ -12,8 +12,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Collections;
 import java.util.List;
 
-public class NoopStorage extends PluginObject implements Storage {
-	public NoopStorage(@NotNull CrateExpress plugin) {
+public class NoopCrateStorage extends PluginObject implements CrateStorage {
+	public NoopCrateStorage(@NotNull CrateExpress plugin) {
 		super(plugin);
 	}
 

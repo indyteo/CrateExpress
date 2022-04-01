@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CrateExpressPreviewSubCommand extends CrateExpressSubCommand {
 	public CrateExpressPreviewSubCommand(@NotNull CrateExpress plugin) {
@@ -38,6 +37,6 @@ public class CrateExpressPreviewSubCommand extends CrateExpressSubCommand {
 
 	@Override
 	public @Nullable List<@NotNull String> tabComplete(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
-		return args.length == 1 ? this.crates().list().stream().map(Crate::getId).collect(Collectors.toList()) : null;
+		return args.length == 1 ? this.existingCrates() : null;
 	}
 }

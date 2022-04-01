@@ -30,6 +30,7 @@ permissions:
       crateexpress.command.create: true
       crateexpress.command.delete: true
       crateexpress.command.edit: true
+      crateexpress.command.export: true
       crateexpress.command.give: true
       crateexpress.command.list: true
       crateexpress.command.open: true
@@ -51,6 +52,9 @@ permissions:
     default: op
   crateexpress.command.edit:
     description: "Grant access to /crateexpress edit command"
+    default: op
+  crateexpress.command.export:
+    description: "Grant access to /crateexpress export command"
     default: op
   crateexpress.command.give:
     description: "Grant access to /crateexpress give command"

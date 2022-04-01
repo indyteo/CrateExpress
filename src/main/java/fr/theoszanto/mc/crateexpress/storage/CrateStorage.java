@@ -10,7 +10,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-public interface Storage extends Logged {
+public interface CrateStorage extends Logged {
 	void loadCrates(@NotNull CrateRegistry registry) throws IllegalStateException;
 
 	default void saveCrates(@NotNull CrateRegistry registry) throws IllegalStateException {

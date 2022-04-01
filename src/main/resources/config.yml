@@ -3,21 +3,18 @@ crates:
   maximum-player-rewards: 135
   resolvers:
     0: # This resolver should always be present to ensure basic "by-name" resolving
-      class: fr.theoszanto.mc.crateexpress.models.resolver.SimpleCrateResolver
-      options: []
+      class: fr.theoszanto.mc.crateexpress.resolvers.SimpleCrateResolver
     1:
-      class: fr.theoszanto.mc.crateexpress.models.resolver.CaseInsensitiveCrateResolver
-      options: []
+      class: fr.theoszanto.mc.crateexpress.resolvers.CaseInsensitiveCrateResolver
     2:
-      class: fr.theoszanto.mc.crateexpress.models.resolver.UpperNamespaceCrateResolver
-      options: []
+      class: fr.theoszanto.mc.crateexpress.resolvers.UpperNamespaceCrateResolver
 #    3:
-#      class: fr.theoszanto.mc.crateexpress.models.resolver.BindingsCrateResolver
+#      class: fr.theoszanto.mc.crateexpress.resolvers.BindingsCrateResolver
 #      options:
 #        - alias1: KeyName1
 #          alias2: KeyName2
 storage:
-  class: fr.theoszanto.mc.crateexpress.storage.YamlStorage
+  class: fr.theoszanto.mc.crateexpress.storage.YamlCrateStorage
   options:
     - "./crates/"
     - "./rewards/"
@@ -27,3 +24,8 @@ money:
   currency-symbol: "$"
   placement: before
   physical: false
+export:
+  directory: "./exports/"
+  exporters:
+    0:
+      class: fr.theoszanto.mc.crateexpress.exporters.CSVCrateExporter

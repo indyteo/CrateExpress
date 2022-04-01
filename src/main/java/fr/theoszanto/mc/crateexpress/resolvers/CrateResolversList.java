@@ -1,17 +1,18 @@
-package fr.theoszanto.mc.crateexpress.models.resolver;
+package fr.theoszanto.mc.crateexpress.resolvers;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
+import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrateResolverList extends CrateResolver {
+public class CrateResolversList extends PluginObject implements CrateResolver {
 	private final @NotNull List<@NotNull CrateResolver> resolvers = new ArrayList<>();
 
-	public CrateResolverList(@NotNull CrateExpress plugin) {
+	public CrateResolversList(@NotNull CrateExpress plugin) {
 		super(plugin);
 	}
 

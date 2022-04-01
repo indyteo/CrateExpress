@@ -44,7 +44,7 @@ public class I18nManager extends Registry<String, String> {
 		}
 	}
 
-	private /*static*/ @NotNull String format(@NotNull String message, @Nullable Object @NotNull... format) {
+	private static @NotNull String format(@NotNull String message, @Nullable Object @NotNull... format) {
 		if (format.length % 2 != 0)
 			throw new IllegalArgumentException("Illegal format parameters count (must be even): " + format.length);
 		for (int i = 0; i < format.length; i += 2) {

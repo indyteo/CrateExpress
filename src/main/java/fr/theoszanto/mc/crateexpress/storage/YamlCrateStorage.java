@@ -31,11 +31,11 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 
-public class YamlStorage extends PluginObject implements Storage {
+public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	private final @NotNull File cratesDir;
 	private final @NotNull File rewardsDir;
 
-	public YamlStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir) throws IllegalArgumentException {
+	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir) throws IllegalArgumentException {
 		super(plugin);
 		this.cratesDir = new File(plugin.getDataFolder(), cratesDir);
 		if (!(this.cratesDir.exists() ? this.cratesDir.isDirectory() : this.cratesDir.mkdirs()))
@@ -49,7 +49,7 @@ public class YamlStorage extends PluginObject implements Storage {
 	public void loadCrates(@NotNull CrateRegistry registry) throws IllegalStateException {
 		try {
 			Path cratePath = this.cratesDir.toPath();
-			Files.find(cratePath, 10, YamlStorage::crateFilesFilter).forEach(path -> {
+			Files.find(cratePath, 10, YamlCrateStorage::crateFilesFilter).forEach(path -> {
 				String id = crateIdFromFileName(cratePath.relativize(path).toString());
 				try {
 					YamlConfiguration data = new YamlConfiguration();

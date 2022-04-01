@@ -2,10 +2,10 @@ package fr.theoszanto.mc.crateexpress.models;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.events.CrateLoadEvent;
-import fr.theoszanto.mc.crateexpress.models.resolver.CrateResolver;
-import fr.theoszanto.mc.crateexpress.models.resolver.CrateResolverList;
-import fr.theoszanto.mc.crateexpress.models.resolver.NoopResolver;
-import fr.theoszanto.mc.crateexpress.models.resolver.SimpleCrateResolver;
+import fr.theoszanto.mc.crateexpress.resolvers.CrateResolver;
+import fr.theoszanto.mc.crateexpress.resolvers.CrateResolversList;
+import fr.theoszanto.mc.crateexpress.resolvers.NoopCrateResolver;
+import fr.theoszanto.mc.crateexpress.resolvers.SimpleCrateResolver;
 import fr.theoszanto.mc.crateexpress.utils.LocationUtils;
 import fr.theoszanto.mc.crateexpress.utils.Registry;
 import org.bukkit.Location;
@@ -18,11 +18,11 @@ import java.util.Optional;
 
 public class CrateRegistry extends Registry<String, Crate> {
 	private int maximumPlayerRewards = -1;
-	private @NotNull CrateResolver crateResolver;
+	private @NotNull CrateResolver resolver;
 
 	public CrateRegistry(@NotNull CrateExpress plugin) {
 		super(plugin, "crate");
-		this.crateResolver = new NoopResolver(plugin);
+		this.resolver = new NoopCrateResolver(plugin);
 	}
 
 	public void load(@NotNull ConfigurationSection config) {
@@ -32,9 +32,9 @@ public class CrateRegistry extends Registry<String, Crate> {
 		this.maximumPlayerRewards = config.getInt("maximum-player-rewards", -1);
 		ConfigurationSection resolvers = config.getConfigurationSection("resolvers");
 		if (resolvers == null)
-			this.crateResolver = new SimpleCrateResolver(this.plugin);
+			this.resolver = new SimpleCrateResolver(this.plugin);
 		else {
-			CrateResolverList resolverList = new CrateResolverList(this.plugin);
+			CrateResolversList resolversList = new CrateResolversList(this.plugin);
 			for (String resolverKey : resolvers.getKeys(false)) {
 				ConfigurationSection resolverConfig = resolvers.getConfigurationSection(resolverKey);
 				if (resolverConfig != null) {
@@ -42,20 +42,20 @@ public class CrateRegistry extends Registry<String, Crate> {
 					if (resolverClassName == null)
 						throw new IllegalStateException("Missing resolver class name in config: " + resolverConfig.getCurrentPath());
 					try {
-						resolverList.addResolver((CrateResolver) this.instanciate(resolverClassName, resolverConfig.getList("options")));
+						resolversList.addResolver((CrateResolver) this.instanciate(resolverClassName, resolverConfig.getList("options")));
 					} catch (IllegalArgumentException | ClassCastException e) {
 						throw new IllegalStateException("Invalid resolver class: " + resolverClassName, e);
 					}
 				}
 			}
-			this.crateResolver = resolverList;
+			this.resolver = resolversList;
 		}
 	}
 
 	@Override
 	public void reset() {
 		super.reset();
-		this.crateResolver = new NoopResolver(this.plugin);
+		this.resolver = new NoopCrateResolver(this.plugin);
 	}
 
 	public boolean noLimitToPlayerRewards() {
@@ -67,7 +67,7 @@ public class CrateRegistry extends Registry<String, Crate> {
 	}
 
 	public @Nullable Crate resolve(@NotNull String name) {
-		return this.crateResolver.resolve(name);
+		return this.resolver.resolve(name);
 	}
 
 	@Override

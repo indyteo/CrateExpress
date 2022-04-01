@@ -1,14 +1,15 @@
-package fr.theoszanto.mc.crateexpress.models.resolver;
+package fr.theoszanto.mc.crateexpress.resolvers;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
+import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class BindingsCrateResolver extends CrateResolver {
+public class BindingsCrateResolver extends PluginObject implements CrateResolver {
 	private final @NotNull Map<@NotNull String, @NotNull String> bindings;
 
 	public BindingsCrateResolver(@NotNull CrateExpress plugin) {

@@ -8,11 +8,14 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-public class Registry<K extends Comparable<K>, V> extends PluginObject implements Iterable<V> {
+public class Registry<K extends Comparable<@NotNull K>, V> extends PluginObject implements Iterable<@NotNull V> {
 	private final @NotNull SortedMap<@NotNull K, @NotNull V> values = new TreeMap<>();
+	@UnmodifiableView
+	private final @NotNull Set<@NotNull K> unmodifiableKeys = Collections.unmodifiableSet(this.values.keySet());
 	@UnmodifiableView
 	private final @NotNull Collection<@NotNull V> unmodifiableValues = Collections.unmodifiableCollection(this.values.values());
 	private final @NotNull String name;
@@ -24,6 +27,11 @@ public class Registry<K extends Comparable<K>, V> extends PluginObject implement
 
 	public void reset() {
 		this.values.clear();
+	}
+
+	@UnmodifiableView
+	public @NotNull Set<@NotNull K> keys() {
+		return this.unmodifiableKeys;
 	}
 
 	@UnmodifiableView
