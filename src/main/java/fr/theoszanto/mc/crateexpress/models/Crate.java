@@ -49,7 +49,7 @@ public class Crate extends PluginObject implements Iterable<CrateReward> {
 	public void open(@NotNull Player player) {
 		List<CrateReward> rewards = new ArrayList<>();
 		if (!this.isEmpty()) {
-			int rewardCount = MathUtils.random(this.min, this.max);
+			int rewardCount = MathUtils.random(this.min, this.max + 1);
 			for (int i = 0; i < rewardCount; i++)
 				rewards.add(this.randomReward());
 		}
