@@ -29,11 +29,15 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	private final @NotNull File cratesDir;
 	private final @NotNull File rewardsDir;
+	private final @NotNull Map<@NotNull UUID, @NotNull Integer> rewardsCountCache = new HashMap<>();
 
 	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir) throws IllegalArgumentException {
 		super(plugin);
@@ -130,7 +134,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 
 	@Override
 	public void saveReward(@NotNull Player player, @NotNull CrateReward reward) throws IllegalStateException {
-		String uuid = player.getUniqueId().toString();
+		UUID uuid = player.getUniqueId();
 		try {
 			File file = new File(this.rewardsDir, uuid + ".yml");
 			YamlConfiguration data = new YamlConfiguration();
@@ -140,6 +144,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			ConfigurationSection rewardData = data.createSection(Integer.toString(MathUtils.nextAvailableInt(data.getKeys(false))));
 			serializeReward(rewardData, reward);
 			data.save(file);
+			this.rewardsCountCache.compute(uuid, (u, count) -> count == null ? 1 : count + 1);
 		} catch (IOException | InvalidConfigurationException e) {
 			throw new IllegalStateException("Could not save reward for player: " + player.getName() + " (" + uuid + ")", e);
 		}
@@ -168,28 +173,33 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 
 	@Override
 	public int countRewards(@NotNull Player player) throws IllegalStateException {
-		String uuid = player.getUniqueId().toString();
-		try {
-			File file = new File(this.rewardsDir, uuid + ".yml");
-			YamlConfiguration data = new YamlConfiguration();
-			data.load(file);
-			return data.getKeys(false).size();
-		} catch (FileNotFoundException e) {
-			return 0;
-		} catch (IOException | InvalidConfigurationException e) {
-			throw new IllegalStateException("Could not count rewards for player: " + player.getName() + " (" + uuid + ")", e);
-		}
+		UUID uuid = player.getUniqueId();
+		return this.rewardsCountCache.computeIfAbsent(uuid, u -> {
+			try {
+				File file = new File(this.rewardsDir, uuid + ".yml");
+				YamlConfiguration data = new YamlConfiguration();
+				data.load(file);
+				return data.getKeys(false).size();
+			} catch (FileNotFoundException e) {
+				return 0;
+			} catch (IOException | InvalidConfigurationException e) {
+				throw new IllegalStateException("Could not count rewards for player: " + player.getName() + " (" + uuid + ")", e);
+			}
+		});
 	}
 
 	@Override
 	public void deleteReward(@NotNull Player player, @NotNull String id) throws IllegalStateException {
-		String uuid = player.getUniqueId().toString();
+		UUID uuid = player.getUniqueId();
 		try {
 			File file = new File(this.rewardsDir, uuid + ".yml");
 			YamlConfiguration data = new YamlConfiguration();
 			data.load(file);
+			boolean exists = data.contains(id);
 			data.set(id, null);
 			data.save(file);
+			if (exists)
+				this.rewardsCountCache.computeIfPresent(uuid, (u, count) -> count > 0 ? count - 1 : 0);
 		} catch (FileNotFoundException ignored) {
 		} catch (IOException | InvalidConfigurationException e) {
 			throw new IllegalStateException("Could not delete reward for player: " + player.getName() + " (" + uuid + ")", e);
