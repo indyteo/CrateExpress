@@ -14,6 +14,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,6 +28,8 @@ public class CrateInteractionListener extends CrateListener {
 	// TODO Split into multiple interactions listeners to avoid wierd Spigot event call
 	@EventHandler
 	private void onPlayerInteract(@NotNull PlayerInteractEvent event) {
+		if (event.getHand() == EquipmentSlot.OFF_HAND)
+			return;
 		Player player = event.getPlayer();
 		ItemStack item = event.getItem();
 		Block block = event.getClickedBlock();
