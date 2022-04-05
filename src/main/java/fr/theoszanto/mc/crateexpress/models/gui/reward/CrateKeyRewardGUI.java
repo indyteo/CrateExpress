@@ -2,6 +2,7 @@ package fr.theoszanto.mc.crateexpress.models.gui.reward;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
+import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.models.gui.CrateSelectGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateKeyReward;
 import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
@@ -32,6 +33,25 @@ public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 			this.reward.setAmount(amount);
 	}
 
+	private void selectCrate(@NotNull String key) {
+		this.key = key;
+		this.amount = Math.min(this.amount, this.getMaxAmount());
+	}
+
+	private int getMaxAmount() {
+		if (this.key != null) {
+			try {
+				CrateKey key = this.crates().get(this.key).getKey();
+				if (key != null) {
+					int max = key.getItem().getMaxStackSize();
+					if (max != -1)
+						return max;
+				}
+			} catch (IllegalArgumentException ignored) {}
+		}
+		return 64;
+	}
+
 	@Override
 	protected void setupButtons(@NotNull Player player) {
 		this.set(slot(0, 4), new ItemBuilder(Material.TRIPWIRE_HOOK, 1, this.i18n("menu.reward.key.header.name"), this.i18nLines("menu.reward.key.header.lore")));
@@ -41,7 +61,7 @@ public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 			this.set(slot(1, 2), this.reward.getIcon());
 		this.set(slot(1, 4), new ItemBuilder(Material.NETHER_STAR, this.getAmount(), this.i18n("menu.reward.key.amount.name", "amount", this.getAmount()), this.i18nLines("menu.reward.key.amount.lore"))
 				.addLoreConditionally(this.getAmount() > 1, this.i18n("menu.reward.key.amount.decrease"))
-				.addLoreConditionally(this.getAmount() < 64, this.i18n("menu.reward.key.amount.increase")), "amount");
+				.addLoreConditionally(this.getAmount() < this.getMaxAmount(), this.i18n("menu.reward.key.amount.increase")), "amount");
 		this.setWeightButton(slot(1, 6));
 	}
 
@@ -62,11 +82,11 @@ public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 		switch (data.getName()) {
 		case "key":
 			if (this.reward == null)
-				new CrateSelectGUI(this.plugin, true, this, key -> this.key = key).showToPlayer(player);
+				new CrateSelectGUI(this.plugin, true, this, this::selectCrate).showToPlayer(player);
 			break;
 		case "amount":
 			if (click.isLeftClick()) {
-				if (this.getAmount() < 64) {
+				if (this.getAmount() < this.getMaxAmount()) {
 					this.setAmount(this.getAmount() + 1);
 					this.refresh(player);
 				}
