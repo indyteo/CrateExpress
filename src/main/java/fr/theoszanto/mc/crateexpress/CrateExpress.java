@@ -69,12 +69,12 @@ public final class CrateExpress extends JavaPlugin {
 	}
 
 	private void unload() {
-		this.i18n.reset();
-		this.storage.resetStorageSource();
-		this.money.reset();
-		this.crates.reset();
-		this.export.reset();
 		this.spigot.reset();
+		this.export.reset();
+		this.crates.reset();
+		this.money.reset();
+		this.storage.resetStorageSource();
+		this.i18n.reset();
 	}
 
 	public void reload() {

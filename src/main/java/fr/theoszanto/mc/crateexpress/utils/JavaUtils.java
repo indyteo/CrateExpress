@@ -9,6 +9,7 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 public class JavaUtils {
 	private JavaUtils() {
@@ -101,5 +102,11 @@ public class JavaUtils {
 			return sub;
 		System.arraycopy(array, start, sub, 0, length);
 		return sub;
+	}
+
+	public static <T> @NotNull CompletableFuture<T> cancelledCompletableFuture() {
+		CompletableFuture<T> completableFuture = new CompletableFuture<>();
+		completableFuture.cancel(false);
+		return completableFuture;
 	}
 }

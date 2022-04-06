@@ -394,3 +394,4 @@ misc:
   "no": "§cNon§r"
   default-cmd-icon-name: "§7Commande"
   default-other-icon-name: "§7Caisse"
+  cancelled-by-reload: "§cVotre action a été interrompue car le plugin a été rechargé"

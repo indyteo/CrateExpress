@@ -25,6 +25,7 @@ import org.bukkit.plugin.PluginManager;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,6 +38,7 @@ import java.util.concurrent.TimeoutException;
 public class SpigotManager extends PluginObject implements Listener {
 	private final @NotNull Map<@NotNull Player, @NotNull CrateGUI> activeGUIs = new HashMap<>();
 	private final @NotNull Map<@NotNull Player, @NotNull ChatRequest> pendingChatRequests = new HashMap<>();
+	private boolean resetting = false;
 
 	private static final @NotNull Timer timer = new Timer();
 
@@ -60,6 +62,8 @@ public class SpigotManager extends PluginObject implements Listener {
 	}
 
 	public void showGUI(@NotNull Player player, @NotNull CrateGUI gui) {
+		if (this.resetting)
+			return;
 		player.openInventory(gui.getInventory());
 		CrateGUI previous = this.activeGUIs.put(player, gui);
 		gui.onOpen(player, previous);
@@ -130,6 +134,8 @@ public class SpigotManager extends PluginObject implements Listener {
 
 	@Contract(pure = true)
 	public @NotNull CompletableFuture<@NotNull String> requestChatMessage(@NotNull Player player, long timeoutDelay, TimeUnit unit) {
+		if (this.resetting)
+			return JavaUtils.cancelledCompletableFuture();
 		CompletableFuture<String> future = new CompletableFuture<>();
 		TimerTask timeout = new TimerTask() {
 			@Override
@@ -158,7 +164,23 @@ public class SpigotManager extends PluginObject implements Listener {
 	}
 
 	public void reset() {
+		this.resetting = true;
+		this.pendingChatRequests.forEach(this::resetChatRequest);
+		this.pendingChatRequests.clear();
+		new ArrayList<>(this.activeGUIs.keySet()).forEach(this::resetGUI);
+		this.activeGUIs.clear();
 		HandlerList.unregisterAll(this.plugin);
+		this.resetting = false;
+	}
+
+	private void resetGUI(@NotNull Player player) {
+		player.closeInventory();
+		this.i18nMessage(player, "misc.cancelled-by-reload");
+	}
+
+	private void resetChatRequest(@NotNull Player player, @NotNull ChatRequest request) {
+		request.abort();
+		this.i18nMessage(player, "misc.cancelled-by-reload");
 	}
 
 	private static final class ChatRequest {
@@ -172,6 +194,11 @@ public class SpigotManager extends PluginObject implements Listener {
 
 		public void fulfill(@NotNull String message) {
 			this.future.complete(message);
+			this.timeout.cancel();
+		}
+
+		public void abort() {
+			this.future.cancel(false);
 			this.timeout.cancel();
 		}
 	}
