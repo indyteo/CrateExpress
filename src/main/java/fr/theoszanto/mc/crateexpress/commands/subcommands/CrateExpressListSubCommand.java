@@ -2,7 +2,6 @@ package fr.theoszanto.mc.crateexpress.commands.subcommands;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.commands.CrateExpressCommand;
-import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.gui.CrateListGUI;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
 import org.bukkit.command.CommandSender;
@@ -10,7 +9,6 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class CrateExpressListSubCommand extends CrateExpressSubCommand {
@@ -27,9 +25,7 @@ public class CrateExpressListSubCommand extends CrateExpressSubCommand {
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
 		if (args.length != 0)
 			return false;
-		Player player = (Player) sender;
-		List<Crate> crates = new ArrayList<>(this.crates().list());
-		new CrateListGUI(this.plugin, crates).showToPlayer(player);
+		new CrateListGUI(this.plugin).showToPlayer((Player) sender);
 		return true;
 	}
 

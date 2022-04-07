@@ -5,7 +5,6 @@ import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
 import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
-import fr.theoszanto.mc.crateexpress.utils.MathUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,18 +13,15 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.function.Consumer;
 
-public class CrateSelectGUI extends CratePaginatedGUI<Crate> {
+public class CrateSelectGUI extends CrateListGUI {
 	private final boolean withKeyOnly;
 	private final @NotNull CrateGUI returnTo;
 	private final @NotNull Consumer<@NotNull String> onSelect;
 
-	private static final int[] contentSlots = MathUtils.numbers(0, 3 * 9);
-
 	public CrateSelectGUI(@NotNull CrateExpress plugin, boolean withKeyOnly, @NotNull CrateGUI returnTo, @NotNull Consumer<@NotNull String> onSelect) {
-		super(plugin, new ArrayList<>(plugin.crates().list()), 4, "menu.select.title");
+		super(plugin, "menu.select.title");
 		this.withKeyOnly = withKeyOnly;
 		this.returnTo = returnTo;
 		this.onSelect = onSelect;
@@ -33,17 +29,12 @@ public class CrateSelectGUI extends CratePaginatedGUI<Crate> {
 
 	@Override
 	protected void prepareGUI() {
-		this.setButtons(slot(3, 0), slot(3, 8), slot(3, 3), slot(3, 5));
+		super.prepareGUI();
 		this.setEmptyIndicator(slot(1, 4), "menu.select.empty");
 	}
 
 	@Override
-	protected int @NotNull[] contentSlots() {
-		return contentSlots;
-	}
-
-	@Override
-	protected @Nullable ItemStack icon(@NotNull Player player, @NotNull Crate crate) {
+	protected @Nullable ItemStack crateIcon(@NotNull Player player, @NotNull Crate crate) {
 		CrateKey key = crate.getKey();
 		ItemStack item;
 		if (key == null) {
@@ -58,7 +49,13 @@ public class CrateSelectGUI extends CratePaginatedGUI<Crate> {
 	}
 
 	@Override
-	protected boolean onClickOnElement(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull Crate crate) {
+	protected @Nullable ItemStack crateSimpleIcon(@NotNull Player player, @NotNull Crate crate) {
+		CrateKey key = crate.getKey();
+		return key == null ? (this.withKeyOnly ? null : new ItemStack(Material.CHEST)) : key.getItem();
+	}
+
+	@Override
+	protected boolean onClickOnCrate(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull Crate crate) {
 		this.onSelect.accept(crate.getId());
 		player.closeInventory();
 		return true;

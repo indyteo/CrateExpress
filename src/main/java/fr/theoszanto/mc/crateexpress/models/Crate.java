@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-public class Crate extends PluginObject implements Iterable<CrateReward> {
+public class Crate extends PluginObject implements Iterable<CrateReward>, CrateElement {
 	private final @NotNull String id;
 	private final @NotNull Map<@NotNull Integer, @NotNull CrateReward> rewards = new HashMap<>();
 	private int min;

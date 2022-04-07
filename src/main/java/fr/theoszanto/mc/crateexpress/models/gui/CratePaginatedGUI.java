@@ -28,12 +28,12 @@ public abstract class CratePaginatedGUI<T> extends CrateGUI {
 		// Previous
 		int previousPage = this.page - 1;
 		if (previousPage >= 0)
-			this.set(previous, new ItemBuilder(Material.ARROW, 1, this.i18n("menu.previous", "page", previousPage + 1, "total", this.pageMax + 1)), "previous", previousPage);
+			this.set(previous, new ItemBuilder(Material.ARROW, previousPage + 1, this.i18n("menu.previous", "page", previousPage + 1, "total", this.pageMax + 1)), "previous", previousPage);
 
 		// Next
 		int nextPage = this.page + 1;
 		if (nextPage <= this.pageMax)
-			this.set(next, new ItemBuilder(Material.ARROW, 1, this.i18n("menu.next", "page", nextPage + 1, "total", this.pageMax + 1)), "next", nextPage);
+			this.set(next, new ItemBuilder(Material.ARROW, nextPage + 1, this.i18n("menu.next", "page", nextPage + 1, "total", this.pageMax + 1)), "next", nextPage);
 
 		// Current page & close button
 		this.set(current, new ItemBuilder(Material.PAPER, this.page + 1, this.i18n("menu.page", "page", this.page + 1, "total", this.pageMax + 1)));

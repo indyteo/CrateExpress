@@ -48,6 +48,16 @@ menu:
     give-key: "§6»§e Clic pour obtenir une clé"
   list:
     title: "Liste des caisses"
+    header:
+      name: "§aContenu de l'espace de caisses : §n#{namespace}"
+      lore: |-
+        §7Un espace de caisses contient plusieurs caisses
+        §7et des sous-espaces de caisses, de la même
+        §7manière que les dossiers et les fichiers
+        §7d'un ordinateur
+        §7Il vous permet d'organiser vos caisses pour mieux
+        §7vous y retrouver
+      root-namespace: "§oRacine"
     empty: "§cAucune caisse n'a été créée. §4/crate create"
     no-key: "§cAucune clé définie"
     no-location: "§cAucune position définie"
@@ -60,6 +70,10 @@ menu:
     give: "§6»§e Clic molette pour obtenir une clé"
     teleport: "§6»§e Clic droit pour se téléporter"
     crate-id: "§8##{id}"
+    namespace: "§bEspace de caisses : §3#{namespace}"
+    parent-namespace: "§7Espace de caisses parent"
+    enter-namespace: "§6»§e Clic pour y accéder"
+    namespace-path: "§8##{path}/"
   edit:
     title: "Édition : #{crate}"
     add:

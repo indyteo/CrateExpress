@@ -1,7 +1,7 @@
 name: CrateExpress
 version: "${project.version}"
 main: fr.theoszanto.mc.crateexpress.CrateExpress
-api-version: 1.16
+api-version: 1.17
 prefix: CrateExpress
 authors: [ indyteo ]
 description: "Make crates easily using in-game interface to manage items"
