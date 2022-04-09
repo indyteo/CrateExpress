@@ -8,7 +8,11 @@ description: "Make crates easily using in-game interface to manage items"
 website: "https://theoszanto.fr/"
 commands:
   crateexpress:
-    aliases: [ ce, crate ]
+    aliases:
+      - ce
+      - crate
+      # Remove the "#" sign in front of the following line to add "/cr" alias
+      #- cr
     description: "Base command to manage crates"
     permission: crateexpress.command.access
 permissions:

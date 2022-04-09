@@ -48,7 +48,7 @@ public class SpigotManager extends PluginObject implements Listener {
 
 	public void init() {
 		// Commands
-		PluginCommand command = this.plugin.getCommand("crate");
+		PluginCommand command = this.plugin.getCommand("crateexpress");
 		if (command == null)
 			throw new IllegalStateException("Crate command not found in plugin.yml");
 		command.setExecutor(new CrateExpressCommand(this.plugin));

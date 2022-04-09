@@ -51,8 +51,8 @@ public class CrateClaimGUI extends CratePaginatedGUI<ClaimableReward> {
 		this.processing = true;
 		PlayerInventory inventory = player.getInventory();
 		if (inventory.firstEmpty() != -1 || !element.getReward().isPhysicalReward())
-			this.claimReward(player, element);
-		this.refresh(player);
+			if (this.claimReward(player, element))
+				this.refresh(player);
 		this.processing = false;
 		return true;
 	}
@@ -66,19 +66,25 @@ public class CrateClaimGUI extends CratePaginatedGUI<ClaimableReward> {
 		this.processing = true;
 		if (data != null && data.getName().equalsIgnoreCase("all")) {
 			PlayerInventory inventory = player.getInventory();
-			while (inventory.firstEmpty() != -1 && !this.list.isEmpty())
-				this.claimReward(player, this.list.get(0));
+			int index = 0;
+			while (inventory.firstEmpty() != -1 && index < this.list.size()) {
+				if (!this.claimReward(player, this.list.get(index)))
+					index++;
+			}
 			this.refresh(player);
 		}
 		this.processing = false;
 		return true;
 	}
 
-	private void claimReward(@NotNull Player player, @NotNull ClaimableReward reward) {
+	private boolean claimReward(@NotNull Player player, @NotNull ClaimableReward reward) {
 		// Remove stored pending reward
 		this.storage().deleteReward(player, reward.getId());
 		// Try to give it to player and remove it from current pending rewards if successful
-		if (reward.getReward().giveRewardTo(player))
+		if (reward.getReward().giveRewardTo(player)) {
 			this.list.remove(reward);
+			return true;
+		}
+		return false;
 	}
 }
