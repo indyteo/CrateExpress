@@ -29,12 +29,15 @@ public class CrateNamespace extends PluginObject implements CrateElement {
 	public @NotNull CrateNamespace getParent() {
 		if (this.isRoot())
 			throw new IllegalStateException("Root namespace have no parent");
-		int sep = this.path.lastIndexOf(SEPARATOR);
-		return new CrateNamespace(this.plugin, sep == -1 ? "" : this.path.substring(0, sep));
+		return parent(this.plugin, this.path);
 	}
 
 	public boolean isRoot() {
 		return this.path.isEmpty();
+	}
+
+	public boolean exists() {
+		return this.isRoot() || !this.listContent().isEmpty();
 	}
 
 	public @NotNull SortedSet<@NotNull CrateElement> listContent() {
@@ -50,7 +53,29 @@ public class CrateNamespace extends PluginObject implements CrateElement {
 		return content;
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		CrateNamespace namespace = (CrateNamespace) o;
+		return this.path.equals(namespace.path);
+	}
+
+	@Override
+	public int hashCode() {
+		return this.path.hashCode();
+	}
+
 	public static @NotNull CrateNamespace root(@NotNull CrateExpress plugin) {
 		return new CrateNamespace(plugin, "");
+	}
+
+	public static @NotNull CrateNamespace ofCrate(@NotNull Crate crate) {
+		return parent(crate.getPlugin(), crate.getId());
+	}
+
+	private static @NotNull CrateNamespace parent(@NotNull CrateExpress plugin, @NotNull String path) {
+		int sep = path.lastIndexOf(SEPARATOR);
+		return new CrateNamespace(plugin, sep == -1 ? "" : path.substring(0, sep));
 	}
 }

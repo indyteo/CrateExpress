@@ -75,7 +75,7 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 			}
 		}
 		for (Player player : targets)
-			key.giveTo(player, amount);
+			key.giveTo(player, amount, sender);
 		this.i18nMessage(sender, "command.give.success");
 		return true;
 	}

@@ -2,6 +2,8 @@ package fr.theoszanto.mc.crateexpress.commands.subcommands;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.commands.CrateExpressCommand;
+import fr.theoszanto.mc.crateexpress.models.Crate;
+import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -48,11 +50,21 @@ public abstract class CrateExpressSubCommand extends PluginObject {
 	}
 
 	protected final @NotNull List<@NotNull String> onlinePlayers() {
-		return Bukkit.getOnlinePlayers().stream().map(HumanEntity::getName).collect(Collectors.toList());
+		return Bukkit.getOnlinePlayers().stream()
+				.map(HumanEntity::getName)
+				.collect(Collectors.toList());
 	}
 
 	protected final @NotNull List<@NotNull String> existingCrates() {
 		return new ArrayList<>(this.crates().keys());
+	}
+
+	protected final @NotNull List<@NotNull String> existingNamespaces() {
+		return this.crates().list().stream()
+				.map(Crate::getNamespace)
+				.distinct()
+				.map(CrateNamespace::getPath)
+				.collect(Collectors.toList());
 	}
 
 	protected final @NotNull List<@NotNull String> numbers(int min, int max) {

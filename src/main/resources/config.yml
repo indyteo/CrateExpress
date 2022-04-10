@@ -19,7 +19,8 @@ storage:
     - "./crates/"
     - "./rewards/"
 money:
-  give-command: "/money give <player> <amount>"
+  # Be careful not to include any leading slash!
+  give-command: "money give <player> <amount>"
   item: PAPER
   currency-symbol: "$"
   placement: before

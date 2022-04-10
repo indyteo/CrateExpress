@@ -364,6 +364,7 @@ command:
   invalid-usage: "§cUsage incorrect :"
   unknown-player: "§cJoueur inconnu : §4#{player}"
   unknown-crate: "§cCaisse inconnue : §4#{crate}"
+  unknown-namespace: "§cEspace de caisses inconnu : §4#{path}"
   invalid-int: "§cValeur entière invalide : §4#{value}"
   info: |-
     §bPlugin : §e#{plugin}

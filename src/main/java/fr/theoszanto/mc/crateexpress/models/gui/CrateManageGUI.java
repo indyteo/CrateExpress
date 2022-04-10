@@ -1,6 +1,7 @@
 package fr.theoszanto.mc.crateexpress.models.gui;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
+import fr.theoszanto.mc.crateexpress.events.CrateGiveEvent;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
@@ -127,7 +128,7 @@ public class CrateManageGUI extends CrateGUI {
 			} else if (click == ClickType.MIDDLE && player.hasPermission(CratePermission.Command.GIVE)) {
 				CrateKey key = this.crate.getKey();
 				if (key != null)
-					key.giveTo(player, 1);
+					key.giveTo(player, 1, CrateGiveEvent.AdminGUIGiveButton.MANAGE);
 			}
 			break;
 		case "name":

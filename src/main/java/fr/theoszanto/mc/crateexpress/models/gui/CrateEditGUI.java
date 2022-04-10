@@ -45,15 +45,18 @@ public class CrateEditGUI extends CrateGUI {
 		for (int i = 0; i < 9; i++)
 			this.set(slot(5, i), border);
 
+		// Back button
+		this.set(slot(5, 0), new ItemBuilder(Material.ARROW, 1, this.i18n("menu.back")), "back");
+
 		// Add reward button
 		if (this.crate.getRewards().size() < 5 * 9)
-			this.set(slot(5, 2), new ItemBuilder(Material.NETHER_STAR, 1, this.i18n("menu.edit.add.name"), this.i18nLines("menu.edit.add.lore")), "add");
+			this.set(slot(5, 3), new ItemBuilder(Material.NETHER_STAR, 1, this.i18n("menu.edit.add.name"), this.i18nLines("menu.edit.add.lore")), "add");
 
 		// Manage crate
-		this.set(slot(5, 4), new ItemBuilder(Material.CHEST, 1, this.i18n("menu.edit.manage.name"), this.i18nLines("menu.edit.manage.lore")), "manage");
+		this.set(slot(5, 5), new ItemBuilder(Material.CHEST, 1, this.i18n("menu.edit.manage.name"), this.i18nLines("menu.edit.manage.lore")), "manage");
 
 		// Close button
-		this.setCloseButton(slot(5, 6));
+		this.setCloseButton(slot(5, 8));
 
 		// Content
 		if (this.crate.isEmpty())
@@ -138,6 +141,9 @@ public class CrateEditGUI extends CrateGUI {
 			return true;
 		}
 		switch (data.getName()) {
+		case "back":
+			new CrateListGUI(this.plugin, this.crate.getNamespace()).showToPlayer(player);
+			break;
 		case "add":
 			new CrateAddRewardGUI(this.plugin, this.crate).showToPlayer(player);
 			break;

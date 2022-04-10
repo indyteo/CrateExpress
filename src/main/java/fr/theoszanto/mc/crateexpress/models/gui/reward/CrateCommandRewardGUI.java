@@ -56,13 +56,15 @@ public class CrateCommandRewardGUI extends CrateRewardGUI<CrateCommandReward> {
 
 	@Override
 	protected boolean canCreateReward() {
-		return this.command != null;
+		return this.command != null && !this.command.isEmpty();
 	}
 
 	@Override
 	protected @NotNull CrateCommandReward createReward() throws IllegalStateException {
-		if (this.command == null)
+		if (this.command == null || this.command.isEmpty() || this.command.equals("/"))
 			throw new IllegalStateException();
+		if (this.command.charAt(0) == '/')
+			this.command = this.command.substring(1);
 		return new CrateCommandReward(this.plugin, this.icon, this.getWeight(), this.command, this.physical);
 	}
 

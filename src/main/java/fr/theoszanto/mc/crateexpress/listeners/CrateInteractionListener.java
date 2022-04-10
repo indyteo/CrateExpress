@@ -44,17 +44,19 @@ public class CrateInteractionListener extends CrateListener {
 				if (crateLocation == null || (block != null && LocationUtils.blockEquals(block.getLocation(), crateLocation))) {
 					if (this.crates().noLimitToPlayerRewards() || player.hasPermission(CratePermission.UNLIMITED_CLAIM)
 							|| this.storage().countRewards(player) <= this.crates().getMaximumPlayerRewards()) {
-						CrateOpenInteractEvent e = new CrateOpenInteractEvent(crate, player);
+						CrateOpenInteractEvent e = new CrateOpenInteractEvent(crate, player, item, player.isSneaking() ? item.getAmount() : 1);
 						if (this.event(e)) {
+							int amount = e.getAmount();
 							if (e.doesConsumingKey())
-								item.setAmount(item.getAmount() - 1);
-							crate.open(player);
+								item.setAmount(item.getAmount() - amount);
+							for (int i = 0; i < amount; i++)
+								crate.open(player);
 							this.i18nMessage(player, "action.crate.open", "crate", crate.getName());
-							String message = crate.getMessage();
-							if (e.doesBroadcastMessage() && message != null) {
-								String formatted = message.replaceAll("<player>", player.getName()).replaceAll("<display>", player.getDisplayName());
-								for (Player p : Bukkit.getOnlinePlayers())
-									p.sendMessage(this.prefix() + formatted);
+							if (e.doesBroadcastMessage()) {
+								String message = crate.getFormattedMessage(player);
+								if (message != null)
+									for (Player p : Bukkit.getOnlinePlayers())
+										p.sendMessage(this.prefix() + message);
 							}
 						}
 					} else

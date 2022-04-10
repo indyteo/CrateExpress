@@ -73,6 +73,10 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 		return this.id;
 	}
 
+	public @NotNull CrateNamespace getNamespace() {
+		return CrateNamespace.ofCrate(this);
+	}
+
 	public boolean isEmpty() {
 		return this.rewards.isEmpty();
 	}
@@ -142,6 +146,12 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 
 	public void setMessage(@Nullable String message) {
 		this.message = message;
+	}
+
+	public @Nullable String getFormattedMessage(@NotNull Player player) {
+		return this.message == null ? null : this.message
+				.replaceAll("<player>", player.getName())
+				.replaceAll("<display>", player.getDisplayName());
 	}
 
 	public @Nullable UnloadableWorldLocation getLocation() {
