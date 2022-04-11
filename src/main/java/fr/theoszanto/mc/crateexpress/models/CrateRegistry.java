@@ -6,6 +6,7 @@ import fr.theoszanto.mc.crateexpress.resolvers.CrateResolver;
 import fr.theoszanto.mc.crateexpress.resolvers.CrateResolversList;
 import fr.theoszanto.mc.crateexpress.resolvers.NoopCrateResolver;
 import fr.theoszanto.mc.crateexpress.resolvers.SimpleCrateResolver;
+import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
 import fr.theoszanto.mc.crateexpress.utils.LocationUtils;
 import fr.theoszanto.mc.crateexpress.utils.Registry;
 import org.bukkit.Location;
@@ -103,7 +104,7 @@ public class CrateRegistry extends Registry<String, Crate> {
 	public @NotNull Optional<@NotNull Crate> byItem(@Nullable ItemStack item) {
 		return item == null ? Optional.empty() : this.list().stream().filter(crate -> {
 			CrateKey key = crate.getKey();
-			return key != null && key.getItem().isSimilar(item);
+			return key != null && ItemUtils.basicItemEquals(key.getItem(), item);
 		}).findAny();
 	}
 }

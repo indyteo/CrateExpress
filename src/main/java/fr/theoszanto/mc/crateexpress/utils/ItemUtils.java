@@ -1,5 +1,6 @@
 package fr.theoszanto.mc.crateexpress.utils;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.serialization.DelegateDeserialization;
 import org.bukkit.enchantments.Enchantment;
@@ -243,5 +244,22 @@ public class ItemUtils {
 		} catch (IOException | ClassNotFoundException e) {
 			throw new IllegalStateException("Unable to deserialize item", e);
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	public static boolean basicItemEquals(@NotNull ItemStack item1, @NotNull ItemStack item2) {
+		Material comparisonType = (item1.getType().isLegacy()) ? Bukkit.getUnsafe().fromLegacy(item1.getData(), true) : item1.getType(); // This may be called from legacy item stacks, try to get the right material
+		return comparisonType == item2.getType() && item1.getDurability() == item2.getDurability() && item1.hasItemMeta() == item2.hasItemMeta() && (!item1.hasItemMeta() || basicMetaEquals(item1.getItemMeta(), item2.getItemMeta()));
+	}
+
+	public static boolean basicMetaEquals(@Nullable ItemMeta meta1, @Nullable ItemMeta meta2) {
+		if (meta1 == null)
+			return meta2 == null;
+		if (meta2 == null)
+			return false;
+		return ((meta1.hasDisplayName() ? meta2.hasDisplayName() && meta1.getDisplayName().equals(meta2.getDisplayName()) : !meta2.hasDisplayName()))
+				&& (meta1.hasEnchants() ? meta2.hasEnchants() && meta1.getEnchants().equals(meta2.getEnchants()) : !meta2.hasEnchants())
+				&& ((meta1.hasLore() && meta1.getLore() != null) ? meta2.hasLore() && meta1.getLore().equals(meta2.getLore()) : !meta2.hasLore())
+				&& (meta1.getItemFlags().equals(meta2.getItemFlags()));
 	}
 }
