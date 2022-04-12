@@ -13,24 +13,47 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 public class CrateInteractionListener extends CrateListener {
+	private final @NotNull Map<@NotNull Player, @NotNull BukkitRunnable> droppers = new HashMap<>();
+
 	public CrateInteractionListener(@NotNull CrateExpress plugin) {
 		super(plugin);
 	}
 
-	// TODO Split into multiple interactions listeners to avoid wierd Spigot event call
+	// https://hub.spigotmc.org/jira/browse/SPIGOT-5974
+	@EventHandler
+	private void onPlayerDropItem(@NotNull PlayerDropItemEvent event) {
+		Player player = event.getPlayer();
+		BukkitRunnable runnable = new BukkitRunnable() {
+			@Override
+			public void run() {
+				CrateInteractionListener.this.droppers.remove(player);
+			}
+		};
+		BukkitRunnable previous = this.droppers.put(player, runnable);
+		if (previous != null)
+			previous.cancel();
+		runnable.runTaskLater(this.plugin, 1);
+	}
+
 	@EventHandler
 	private void onPlayerInteract(@NotNull PlayerInteractEvent event) {
 		if (event.getHand() == EquipmentSlot.OFF_HAND)
 			return;
 		Player player = event.getPlayer();
+		if (this.droppers.containsKey(player))
+			return;
 		ItemStack item = event.getItem();
 		Block block = event.getClickedBlock();
 		Action action = event.getAction();
