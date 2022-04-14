@@ -48,7 +48,7 @@ public class CratePreviewGUI extends CrateGUI {
 			this.set(slot(0, 4), new ItemBuilder(Material.STRUCTURE_VOID, 1, this.i18n("menu.preview.empty")));
 		else {
 			int crateWeight = this.crate.totalWeight();
-			this.crate.getRewards().forEach((slot, reward) -> this.set(slot, reward.getIconWithChance(crateWeight)));
+			this.crate.getRewardsWithSlot().forEach((slot, reward) -> this.set(slot, reward.getIconWithChance(crateWeight)));
 		}
 	}
 
@@ -73,6 +73,6 @@ public class CratePreviewGUI extends CrateGUI {
 	}
 
 	private static int computeRows(@NotNull Crate crate) {
-		return crate.getRewards().keySet().stream().max(Comparator.naturalOrder()).orElse(0) / 9 + 2;
+		return crate.getRewardsWithSlot().keySet().stream().max(Comparator.naturalOrder()).orElse(0) / 9 + 2;
 	}
 }

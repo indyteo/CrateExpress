@@ -9,7 +9,7 @@ public class CrateItemReward extends CrateReward {
 	private final @NotNull ItemStack item;
 
 	public CrateItemReward(@NotNull CrateExpress plugin, int weight, @NotNull ItemStack item) {
-		super(plugin, item, weight, true);
+		super(plugin, "item", item, weight, true);
 		this.item = item;
 	}
 

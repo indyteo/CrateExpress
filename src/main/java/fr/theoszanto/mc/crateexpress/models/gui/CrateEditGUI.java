@@ -3,17 +3,7 @@ package fr.theoszanto.mc.crateexpress.models.gui;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateAddRewardGUI;
-import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateCommandRewardGUI;
 import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateDeleteRewardGUI;
-import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateItemRewardGUI;
-import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateKeyRewardGUI;
-import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateMoneyRewardGUI;
-import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateOtherRewardGUI;
-import fr.theoszanto.mc.crateexpress.models.reward.CrateCommandReward;
-import fr.theoszanto.mc.crateexpress.models.reward.CrateItemReward;
-import fr.theoszanto.mc.crateexpress.models.reward.CrateKeyReward;
-import fr.theoszanto.mc.crateexpress.models.reward.CrateMoneyReward;
-import fr.theoszanto.mc.crateexpress.models.reward.CrateOtherReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
 import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
@@ -66,7 +56,7 @@ public class CrateEditGUI extends CrateGUI {
 				for (int j = 0; j < 9; j++)
 					this.set(slot(i, j), ItemUtils.EMPTY, "reward");
 			int crateWeight = this.crate.totalWeight();
-			this.crate.getRewards().forEach((slot, reward) -> {
+			this.crate.getRewardsWithSlot().forEach((slot, reward) -> {
 				ItemStack item = reward.getIconWithChance(crateWeight);
 				ItemUtils.addLore(item, this.i18nLines("menu.edit.reward.info", "weight", reward.getWeight(), "total", crateWeight, "type", this.i18n("crate.reward.type." + reward.getClass().getSimpleName())));
 				this.set(slot, item, "reward", reward);
@@ -124,16 +114,10 @@ public class CrateEditGUI extends CrateGUI {
 			if (optionalReward.isPresent() && this.cursorSlot == -1) {
 				CrateReward reward = optionalReward.get();
 				if (click == ClickType.RIGHT) {
-					if (reward instanceof CrateItemReward) {
-						new CrateItemRewardGUI(this.plugin, this.crate, (CrateItemReward) reward, data.getSlot()).showToPlayer(player);
-					} else if (reward instanceof CrateKeyReward) {
-						new CrateKeyRewardGUI(this.plugin, this.crate, (CrateKeyReward) reward, data.getSlot()).showToPlayer(player);
-					} else if (reward instanceof CrateMoneyReward) {
-						new CrateMoneyRewardGUI(this.plugin, this.crate, (CrateMoneyReward) reward, data.getSlot()).showToPlayer(player);
-					} else if (reward instanceof CrateCommandReward) {
-						new CrateCommandRewardGUI(this.plugin, this.crate, (CrateCommandReward) reward, data.getSlot()).showToPlayer(player);
-					} else if (reward instanceof CrateOtherReward) {
-						new CrateOtherRewardGUI(this.plugin, this.crate, (CrateOtherReward) reward, data.getSlot()).showToPlayer(player);
+					try {
+						this.rewards().getRewardType(reward.getType()).createNewGUI(this.crate, reward, data.getSlot()).showToPlayer(player);
+					} catch (IllegalArgumentException e) {
+						this.i18nMessage(player, "menu.edit.reward.unknown");
 					}
 				} else if (click == ClickType.MIDDLE)
 					reward.giveRewardTo(player);
@@ -171,6 +155,6 @@ public class CrateEditGUI extends CrateGUI {
 
 	@Override
 	public void onClose(@NotNull Player player) {
-		this.storage().saveCrate(this.crate);
+		this.storage().getSource().saveCrate(this.crate);
 	}
 }

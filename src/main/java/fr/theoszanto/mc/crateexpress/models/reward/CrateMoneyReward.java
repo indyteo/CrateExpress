@@ -9,7 +9,7 @@ public class CrateMoneyReward extends CrateReward {
 	private final double amount;
 
 	public CrateMoneyReward(@NotNull CrateExpress plugin, int weight, double amount) {
-		super(plugin, plugin.money().getItem(amount), weight, plugin.money().isPhysical());
+		super(plugin, "money", plugin.money().getItem(amount), weight, plugin.money().isPhysical());
 		this.amount = amount;
 	}
 

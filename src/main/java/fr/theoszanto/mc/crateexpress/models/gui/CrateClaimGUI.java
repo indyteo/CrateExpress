@@ -79,7 +79,7 @@ public class CrateClaimGUI extends CratePaginatedGUI<ClaimableReward> {
 
 	private boolean claimReward(@NotNull Player player, @NotNull ClaimableReward reward) {
 		// Remove stored pending reward
-		this.storage().deleteReward(player, reward.getId());
+		this.storage().getSource().deleteReward(player, reward.getId());
 		// Try to give it to player and remove it from current pending rewards if successful
 		if (reward.getReward().giveRewardTo(player)) {
 			this.list.remove(reward);

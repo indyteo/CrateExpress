@@ -189,6 +189,6 @@ public class CrateManageGUI extends CrateGUI {
 
 	@Override
 	public void onClose(@NotNull Player player) {
-		this.storage().saveCrate(this.crate);
+		this.storage().getSource().saveCrate(this.crate);
 	}
 }

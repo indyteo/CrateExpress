@@ -13,11 +13,41 @@ crates:
 #      options:
 #        - alias1: KeyName1
 #          alias2: KeyName2
+rewards:
+  item:
+    gui-class: fr.theoszanto.mc.crateexpress.models.gui.reward.CrateItemRewardGUI
+    gui-icon: ITEM_FRAME
+  key:
+    gui-class: fr.theoszanto.mc.crateexpress.models.gui.reward.CrateKeyRewardGUI
+    gui-icon: TRIPWIRE_HOOK
+  money:
+    gui-class: fr.theoszanto.mc.crateexpress.models.gui.reward.CrateMoneyRewardGUI
+    gui-icon: EMERALD
+  command:
+    gui-class: fr.theoszanto.mc.crateexpress.models.gui.reward.CrateCommandRewardGUI
+    gui-icon: COMMAND_BLOCK
+  other:
+    gui-class: fr.theoszanto.mc.crateexpress.models.gui.reward.CrateOtherRewardGUI
+    gui-icon: CHEST
 storage:
-  class: fr.theoszanto.mc.crateexpress.storage.YamlCrateStorage
-  options:
-    - "./crates/"
-    - "./rewards/"
+  source:
+    class: fr.theoszanto.mc.crateexpress.storage.YamlCrateStorage
+    options:
+      - "./crates/"
+      - "./rewards/"
+  rewards:
+    0:
+      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateItemRewardYML
+    1:
+      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateKeyRewardYML
+    2:
+      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateMoneyRewardYML
+    3:
+      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateCommandRewardYML
+    4:
+      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateOtherRewardYML
+    5:
+      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateUnknownRewardYML
 money:
   # Be careful not to include any leading slash!
   give-command: "money give <player> <amount>"

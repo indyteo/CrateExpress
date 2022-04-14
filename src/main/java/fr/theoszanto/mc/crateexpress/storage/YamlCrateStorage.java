@@ -5,12 +5,8 @@ import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
-import fr.theoszanto.mc.crateexpress.models.reward.CrateCommandReward;
-import fr.theoszanto.mc.crateexpress.models.reward.CrateItemReward;
-import fr.theoszanto.mc.crateexpress.models.reward.CrateKeyReward;
-import fr.theoszanto.mc.crateexpress.models.reward.CrateMoneyReward;
-import fr.theoszanto.mc.crateexpress.models.reward.CrateOtherReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
+import fr.theoszanto.mc.crateexpress.storage.yaml.CrateRewardYML;
 import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
 import fr.theoszanto.mc.crateexpress.utils.LocationUtils;
 import fr.theoszanto.mc.crateexpress.utils.MathUtils;
@@ -33,6 +29,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Stream;
 
 public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	private final @NotNull File cratesDir;
@@ -51,9 +48,9 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 
 	@Override
 	public void loadCrates(@NotNull CrateRegistry registry) throws IllegalStateException {
-		try {
-			Path cratePath = this.cratesDir.toPath();
-			Files.find(cratePath, 10, YamlCrateStorage::crateFilesFilter).forEach(path -> {
+		Path cratePath = this.cratesDir.toPath();
+		try (Stream<Path> files = Files.find(cratePath, 10, YamlCrateStorage::crateFilesFilter)) {
+			files.forEach(path -> {
 				String id = crateIdFromFileName(cratePath.relativize(path).toString());
 				try {
 					YamlConfiguration data = new YamlConfiguration();
@@ -78,7 +75,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 							}
 							ConfigurationSection reward = items.getConfigurationSection(item);
 							assert reward != null;
-							crate.addReward(slot, deserializeReward(reward, this.plugin));
+							crate.addReward(slot, this.deserializeReward(reward));
 						}
 					}
 					registry.register(id, crate);
@@ -108,9 +105,9 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			if (crate.getLocation() != null)
 				data.set("location", LocationUtils.toString(crate.getLocation()));
 			ConfigurationSection items = data.createSection("items");
-			crate.getRewards().forEach((slot, reward) -> {
+			crate.getRewardsWithSlot().forEach((slot, reward) -> {
 				ConfigurationSection rewardData = items.createSection(slot.toString());
-				serializeReward(rewardData, reward);
+				this.serializeReward(rewardData, reward);
 			});
 			data.save(file);
 		} catch (IOException e) {
@@ -142,7 +139,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 				data.load(file);
 			} catch (FileNotFoundException ignored) {}
 			ConfigurationSection rewardData = data.createSection(Integer.toString(MathUtils.nextAvailableInt(data.getKeys(false))));
-			serializeReward(rewardData, reward);
+			this.serializeReward(rewardData, reward);
 			data.save(file);
 			this.rewardsCountCache.compute(uuid, (u, count) -> count == null ? 1 : count + 1);
 		} catch (IOException | InvalidConfigurationException e) {
@@ -161,7 +158,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			for (String id : data.getKeys(false)) {
 				ConfigurationSection reward = data.getConfigurationSection(id);
 				assert reward != null;
-				rewards.add(new ClaimableReward(id, deserializeReward(reward, this.plugin)));
+				rewards.add(new ClaimableReward(id, this.deserializeReward(reward)));
 			}
 			return rewards;
 		} catch (FileNotFoundException e) {
@@ -206,77 +203,21 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		}
 	}
 
-	private static @NotNull CrateReward deserializeReward(@NotNull ConfigurationSection reward, @NotNull CrateExpress plugin) throws InvalidConfigurationException {
+	private @NotNull CrateReward deserializeReward(@NotNull ConfigurationSection reward) throws InvalidConfigurationException {
 		String type = reward.getString("type", "null");
-		int weight = reward.getInt("weight", 1);
-		switch (type) {
-		case "item":
-			String item = reward.getString("item", null);
-			if (item == null)
-				throw new InvalidConfigurationException("Missing item value for crate item reward");
-			return new CrateItemReward(plugin, weight, ItemUtils.fromString(item));
-		case "command":
-			String command = reward.getString("command", null);
-			if (command == null)
-				throw new InvalidConfigurationException("Missing command value for crate command reward");
-			String icon1 = reward.getString("icon", null);
-			if (icon1 == null)
-				throw new InvalidConfigurationException("Missing icon value for crate command reward");
-			boolean needInventorySpace = reward.getBoolean("need-inventory-space", false);
-			return new CrateCommandReward(plugin, ItemUtils.fromString(icon1), weight, command, needInventorySpace);
-		case "key":
-			String key = reward.getString("key", null);
-			if (key == null)
-				throw new InvalidConfigurationException("Missing key value for crate key reward");
-			int amount = reward.getInt("amount", -1);
-			if (amount < 0 || amount > 64)
-				throw new InvalidConfigurationException("Missing (or invalid) key amount for crate key reward");
-			return new CrateKeyReward(plugin, weight, key, amount);
-		case "money":
-			double moneyAmount = reward.getDouble("amount", Double.NaN);
-			if (Double.isNaN(moneyAmount))
-				throw new InvalidConfigurationException("Missing amount value for crate money reward");
-			return new CrateMoneyReward(plugin, weight, moneyAmount);
-		case "other":
-			String crate = reward.getString("crate", null);
-			if (crate == null)
-				throw new InvalidConfigurationException("Missing crate value for crate other reward");
-			String icon2 = reward.getString("icon", null);
-			if (icon2 == null)
-				throw new InvalidConfigurationException("Missing icon value for crate other reward");
-			boolean random = reward.getBoolean("random", false);
-			return new CrateOtherReward(plugin, ItemUtils.fromString(icon2), weight, crate, random);
-		default:
+		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource(type);
+		if (rewardStorage == null)
+			rewardStorage = this.storage().getRewardSource("unknown");
+		if (!(rewardStorage instanceof CrateRewardYML<?>))
 			throw new InvalidConfigurationException("Could not parse crate item reward type: " + type);
-		}
+		return rewardStorage.deserializeReward(reward);
 	}
 
-	private static void serializeReward(@NotNull ConfigurationSection data, @NotNull CrateReward reward) {
-		if (reward instanceof CrateItemReward) {
-			data.set("type", "item");
-			data.set("item", ItemUtils.toString(((CrateItemReward) reward).getItem()));
-		} else if (reward instanceof CrateCommandReward) {
-			data.set("type", "command");
-			data.set("command", ((CrateCommandReward) reward).getCommand());
-			data.set("icon", ItemUtils.toString(reward.getIcon()));
-			data.set("need-inventory-space", reward.isPhysicalReward());
-		} else if (reward instanceof CrateKeyReward) {
-			CrateKeyReward keyReward = (CrateKeyReward) reward;
-			data.set("type", "key");
-			data.set("key", keyReward.getKey());
-			data.set("amount", keyReward.getAmount());
-		} else if (reward instanceof CrateMoneyReward) {
-			data.set("type", "money");
-			data.set("amount", ((CrateMoneyReward) reward).getAmount());
-		} else if (reward instanceof CrateOtherReward) {
-			CrateOtherReward otherReward = (CrateOtherReward) reward;
-			data.set("type", "other");
-			data.set("crate", otherReward.getOther());
-			data.set("icon", ItemUtils.toString(reward.getIcon()));
-			data.set("random", otherReward.isRandom());
-		} else
+	private void serializeReward(@NotNull ConfigurationSection data, @NotNull CrateReward reward) {
+		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource(reward.getType());
+		if (!(rewardStorage instanceof CrateRewardYML<?>))
 			throw new IllegalArgumentException("Could not save crate item reward class: " + reward.getClass().getName());
-		data.set("weight", reward.getWeight());
+		rewardStorage.serializeReward(reward, data);
 	}
 
 	private static @NotNull String crateIdFromFileName(@NotNull String fileName) {

@@ -13,12 +13,14 @@ import org.jetbrains.annotations.NotNull;
 import java.util.logging.Level;
 
 public abstract class CrateReward extends PluginObject implements Weighted {
+	private final @NotNull String type;
 	private @NotNull ItemStack icon;
 	private int weight;
 	private boolean physicalReward;
 
-	public CrateReward(@NotNull CrateExpress plugin, @NotNull ItemStack icon, int weight, boolean physicalReward) {
+	public CrateReward(@NotNull CrateExpress plugin, @NotNull String type, @NotNull ItemStack icon, int weight, boolean physicalReward) {
 		super(plugin);
+		this.type = type;
 		this.icon = icon;
 		this.weight = weight;
 		this.physicalReward = physicalReward;
@@ -52,7 +54,7 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 	}
 
 	protected void save(@NotNull Player player) {
-		this.storage().saveReward(player, this);
+		this.storage().getSource().saveReward(player, this);
 	}
 
 	public @NotNull ItemStack getIconWithChance(int crateWeight) {
@@ -60,6 +62,10 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 		ItemStack icon = this.getIcon().clone();
 		ItemUtils.addLore(icon, this.i18nLines("crate.preview.reward-chance", "chance", chance));
 		return icon;
+	}
+
+	public @NotNull String getType() {
+		return this.type;
 	}
 
 	public @NotNull ItemStack getIcon() {

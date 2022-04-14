@@ -1,11 +1,11 @@
 package fr.theoszanto.mc.crateexpress.managers;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
+import fr.theoszanto.mc.crateexpress.models.CrateConfig;
 import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
 import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -48,24 +48,14 @@ public class MoneyManager extends PluginObject {
 		return this.physical;
 	}
 
-	public void load(@NotNull ConfigurationSection config) throws IllegalStateException {
-		this.moneyGiveCommand = config.getString("give-command", null);
-		if (this.moneyGiveCommand == null)
-			throw new IllegalStateException("Missing money give command in config");
-		String item = config.getString("item", null);
-		if (item == null)
-			throw new IllegalStateException("Missing money icon item in config");
-		try {
-			this.item = Material.valueOf(item.toUpperCase());
-		} catch (IllegalArgumentException e) {
-			throw new IllegalStateException("Invalid money icon item in config: " + item);
-		}
-		this.currencySymbol = config.getString("currency-symbol", "");
-		String placement = config.getString("placement", "before");
-		if (!placement.equalsIgnoreCase("before") && !placement.equalsIgnoreCase("after"))
-			this.warn("Unrecognized currency symbol placement value for money manager: " + placement + ". Should be either \"before\" or \"after\"");
-		this.placementBefore = placement.equals("before");
-		this.physical = config.getBoolean("physical", false);
+	public void load(@NotNull CrateConfig.Money config) throws IllegalStateException {
+		if (config.isEmpty())
+			return;
+		this.moneyGiveCommand = config.getGiveCommand();
+		this.item = config.getItem();
+		this.currencySymbol = config.getCurrencySymbol();
+		this.placementBefore = config.isPlacementBefore();
+		this.physical = config.isPhysical();
 	}
 
 	public void reset() {

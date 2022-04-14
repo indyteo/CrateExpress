@@ -9,12 +9,14 @@ crate:
     give: "§7Vous avez reçu : §e#{reward}"
     save: "§cVotre inventaire est plein. Récompense stockée : §4#{reward}"
     error: "§cUne erreur est survenue. Récompense stockée : §4#{reward}"
+    unknown: "§cRécompense de type inconnu : §4#{type}"
     type:
       CrateItemReward: "Objet"
       CrateKeyReward: "Clé"
       CrateMoneyReward: "Argent"
       CrateCommandReward: "Commande"
       CrateOtherReward: "Autre caisse"
+      CrateUnknownReward: "§cInconnu"
 action:
   crate:
     open: "§7Vous venez d'ouvrir une caisse §e#{crate}"
@@ -79,12 +81,8 @@ menu:
     add:
       name: "§bAjouter une récompense"
       lore: |-
-        §7Vous pouvez choisir parmi 5 types de récompenses :
-        §7- §eObjet
-        §7- §eClé
-        §7- §eArgent
-        §7- §eCommande
-        §7- §eAutre caisse
+        §7Vous pouvez choisir parmi les types de récompenses
+        §7par défaut ou ceux gérés par des plugins tiers
     manage:
       name: "§bGérer la caisse"
       lore: |-
@@ -98,6 +96,7 @@ menu:
         §6»§e Clic droit pour éditer
         §6»§e Clic molette pour obtenir
         §6»§e Drop pour supprimer
+      unknown: "§cVous ne pouvez pas éditer cette récompense. Êtes-vous sûr de posséder le plugin tiers grâce auquel elle a été créée ?"
   delete:
     title: "Suppression : #{crate}"
     warning:
@@ -208,12 +207,11 @@ menu:
       header:
         name: "§aSélection du type de récompense"
         lore: |-
-          §7Vous pouvez choisir parmi 5 types de récompenses :
-          §7- §eObjet
-          §7- §eClé
-          §7- §eArgent
-          §7- §eCommande
-          §7- §eAutre caisse
+          §7Vous pouvez choisir parmi les types de récompenses
+          §7par défaut ou ceux gérés par des plugins tiers
+          §7Si la liste est vide, vérifiez la configuration
+          §7et les autres plugins présents
+      empty: "§cAucun type de récompense !"
       item:
         name: "§bObjet"
         lore: |-
@@ -259,7 +257,7 @@ menu:
         lore: |-
           §7Contrôlez les paramètres de la récompense
           §7Vous pouvez modifier le poids et la quantité
-          §7mais pas l'objet
+          §7mais pas la clé de caisse
       key:
         name: "§bClé donnée : §3#{key}"
         lore: |-

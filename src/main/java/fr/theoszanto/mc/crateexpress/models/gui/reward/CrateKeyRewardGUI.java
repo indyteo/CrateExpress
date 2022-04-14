@@ -15,11 +15,14 @@ import org.jetbrains.annotations.Nullable;
 
 public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 	private @Nullable String key;
-	private int amount;
+	private int amount = 1;
 
-	public CrateKeyRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable CrateKeyReward reward, int slot) {
+	public CrateKeyRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate) {
+		super(plugin, crate);
+	}
+
+	public CrateKeyRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable CrateKeyReward reward, @NotNull Integer slot) {
 		super(plugin, crate, reward, slot);
-		this.amount = 1;
 	}
 
 	public int getAmount() {

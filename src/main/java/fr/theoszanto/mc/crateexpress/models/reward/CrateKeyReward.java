@@ -15,7 +15,7 @@ public class CrateKeyReward extends CrateReward {
 	private int amount;
 
 	public CrateKeyReward(@NotNull CrateExpress plugin, int weight, @NotNull String key, int amount) {
-		super(plugin, ItemUtils.EMPTY, weight, true);
+		super(plugin, "key", ItemUtils.EMPTY, weight, true);
 		this.key = key;
 		this.amount = amount;
 	}

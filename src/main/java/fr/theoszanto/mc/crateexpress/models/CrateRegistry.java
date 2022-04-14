@@ -10,11 +10,11 @@ import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
 import fr.theoszanto.mc.crateexpress.utils.LocationUtils;
 import fr.theoszanto.mc.crateexpress.utils.Registry;
 import org.bukkit.Location;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Optional;
 
 public class CrateRegistry extends Registry<String, Crate> {
@@ -26,29 +26,18 @@ public class CrateRegistry extends Registry<String, Crate> {
 		this.resolver = new NoopCrateResolver(plugin);
 	}
 
-	public void load(@NotNull ConfigurationSection config) {
-		this.storage().loadCrates(this);
+	public void load(@NotNull CrateConfig.Crates config) {
+		this.storage().getSource().loadCrates(this);
 		for (Crate crate : this)
 			this.event(new CrateLoadEvent(crate));
-		this.maximumPlayerRewards = config.getInt("maximum-player-rewards", -1);
-		ConfigurationSection resolvers = config.getConfigurationSection("resolvers");
-		if (resolvers == null)
+		this.maximumPlayerRewards = config.getMaximumPlayerRewards();
+		List<CrateConfig.SerializedPluginObject> resolversConfig = config.getResolvers();
+		if (resolversConfig.isEmpty())
 			this.resolver = new SimpleCrateResolver(this.plugin);
 		else {
 			CrateResolversList resolversList = new CrateResolversList(this.plugin);
-			for (String resolverKey : resolvers.getKeys(false)) {
-				ConfigurationSection resolverConfig = resolvers.getConfigurationSection(resolverKey);
-				if (resolverConfig != null) {
-					String resolverClassName = resolverConfig.getString("class", null);
-					if (resolverClassName == null)
-						throw new IllegalStateException("Missing resolver class name in config: " + resolverConfig.getCurrentPath());
-					try {
-						resolversList.addResolver((CrateResolver) this.instanciate(resolverClassName, resolverConfig.getList("options")));
-					} catch (IllegalArgumentException | ClassCastException e) {
-						throw new IllegalStateException("Invalid resolver class: " + resolverClassName, e);
-					}
-				}
-			}
+			for (CrateConfig.SerializedPluginObject resolverConfig : resolversConfig)
+				resolversList.addResolver(resolverConfig.instanciate());
 			this.resolver = resolversList;
 		}
 	}
@@ -85,12 +74,12 @@ public class CrateRegistry extends Registry<String, Crate> {
 	}
 
 	public void addCrate(@NotNull Crate crate) {
-		this.storage().saveCrate(crate);
+		this.storage().getSource().saveCrate(crate);
 		this.register(crate.getId(), crate);
 	}
 
 	public void deleteCrate(@NotNull String id) {
-		this.storage().deleteCrate(id);
+		this.storage().getSource().deleteCrate(id);
 		this.delete(id);
 	}
 

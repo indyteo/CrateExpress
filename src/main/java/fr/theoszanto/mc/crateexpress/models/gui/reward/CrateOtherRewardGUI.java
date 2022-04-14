@@ -17,12 +17,20 @@ import org.jetbrains.annotations.Nullable;
 public class CrateOtherRewardGUI extends CrateRewardGUI<CrateOtherReward> {
 	private @NotNull ItemStack icon;
 	private @Nullable String crate;
-	private boolean random;
+	private boolean random = true;
 
-	public CrateOtherRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable CrateOtherReward reward, int slot) {
+	public CrateOtherRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate) {
+		super(plugin, crate);
+		this.icon = this.defaultIcon();
+	}
+
+	public CrateOtherRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable CrateOtherReward reward, @NotNull Integer slot) {
 		super(plugin, crate, reward, slot);
-		this.icon = new ItemBuilder(Material.CHEST_MINECART, 1, this.i18n("misc.default-other-icon-name")).build();
-		this.random = true;
+		this.icon = this.defaultIcon();
+	}
+
+	private @NotNull ItemStack defaultIcon() {
+		return new ItemBuilder(Material.CHEST_MINECART, 1, this.i18n("misc.default-other-icon-name")).build();
 	}
 
 	private void setIcon(@NotNull ItemStack icon) {

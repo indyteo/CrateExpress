@@ -62,11 +62,11 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	}
 
 	public int totalWeight() {
-		return MathUtils.totalWeight(this.rewards());
+		return MathUtils.totalWeight(this.getRewards());
 	}
 
 	public @NotNull CrateReward randomReward() {
-		return MathUtils.weightedRandom(this.rewards());
+		return MathUtils.weightedRandom(this.getRewards());
 	}
 
 	public @NotNull String getId() {
@@ -82,18 +82,18 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	}
 
 	@UnmodifiableView
-	public @NotNull Map<@NotNull Integer, @NotNull CrateReward> getRewards() {
+	public @NotNull Map<@NotNull Integer, @NotNull CrateReward> getRewardsWithSlot() {
 		return this.rewardsUnmodifiable;
 	}
 
 	@UnmodifiableView
-	public @NotNull Collection<@NotNull CrateReward> rewards() {
+	public @NotNull Collection<@NotNull CrateReward> getRewards() {
 		return this.rewardsValuesUnmodifiable;
 	}
 
 	@Override
 	public @NotNull Iterator<@NotNull CrateReward> iterator() {
-		return this.rewards().iterator();
+		return this.getRewards().iterator();
 	}
 
 	public @Nullable CrateReward getReward(int slot) {

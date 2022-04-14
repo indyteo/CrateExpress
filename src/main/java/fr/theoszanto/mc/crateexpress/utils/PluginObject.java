@@ -3,9 +3,10 @@ package fr.theoszanto.mc.crateexpress.utils;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.managers.ExportManager;
 import fr.theoszanto.mc.crateexpress.managers.MoneyManager;
+import fr.theoszanto.mc.crateexpress.managers.RewardsManager;
 import fr.theoszanto.mc.crateexpress.managers.SpigotManager;
+import fr.theoszanto.mc.crateexpress.managers.StorageManager;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
-import fr.theoszanto.mc.crateexpress.storage.CrateStorage;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
@@ -54,12 +55,16 @@ public abstract class PluginObject implements Logged {
 		return lines.isEmpty() ? ItemUtils.NO_LORE : lines.split("\n|\\\\n");
 	}
 
-	public final @NotNull CrateStorage storage() {
+	public final @NotNull StorageManager storage() {
 		return this.plugin.storage();
 	}
 
 	public final @NotNull CrateRegistry crates() {
 		return this.plugin.crates();
+	}
+
+	public final @NotNull RewardsManager rewards() {
+		return this.plugin.rewards();
 	}
 
 	public final @NotNull MoneyManager money() {

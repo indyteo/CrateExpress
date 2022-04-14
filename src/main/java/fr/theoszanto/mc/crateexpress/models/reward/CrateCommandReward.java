@@ -10,7 +10,7 @@ public class CrateCommandReward extends CrateReward {
 	private final @NotNull String command;
 
 	public CrateCommandReward(@NotNull CrateExpress plugin, @NotNull ItemStack icon, int weight, @NotNull String command, boolean needInventorySpace) {
-		super(plugin, icon, weight, needInventorySpace);
+		super(plugin, "command", icon, weight, needInventorySpace);
 		this.command = command;
 	}
 

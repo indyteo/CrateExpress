@@ -3,17 +3,17 @@ package fr.theoszanto.mc.crateexpress.managers;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.exporters.CrateExporter;
 import fr.theoszanto.mc.crateexpress.models.Crate;
+import fr.theoszanto.mc.crateexpress.models.CrateConfig;
 import fr.theoszanto.mc.crateexpress.utils.Registry;
-import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 public class ExportManager extends Registry<String, CrateExporter> {
 	private @NotNull File exportDir;
@@ -29,24 +29,13 @@ public class ExportManager extends Registry<String, CrateExporter> {
 		this.exportDir = this.defaultDir();
 	}
 
-	public void loadExporters(@NotNull ConfigurationSection config) throws IllegalStateException {
-		this.exportDir = new File(this.plugin.getDataFolder(), config.getString("directory", "exports"));
-		ConfigurationSection exporters = config.getConfigurationSection("exporters");
-		if (exporters != null) {
-			for (String exporterKey : exporters.getKeys(false)) {
-				ConfigurationSection exporterConfig = exporters.getConfigurationSection(exporterKey);
-				if (exporterConfig != null) {
-					String exporterClassName = exporterConfig.getString("class", null);
-					if (exporterClassName == null)
-						throw new IllegalStateException("Missing exporter class name in config: " + exporterConfig.getCurrentPath());
-					try {
-						CrateExporter exporter = (CrateExporter) this.instanciate(exporterClassName, exporterConfig.getList("options"));
-						this.register(exporter.getFormat(), exporter);
-					} catch (IllegalArgumentException | ClassCastException e) {
-						throw new IllegalStateException("Invalid exporter class: " + exporterClassName, e);
-					}
-				}
-			}
+	public void loadExporters(@NotNull CrateConfig.Export config) throws IllegalStateException {
+		if (config.isEmpty())
+			return;
+		this.exportDir = new File(this.plugin.getDataFolder(), config.getDirectory());
+		for (CrateConfig.SerializedPluginObject exporterConfig : config.getExporters()) {
+			CrateExporter exporter = exporterConfig.instanciate();
+			this.register(exporter.getFormat(), exporter);
 		}
 	}
 
@@ -72,7 +61,7 @@ public class ExportManager extends Registry<String, CrateExporter> {
 				return null;
 			if (!file.exists() && !file.createNewFile())
 				return null;
-			try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), StandardCharsets.UTF_8)) {
+			try (Writer writer = new OutputStreamWriter(Files.newOutputStream(file.toPath()), StandardCharsets.UTF_8)) {
 				exporter.export(crate, writer);
 			}
 			return file;

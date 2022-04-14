@@ -16,7 +16,11 @@ import org.jetbrains.annotations.Nullable;
 public class CrateItemRewardGUI extends CrateRewardGUI<CrateItemReward> {
 	private @Nullable ItemStack item;
 
-	public CrateItemRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable CrateItemReward reward, int slot) {
+	public CrateItemRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate) {
+		super(plugin, crate);
+	}
+
+	public CrateItemRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable CrateItemReward reward, @NotNull Integer slot) {
 		super(plugin, crate, reward, slot);
 	}
 

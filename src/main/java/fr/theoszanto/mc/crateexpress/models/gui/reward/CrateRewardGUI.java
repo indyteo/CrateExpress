@@ -20,7 +20,11 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends CrateGUI {
 	private final int slot;
 	private int weight;
 
-	public CrateRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable T reward, int slot) {
+	public CrateRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate) {
+		this(plugin, crate, null, -1);
+	}
+
+	public CrateRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable T reward, @NotNull Integer slot) {
 		super(plugin, 3, "menu.reward.title", "crate", crate.getName());
 		this.crate = crate;
 		this.reward = reward;
@@ -122,6 +126,6 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends CrateGUI {
 
 	@Override
 	public void onClose(@NotNull Player player) {
-		this.storage().saveCrate(this.crate);
+		this.storage().getSource().saveCrate(this.crate);
 	}
 }

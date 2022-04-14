@@ -12,7 +12,7 @@ public class CrateOtherReward extends CrateReward {
 	private boolean random;
 
 	public CrateOtherReward(@NotNull CrateExpress plugin, @NotNull ItemStack icon, int weight, @NotNull String other, boolean random) {
-		super(plugin, icon, weight, true);
+		super(plugin, "other", icon, weight, true);
 		this.other = other;
 		this.random = random;
 	}
@@ -33,7 +33,7 @@ public class CrateOtherReward extends CrateReward {
 		if (this.random)
 			other.open(player);
 		else
-			for (CrateReward reward : other.rewards())
+			for (CrateReward reward : other.getRewards())
 				reward.giveRewardTo(player);
 	}
 

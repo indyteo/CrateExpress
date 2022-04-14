@@ -66,7 +66,7 @@ public class CrateInteractionListener extends CrateListener {
 				Location crateLocation = crate.getLocation();
 				if (crateLocation == null || (block != null && LocationUtils.blockEquals(block.getLocation(), crateLocation))) {
 					if (this.crates().noLimitToPlayerRewards() || player.hasPermission(CratePermission.UNLIMITED_CLAIM)
-							|| this.storage().countRewards(player) <= this.crates().getMaximumPlayerRewards()) {
+							|| this.storage().getSource().countRewards(player) <= this.crates().getMaximumPlayerRewards()) {
 						CrateOpenInteractEvent e = new CrateOpenInteractEvent(crate, player, item, player.isSneaking() ? item.getAmount() : 1);
 						if (this.event(e)) {
 							int amount = e.getAmount();

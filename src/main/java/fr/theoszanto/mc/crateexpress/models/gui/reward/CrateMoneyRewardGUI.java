@@ -17,9 +17,12 @@ import java.util.concurrent.TimeUnit;
 public class CrateMoneyRewardGUI extends CrateRewardGUI<CrateMoneyReward> {
 	private double amount;
 
-	public CrateMoneyRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable CrateMoneyReward reward, int slot) {
+	public CrateMoneyRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate) {
+		super(plugin, crate);
+	}
+
+	public CrateMoneyRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable CrateMoneyReward reward, @NotNull Integer slot) {
 		super(plugin, crate, reward, slot);
-		this.amount = 0;
 	}
 
 	@Override

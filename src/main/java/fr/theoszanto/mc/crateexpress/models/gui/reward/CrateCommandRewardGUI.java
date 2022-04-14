@@ -20,11 +20,20 @@ import org.jetbrains.annotations.Nullable;
 public class CrateCommandRewardGUI extends CrateRewardGUI<CrateCommandReward> {
 	private @NotNull ItemStack icon;
 	private @Nullable String command;
-	private boolean physical;
+	private boolean physical = false;
 
-	public CrateCommandRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable CrateCommandReward reward, int slot) {
+	public CrateCommandRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate) {
+		super(plugin, crate);
+		this.icon = this.defaultIcon();
+	}
+
+	public CrateCommandRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, @Nullable CrateCommandReward reward, @NotNull Integer slot) {
 		super(plugin, crate, reward, slot);
-		this.icon = new ItemBuilder(Material.COMMAND_BLOCK_MINECART, 1, this.i18n("misc.default-cmd-icon-name")).build();
+		this.icon = this.defaultIcon();
+	}
+
+	private @NotNull ItemStack defaultIcon() {
+		return new ItemBuilder(Material.COMMAND_BLOCK_MINECART, 1, this.i18n("misc.default-cmd-icon-name")).build();
 	}
 
 	private void setIcon(@NotNull ItemStack icon) {

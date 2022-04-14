@@ -47,7 +47,7 @@ public class CrateKey extends PluginObject {
 		if (this.event(event)) {
 			CrateKey key = event.getKey();
 			if (saving)
-				this.storage().saveReward(player, new CrateKeyReward(this.plugin, 0, key.getCrateId(), event.getAmount()));
+				this.storage().getSource().saveReward(player, new CrateKeyReward(this.plugin, 0, key.getCrateId(), event.getAmount()));
 			else
 				player.getInventory().addItem(ItemUtils.withAmount(key.getItem(), event.getAmount()));
 			this.i18nMessage(player, "action.key.receive", "key", ItemUtils.name(key.getItem()));
