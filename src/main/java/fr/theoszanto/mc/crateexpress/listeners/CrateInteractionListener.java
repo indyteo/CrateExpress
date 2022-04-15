@@ -79,7 +79,7 @@ public class CrateInteractionListener extends CrateListener {
 								String message = crate.getFormattedMessage(player);
 								if (message != null)
 									for (Player p : Bukkit.getOnlinePlayers())
-										p.sendMessage(this.prefix() + message);
+										p.sendMessage(message);
 							}
 						}
 					} else
