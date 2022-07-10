@@ -2,11 +2,10 @@ package fr.theoszanto.mc.crateexpress.commands;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.commands.subcommands.CrateExpressSubCommand;
-import fr.theoszanto.mc.crateexpress.utils.JavaUtils;
-import fr.theoszanto.mc.crateexpress.utils.PluginObject;
+import fr.theoszanto.mc.express.commands.ExpressCommand;
+import fr.theoszanto.mc.express.utils.JavaUtils;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabExecutor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,11 +14,11 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class CrateExpressCommand extends PluginObject implements TabExecutor {
+public class CrateExpressCommand extends ExpressCommand<CrateExpress> {
 	private final @NotNull List<? extends CrateExpressSubCommand> subCommands;
 
 	public CrateExpressCommand(@NotNull CrateExpress plugin) {
-		super(plugin);
+		super(plugin, "crateexpress");
 		this.subCommands = JavaUtils.instanciateSubClasses(CrateExpressSubCommand.class, "fr.theoszanto.mc.crateexpress.commands.subcommands", plugin);
 	}
 

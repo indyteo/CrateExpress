@@ -4,7 +4,7 @@ main: fr.theoszanto.mc.crateexpress.CrateExpress
 api-version: 1.17
 prefix: CrateExpress
 authors: [ indyteo ]
-description: "Make crates easily using in-game interface to manage items"
+description: "Make crates easily using in-game interface to manage rewards"
 website: "https://theoszanto.fr/"
 commands:
   crateexpress:
@@ -12,7 +12,7 @@ commands:
       - ce
       - crate
       # Remove the "#" sign in front of the following line to add "/cr" alias
-      - cr
+      #- cr
     description: "Base command to manage crates"
     permission: crateexpress.command.access
 permissions:

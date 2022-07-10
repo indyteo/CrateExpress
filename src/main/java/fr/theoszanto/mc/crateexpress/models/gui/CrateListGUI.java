@@ -7,10 +7,11 @@ import fr.theoszanto.mc.crateexpress.models.CrateElement;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
-import fr.theoszanto.mc.crateexpress.utils.MathUtils;
-import fr.theoszanto.mc.crateexpress.utils.UnloadableWorldLocation;
+import fr.theoszanto.mc.express.gui.ExpressPaginatedGUI;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.ItemUtils;
+import fr.theoszanto.mc.express.utils.MathUtils;
+import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -26,7 +27,7 @@ import java.util.Objects;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
 
-public class CrateListGUI extends CratePaginatedGUI<CrateElement> {
+public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement> {
 	private @NotNull CrateNamespace namespace;
 
 	private static final int[] contentSlots = MathUtils.numbers(9, 4 * 9);

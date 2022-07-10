@@ -2,10 +2,10 @@ package fr.theoszanto.mc.crateexpress.models.reward;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.events.CrateRewardGiveEvent;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
-import fr.theoszanto.mc.crateexpress.utils.MathUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
-import fr.theoszanto.mc.crateexpress.utils.Weighted;
+import fr.theoszanto.mc.express.utils.ItemUtils;
+import fr.theoszanto.mc.express.utils.MathUtils;
+import fr.theoszanto.mc.express.utils.Weighted;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;

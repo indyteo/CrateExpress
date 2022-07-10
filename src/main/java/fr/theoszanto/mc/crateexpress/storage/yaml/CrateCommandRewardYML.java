@@ -2,7 +2,7 @@ package fr.theoszanto.mc.crateexpress.storage.yaml;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateCommandReward;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
+import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.configuration.ConfigurationSection;
 import org.jetbrains.annotations.NotNull;
 

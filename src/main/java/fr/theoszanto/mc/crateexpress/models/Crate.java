@@ -4,9 +4,10 @@ import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.events.CrateOpenEvent;
 import fr.theoszanto.mc.crateexpress.models.gui.CratePreviewGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
-import fr.theoszanto.mc.crateexpress.utils.MathUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
-import fr.theoszanto.mc.crateexpress.utils.UnloadableWorldLocation;
+import fr.theoszanto.mc.express.utils.ItemUtils;
+import fr.theoszanto.mc.express.utils.MathUtils;
+import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -151,7 +152,9 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	public @Nullable String getFormattedMessage(@NotNull Player player) {
 		return this.message == null ? null : this.prefix() + this.message
 				.replaceAll("<player>", player.getName())
-				.replaceAll("<display>", player.getDisplayName());
+				.replaceAll("<display>", player.getDisplayName())
+				.replaceAll("<crate>", this.name)
+				.replaceAll("<key>", this.key == null ? this.name : ItemUtils.name(this.key.getItem()));
 	}
 
 	public @Nullable UnloadableWorldLocation getLocation() {

@@ -5,12 +5,14 @@ import fr.theoszanto.mc.crateexpress.events.CrateGiveEvent;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
-import fr.theoszanto.mc.crateexpress.utils.UnloadableWorldLocation;
+import fr.theoszanto.mc.express.gui.ExpressGUI;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.ItemUtils;
+import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -20,7 +22,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
 
-public class CrateManageGUI extends CrateGUI {
+public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 	private final @NotNull Crate crate;
 
 	public CrateManageGUI(@NotNull CrateExpress plugin, @NotNull Crate crate) {
@@ -29,7 +31,7 @@ public class CrateManageGUI extends CrateGUI {
 	}
 
 	@Override
-	public void onOpen(@NotNull Player player, @Nullable CrateGUI previous) {
+	public void onOpen(@NotNull Player player, @Nullable ExpressGUI<CrateExpress> previous) {
 		// Borders
 		ItemBuilder border = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE, 1, "§r");
 		for (int i = 0; i < 3; i++)
@@ -160,7 +162,8 @@ public class CrateManageGUI extends CrateGUI {
 			break;
 		case "location":
 			if (click.isLeftClick()) {
-				Location location = player.getLocation();
+				Block block = player.getTargetBlockExact(15);
+				Location location = block == null ? player.getLocation() : block.getLocation();
 				this.crate.setLocation(new UnloadableWorldLocation(player.getWorld(), location.getBlockX(), location.getBlockY(), location.getBlockZ()));
 				this.refresh(player);
 			} else if (click.isRightClick()) {
@@ -189,6 +192,6 @@ public class CrateManageGUI extends CrateGUI {
 
 	@Override
 	public void onClose(@NotNull Player player) {
-		this.storage().getSource().saveCrate(this.crate);
+		this.plugin.storage().getSource().saveCrate(this.crate);
 	}
 }

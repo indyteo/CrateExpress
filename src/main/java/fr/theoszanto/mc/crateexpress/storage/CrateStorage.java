@@ -4,7 +4,7 @@ import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
-import fr.theoszanto.mc.crateexpress.utils.Logged;
+import fr.theoszanto.mc.express.utils.Logged;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 

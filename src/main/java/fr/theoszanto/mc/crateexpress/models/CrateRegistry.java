@@ -6,9 +6,9 @@ import fr.theoszanto.mc.crateexpress.resolvers.CrateResolver;
 import fr.theoszanto.mc.crateexpress.resolvers.CrateResolversList;
 import fr.theoszanto.mc.crateexpress.resolvers.NoopCrateResolver;
 import fr.theoszanto.mc.crateexpress.resolvers.SimpleCrateResolver;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
-import fr.theoszanto.mc.crateexpress.utils.LocationUtils;
-import fr.theoszanto.mc.crateexpress.utils.Registry;
+import fr.theoszanto.mc.express.utils.ItemUtils;
+import fr.theoszanto.mc.express.utils.LocationUtils;
+import fr.theoszanto.mc.express.utils.Registry;
 import org.bukkit.Location;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -17,7 +17,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Optional;
 
-public class CrateRegistry extends Registry<String, Crate> {
+public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	private int maximumPlayerRewards = -1;
 	private @NotNull CrateResolver resolver;
 
@@ -27,7 +27,7 @@ public class CrateRegistry extends Registry<String, Crate> {
 	}
 
 	public void load(@NotNull CrateConfig.Crates config) {
-		this.storage().getSource().loadCrates(this);
+		this.plugin.storage().getSource().loadCrates(this);
 		for (Crate crate : this)
 			this.event(new CrateLoadEvent(crate));
 		this.maximumPlayerRewards = config.getMaximumPlayerRewards();
@@ -74,12 +74,12 @@ public class CrateRegistry extends Registry<String, Crate> {
 	}
 
 	public void addCrate(@NotNull Crate crate) {
-		this.storage().getSource().saveCrate(crate);
+		this.plugin.storage().getSource().saveCrate(crate);
 		this.register(crate.getId(), crate);
 	}
 
 	public void deleteCrate(@NotNull String id) {
-		this.storage().getSource().deleteCrate(id);
+		this.plugin.storage().getSource().deleteCrate(id);
 		this.delete(id);
 	}
 

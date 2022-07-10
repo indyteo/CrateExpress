@@ -4,7 +4,7 @@ import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.exporters.CrateExporter;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateConfig;
-import fr.theoszanto.mc.crateexpress.utils.Registry;
+import fr.theoszanto.mc.express.utils.Registry;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,7 +15,7 @@ import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 
-public class ExportManager extends Registry<String, CrateExporter> {
+public class ExportManager extends Registry<CrateExpress, String, CrateExporter> {
 	private @NotNull File exportDir;
 
 	public ExportManager(@NotNull CrateExpress plugin) {

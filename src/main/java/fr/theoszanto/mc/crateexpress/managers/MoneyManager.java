@@ -2,9 +2,9 @@ package fr.theoszanto.mc.crateexpress.managers;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.CrateConfig;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

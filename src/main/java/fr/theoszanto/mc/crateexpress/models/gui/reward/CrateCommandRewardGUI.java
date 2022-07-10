@@ -3,17 +3,18 @@ package fr.theoszanto.mc.crateexpress.models.gui.reward;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateCommandReward;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BlockStateMeta;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -90,10 +91,11 @@ public class CrateCommandRewardGUI extends CrateRewardGUI<CrateCommandReward> {
 			}
 			break;
 		case "command":
-			if (this.reward == null) {
-				Block block = player.getLocation().subtract(0, 1, 0).getBlock();
-				if (block.getType() == Material.COMMAND_BLOCK) {
-					BlockState state = block.getState();
+			if (this.reward == null && action == InventoryAction.SWAP_WITH_CURSOR) {
+				ItemStack item = player.getItemOnCursor();
+				ItemMeta meta = item.getItemMeta();
+				if (meta instanceof BlockStateMeta) {
+					BlockState state = ((BlockStateMeta) meta).getBlockState();
 					if (state instanceof CommandBlock) {
 						String command = ((CommandBlock) state).getCommand();
 						if (!command.isEmpty()) {

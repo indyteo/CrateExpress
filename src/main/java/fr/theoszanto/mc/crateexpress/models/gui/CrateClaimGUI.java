@@ -2,8 +2,9 @@ package fr.theoszanto.mc.crateexpress.models.gui;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
-import fr.theoszanto.mc.crateexpress.utils.MathUtils;
+import fr.theoszanto.mc.express.gui.ExpressPaginatedGUI;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.MathUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -15,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CrateClaimGUI extends CratePaginatedGUI<ClaimableReward> {
+public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableReward> {
 	private boolean processing = false;
 
 	private static final int[] contentSlots = MathUtils.numbers(0, 5 * 9);
@@ -79,7 +80,7 @@ public class CrateClaimGUI extends CratePaginatedGUI<ClaimableReward> {
 
 	private boolean claimReward(@NotNull Player player, @NotNull ClaimableReward reward) {
 		// Remove stored pending reward
-		this.storage().getSource().deleteReward(player, reward.getId());
+		this.plugin.storage().getSource().deleteReward(player, reward.getId());
 		// Try to give it to player and remove it from current pending rewards if successful
 		if (reward.getReward().giveRewardTo(player)) {
 			this.list.remove(reward);

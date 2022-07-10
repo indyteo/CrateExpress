@@ -162,6 +162,8 @@ menu:
         §7joueurs lors de l'ouverture de la caisse, avec :
         §7- §e<player>§7 : Pseudo du joueur
         §7- §e<display>§7 : Nom d'affichage du joueur
+        §7- §e<crate>§7 : Nom d'affichage de la caisse
+        §7- §e<key>§7 : Nom de l'objet clé, ou §e<crate>
         §6»§e Clic gauche pour définir dans le chat
         §6»§e Clic droit pour supprimer
       none: "§cAucun message défini"
@@ -173,7 +175,7 @@ menu:
         §7Position actuelle : §e#{location}
         §7Ce paramètre défini la position de la caisse, ou si
         §7non défini, la capacité à ouvrir depuis n'importe où
-        §6»§e Clic gauche pour définir à la position actuelle
+        §6»§e Clic gauche pour définir sur le bloc visé
         §6»§e Clic droit pour supprimer
         §6»§e Clic molette pour s'y téléporter
       none: "§cAucune position définie"
@@ -308,7 +310,7 @@ menu:
           §7joueur obtient cette récompense
           §7Ce paramètre n'est modifiable qu'à la création de la
           §7récompense
-        set: "§6»§e Clic en étant sur le bloc de commande pour définir"
+        set: "§6»§e Déposez le bloc de commande ici pour la définir"
       physical:
         name: "§bRécompense physique : §3#{physical}"
         lore: |-

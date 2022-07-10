@@ -5,8 +5,9 @@ import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateAddRewardGUI;
 import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateDeleteRewardGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
+import fr.theoszanto.mc.express.gui.ExpressGUI;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -18,7 +19,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Optional;
 
-public class CrateEditGUI extends CrateGUI {
+public class CrateEditGUI extends ExpressGUI<CrateExpress> {
 	private final @NotNull Crate crate;
 	private int cursorSlot;
 
@@ -29,7 +30,7 @@ public class CrateEditGUI extends CrateGUI {
 	}
 
 	@Override
-	public void onOpen(@NotNull Player player, @Nullable CrateGUI previous) {
+	public void onOpen(@NotNull Player player, @Nullable ExpressGUI<CrateExpress> previous) {
 		// Borders
 		ItemBuilder border = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE, 1, "§r");
 		for (int i = 0; i < 9; i++)
@@ -115,7 +116,7 @@ public class CrateEditGUI extends CrateGUI {
 				CrateReward reward = optionalReward.get();
 				if (click == ClickType.RIGHT) {
 					try {
-						this.rewards().getRewardType(reward.getType()).createNewGUI(this.crate, reward, data.getSlot()).showToPlayer(player);
+						this.plugin.rewards().getRewardType(reward.getType()).createNewGUI(this.crate, reward, data.getSlot()).showToPlayer(player);
 					} catch (IllegalArgumentException e) {
 						this.i18nMessage(player, "menu.edit.reward.unknown");
 					}
@@ -155,6 +156,6 @@ public class CrateEditGUI extends CrateGUI {
 
 	@Override
 	public void onClose(@NotNull Player player) {
-		this.storage().getSource().saveCrate(this.crate);
+		this.plugin.storage().getSource().saveCrate(this.crate);
 	}
 }

@@ -1,46 +1,47 @@
 package fr.theoszanto.mc.crateexpress;
 
 import fr.theoszanto.mc.crateexpress.managers.ExportManager;
-import fr.theoszanto.mc.crateexpress.managers.I18nManager;
 import fr.theoszanto.mc.crateexpress.managers.MoneyManager;
 import fr.theoszanto.mc.crateexpress.managers.RewardsManager;
-import fr.theoszanto.mc.crateexpress.managers.SpigotManager;
 import fr.theoszanto.mc.crateexpress.managers.StorageManager;
 import fr.theoszanto.mc.crateexpress.models.CrateConfig;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
-import org.bukkit.plugin.java.JavaPlugin;
+import fr.theoszanto.mc.express.ExpressPlugin;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
+import java.util.List;
 
-public final class CrateExpress extends JavaPlugin {
+public final class CrateExpress extends ExpressPlugin<CrateExpress> {
 	private final @NotNull CrateConfig config = new CrateConfig(this);
-	private final @NotNull I18nManager i18n = new I18nManager(this);
 	private final @NotNull StorageManager storage = new StorageManager(this);
 	private final @NotNull MoneyManager money = new MoneyManager(this);
 	private final @NotNull CrateRegistry crates = new CrateRegistry(this);
 	private final @NotNull RewardsManager rewards = new RewardsManager(this);
 	private final @NotNull ExportManager export = new ExportManager(this);
-	private final @NotNull SpigotManager spigot = new SpigotManager(this);
 
-	@Override
-	public void onEnable() {
-		this.load();
+	public CrateExpress() {
+		super("fr.theoszanto.mc.crateexpress");
 	}
 
-	private void load() {
-		this.saveDefaultConfig();
-		this.loadConfig();
+	@Override
+	public void loadConfig(@NotNull FileConfiguration config) {
+		this.config.setRawConfig(config);
+	}
 
-		// Initializing i18n module
-		String locale = this.config.getLocale();
-		String messagesFile = "messages/" + locale + ".yml";
-		this.saveResource(messagesFile, false);
-		this.i18n.loadMessages(new File(this.getDataFolder(), messagesFile));
-		for (File additionalMessageFile : this.config.getAdditionalMessageFiles())
-			this.i18n.loadMessages(additionalMessageFile);
+	@Override
+	public @NotNull String getLocale() {
+		return this.config.getLocale();
+	}
 
+	@Override
+	protected @NotNull List<@NotNull File> getAdditionalMessageFiles() {
+		return this.config.getAdditionalMessageFiles();
+	}
+
+	@Override
+	protected void init() {
 		// Initializing storage module
 		this.storage.loadStorageSource(this.config.getStorageConfig());
 
@@ -55,38 +56,15 @@ public final class CrateExpress extends JavaPlugin {
 
 		// Initializing export module
 		this.export.loadExporters(this.config.getExportConfig());
-
-		// Initializing Spigot plugin stuff
-		this.spigot.init();
 	}
 
 	@Override
-	public void onDisable() {
-		this.unload();
-	}
-
-	private void unload() {
-		this.spigot.reset();
+	protected void reset() {
 		this.export.reset();
 		this.rewards.reset();
 		this.crates.reset();
 		this.money.reset();
 		this.storage.resetStorageSource();
-		this.i18n.reset();
-	}
-
-	public void reload() {
-		this.unload();
-		this.load();
-	}
-
-	private void loadConfig() {
-		this.reloadConfig();
-		this.config.setRawConfig(this.getConfig());
-	}
-
-	public @NotNull String i18n(@NotNull String key, @Nullable Object @NotNull... format) {
-		return this.i18n.getMessage(key, format);
 	}
 
 	public @NotNull StorageManager storage() {
@@ -107,9 +85,5 @@ public final class CrateExpress extends JavaPlugin {
 
 	public @NotNull ExportManager export() {
 		return this.export;
-	}
-
-	public @NotNull SpigotManager spigot() {
-		return this.spigot;
 	}
 }

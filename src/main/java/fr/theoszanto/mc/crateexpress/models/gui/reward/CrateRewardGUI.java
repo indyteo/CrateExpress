@@ -3,9 +3,9 @@ package fr.theoszanto.mc.crateexpress.models.gui.reward;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.gui.CrateEditGUI;
-import fr.theoszanto.mc.crateexpress.models.gui.CrateGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
+import fr.theoszanto.mc.express.gui.ExpressGUI;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -14,7 +14,7 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public abstract class CrateRewardGUI<T extends CrateReward> extends CrateGUI {
+public abstract class CrateRewardGUI<T extends CrateReward> extends ExpressGUI<CrateExpress> {
 	private final @NotNull Crate crate;
 	protected final @Nullable T reward;
 	private final int slot;
@@ -53,7 +53,7 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends CrateGUI {
 	}
 
 	@Override
-	public void onOpen(@NotNull Player player, @Nullable CrateGUI previous) {
+	public void onOpen(@NotNull Player player, @Nullable ExpressGUI<CrateExpress> previous) {
 		// Borders
 		ItemBuilder border = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE, 1, "§r");
 		for (int i = 0; i < 9; i++) {
@@ -126,6 +126,6 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends CrateGUI {
 
 	@Override
 	public void onClose(@NotNull Player player) {
-		this.storage().getSource().saveCrate(this.crate);
+		this.plugin.storage().getSource().saveCrate(this.crate);
 	}
 }

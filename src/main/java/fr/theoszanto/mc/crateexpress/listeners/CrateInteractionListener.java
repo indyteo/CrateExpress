@@ -6,12 +6,14 @@ import fr.theoszanto.mc.crateexpress.events.interaction.CratePreviewInteractEven
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.gui.CratePreviewGUI;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
-import fr.theoszanto.mc.crateexpress.utils.LocationUtils;
+import fr.theoszanto.mc.express.listeners.ExpressListener;
+import fr.theoszanto.mc.express.utils.LocationUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
@@ -24,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class CrateInteractionListener extends CrateListener {
+public class CrateInteractionListener extends ExpressListener<CrateExpress> implements Listener {
 	private final @NotNull Map<@NotNull Player, @NotNull BukkitRunnable> droppers = new HashMap<>();
 
 	public CrateInteractionListener(@NotNull CrateExpress plugin) {
@@ -57,16 +59,16 @@ public class CrateInteractionListener extends CrateListener {
 		ItemStack item = event.getItem();
 		Block block = event.getClickedBlock();
 		Action action = event.getAction();
-		Optional<Crate> clickedCrate = this.crates().byLocation(block == null ? null : block.getLocation());
-		Optional<Crate> usedKeyCrate = this.crates().byItem(item);
+		Optional<Crate> clickedCrate = this.plugin.crates().byLocation(block == null ? null : block.getLocation());
+		Optional<Crate> usedKeyCrate = this.plugin.crates().byItem(item);
 		if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
 			if (usedKeyCrate.isPresent()) {
 				assert item != null;
 				Crate crate = usedKeyCrate.get();
 				Location crateLocation = crate.getLocation();
 				if (crateLocation == null || (block != null && LocationUtils.blockEquals(block.getLocation(), crateLocation))) {
-					if (this.crates().noLimitToPlayerRewards() || player.hasPermission(CratePermission.UNLIMITED_CLAIM)
-							|| this.storage().getSource().countRewards(player) <= this.crates().getMaximumPlayerRewards()) {
+					if (this.plugin.crates().noLimitToPlayerRewards() || player.hasPermission(CratePermission.UNLIMITED_CLAIM)
+							|| this.plugin.storage().getSource().countRewards(player) <= this.plugin.crates().getMaximumPlayerRewards()) {
 						CrateOpenInteractEvent e = new CrateOpenInteractEvent(crate, player, item, player.isSneaking() ? item.getAmount() : 1);
 						if (this.event(e)) {
 							int amount = e.getAmount();

@@ -3,7 +3,7 @@ package fr.theoszanto.mc.crateexpress.exporters;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
-import fr.theoszanto.mc.crateexpress.utils.MathUtils;
+import fr.theoszanto.mc.express.utils.MathUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;

@@ -4,7 +4,7 @@ import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.commands.CrateExpressCommand;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
-import fr.theoszanto.mc.crateexpress.utils.UnloadableWorldLocation;
+import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

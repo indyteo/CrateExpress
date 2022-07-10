@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 	public CrateExpressGiveSubCommand(@NotNull CrateExpress plugin) {
@@ -92,7 +93,7 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 		} else if (!target.equals("all"))
 			return null;
 		if (args.length == i++)
-			return this.existingCrates();
+			return this.crates().list().stream().filter(crate -> crate.getKey() != null).map(Crate::getId).collect(Collectors.toList());
 		if (args.length == i)
 			return this.numbers(1, 64);
 		return null;

@@ -3,8 +3,8 @@ package fr.theoszanto.mc.crateexpress.models.gui.reward;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.gui.CrateEditGUI;
-import fr.theoszanto.mc.crateexpress.models.gui.CrateGUI;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
+import fr.theoszanto.mc.express.gui.ExpressGUI;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -12,12 +12,12 @@ import org.bukkit.event.inventory.InventoryAction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CrateDeleteRewardGUI extends CrateGUI {
+public class CrateDeleteRewardGUI extends ExpressGUI<CrateExpress> {
 	private final @NotNull Crate crate;
 	private final int slot;
-	private final @NotNull CrateGUI returnTo;
+	private final @NotNull ExpressGUI<CrateExpress> returnTo;
 
-	public CrateDeleteRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, int slot, @NotNull CrateGUI returnTo) {
+	public CrateDeleteRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate, int slot, @NotNull ExpressGUI<CrateExpress> returnTo) {
 		super(plugin, 2, "menu.reward.delete.title", "crate", crate.getName());
 		this.crate = crate;
 		this.slot = slot;
@@ -25,7 +25,7 @@ public class CrateDeleteRewardGUI extends CrateGUI {
 	}
 
 	@Override
-	public void onOpen(@NotNull Player player, @Nullable CrateGUI previous) {
+	public void onOpen(@NotNull Player player, @Nullable ExpressGUI previous) {
 		this.set(slot(0, 4), new ItemBuilder(Material.TNT, 1, this.i18n("menu.reward.delete.warning.name"), this.i18nLines("menu.reward.delete.warning.lore")));
 		this.set(slot(1, 2), new ItemBuilder(Material.LIME_DYE, 1, this.i18n("menu.reward.delete.confirm.name"), this.i18nLines("menu.reward.delete.confirm.lore")), "confirm");
 		this.set(slot(1, 6), new ItemBuilder(Material.BARRIER, 1, this.i18n("menu.reward.delete.cancel.name"), this.i18nLines("menu.reward.delete.cancel.lore")), "cancel");

@@ -1,7 +1,7 @@
 package fr.theoszanto.mc.crateexpress.models.reward;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;

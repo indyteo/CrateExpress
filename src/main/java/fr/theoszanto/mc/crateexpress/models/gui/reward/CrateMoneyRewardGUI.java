@@ -3,8 +3,8 @@ package fr.theoszanto.mc.crateexpress.models.gui.reward;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateMoneyReward;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -29,7 +29,7 @@ public class CrateMoneyRewardGUI extends CrateRewardGUI<CrateMoneyReward> {
 	protected void setupButtons(@NotNull Player player) {
 		this.set(slot(0, 4), new ItemBuilder(Material.EMERALD, 1, this.i18n("menu.reward.money.header.name"), this.i18nLines("menu.reward.money.header.lore")));
 		if (this.reward == null)
-			this.set(slot(1, 2), new ItemBuilder(Material.EMERALD, ItemUtils.stackAmountFromValue(this.amount), this.i18n("menu.reward.money.amount.name", "amount", this.money().formatMoney(this.amount)), this.i18nLines("menu.reward.money.amount.lore")), "amount");
+			this.set(slot(1, 2), new ItemBuilder(Material.EMERALD, ItemUtils.stackAmountFromValue(this.amount), this.i18n("menu.reward.money.amount.name", "amount", this.plugin.money().formatMoney(this.amount)), this.i18nLines("menu.reward.money.amount.lore")), "amount");
 		else
 			this.set(slot(1, 2), this.reward.getIcon());
 		this.setWeightButton(slot(1, 6));

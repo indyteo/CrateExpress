@@ -3,8 +3,9 @@ package fr.theoszanto.mc.crateexpress.models.gui;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
+import fr.theoszanto.mc.express.gui.ExpressGUI;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -17,10 +18,10 @@ import java.util.function.Consumer;
 
 public class CrateSelectGUI extends CrateListGUI {
 	private final boolean withKeyOnly;
-	private final @NotNull CrateGUI returnTo;
+	private final @NotNull ExpressGUI<CrateExpress> returnTo;
 	private final @NotNull Consumer<@NotNull String> onSelect;
 
-	public CrateSelectGUI(@NotNull CrateExpress plugin, boolean withKeyOnly, @NotNull CrateGUI returnTo, @NotNull Consumer<@NotNull String> onSelect) {
+	public CrateSelectGUI(@NotNull CrateExpress plugin, boolean withKeyOnly, @NotNull ExpressGUI<CrateExpress> returnTo, @NotNull Consumer<@NotNull String> onSelect) {
 		super(plugin, "menu.select.title");
 		this.withKeyOnly = withKeyOnly;
 		this.returnTo = returnTo;

@@ -3,9 +3,9 @@ package fr.theoszanto.mc.crateexpress.models.gui.reward;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.gui.CrateEditGUI;
-import fr.theoszanto.mc.crateexpress.models.gui.CratePaginatedGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateRewardType;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
+import fr.theoszanto.mc.express.gui.ExpressPaginatedGUI;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -14,7 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class CrateAddRewardGUI extends CratePaginatedGUI<CrateRewardType> {
+public class CrateAddRewardGUI extends ExpressPaginatedGUI<CrateExpress, CrateRewardType> {
 	private final @NotNull Crate crate;
 
 	private static final int[] contentSlots = { slot(1, 2), slot(1, 4), slot(2, 3), slot(1, 6), slot(2, 5) };

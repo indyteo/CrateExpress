@@ -5,7 +5,7 @@ import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.models.gui.CrateSelectGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateKeyReward;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -44,7 +44,7 @@ public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 	private int getMaxAmount() {
 		if (this.key != null) {
 			try {
-				CrateKey key = this.crates().get(this.key).getKey();
+				CrateKey key = this.plugin.crates().get(this.key).getKey();
 				if (key != null) {
 					int max = key.getItem().getMaxStackSize();
 					if (max != -1)

@@ -3,9 +3,9 @@ package fr.theoszanto.mc.crateexpress.commands.subcommands;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.commands.CrateExpressCommand;
 import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
-import fr.theoszanto.mc.crateexpress.models.gui.CrateGUI;
 import fr.theoszanto.mc.crateexpress.models.gui.CrateListGUI;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
+import fr.theoszanto.mc.express.gui.ExpressGUI;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -25,7 +25,7 @@ public class CrateExpressListSubCommand extends CrateExpressSubCommand {
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
-		CrateGUI gui;
+		ExpressGUI<CrateExpress> gui;
 		if (args.length == 0)
 			gui = new CrateListGUI(this.plugin);
 		else if (args.length == 1) {

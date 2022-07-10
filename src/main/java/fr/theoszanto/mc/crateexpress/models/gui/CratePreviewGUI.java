@@ -5,8 +5,9 @@ import fr.theoszanto.mc.crateexpress.events.CrateGiveEvent;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
-import fr.theoszanto.mc.crateexpress.utils.ItemBuilder;
-import fr.theoszanto.mc.crateexpress.utils.ItemUtils;
+import fr.theoszanto.mc.express.gui.ExpressGUI;
+import fr.theoszanto.mc.express.utils.ItemBuilder;
+import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -17,7 +18,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Comparator;
 
-public class CratePreviewGUI extends CrateGUI {
+public class CratePreviewGUI extends ExpressGUI<CrateExpress> {
 	private final @NotNull Crate crate;
 
 	public CratePreviewGUI(@NotNull CrateExpress plugin, @NotNull Crate crate) {
@@ -26,7 +27,7 @@ public class CratePreviewGUI extends CrateGUI {
 	}
 
 	@Override
-	public void onOpen(@NotNull Player player, @Nullable CrateGUI previous) {
+	public void onOpen(@NotNull Player player, @Nullable ExpressGUI<CrateExpress> previous) {
 		// Crate info & close button
 		CrateKey key = this.crate.getKey();
 		ItemStack keyItem;
