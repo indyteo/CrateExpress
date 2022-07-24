@@ -51,9 +51,10 @@ public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableRe
 		}
 		this.processing = true;
 		PlayerInventory inventory = player.getInventory();
-		if (inventory.firstEmpty() != -1 || !element.getReward().isPhysicalReward())
-			if (this.claimReward(player, element))
-				this.refresh(player);
+		if ((inventory.firstEmpty() != -1 || !element.getReward().isPhysicalReward()) && this.claimReward(player, element)) {
+			this.refresh(player);
+			this.recomputePageMax();
+		}
 		this.processing = false;
 		return true;
 	}
@@ -72,6 +73,7 @@ public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableRe
 				if (!this.claimReward(player, this.list.get(index)))
 					index++;
 			}
+			this.recomputePageMax();
 			this.refresh(player);
 		}
 		this.processing = false;

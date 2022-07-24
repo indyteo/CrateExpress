@@ -6,11 +6,10 @@ import fr.theoszanto.mc.express.listeners.ExpressListener;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class WorldListener extends ExpressListener<CrateExpress> implements Listener {
+public class WorldListener extends ExpressListener<CrateExpress> {
 	public WorldListener(@NotNull CrateExpress plugin) {
 		super(plugin);
 	}

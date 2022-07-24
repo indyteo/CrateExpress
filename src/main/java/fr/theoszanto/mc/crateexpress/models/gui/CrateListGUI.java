@@ -22,7 +22,6 @@ import org.bukkit.inventory.meta.BundleMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
@@ -45,7 +44,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	}
 
 	CrateListGUI(@NotNull CrateExpress plugin, @NotNull String key, @NotNull CrateNamespace namespace) {
-		super(plugin, new ArrayList<>(namespace.listContent()), 5, key);
+		super(plugin, namespace.listContent(), 5, key);
 		this.namespace = namespace;
 	}
 
@@ -159,8 +158,8 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 
 	private void openNamespace(@NotNull Player player, @NotNull CrateNamespace namespace) {
 		this.namespace = namespace;
-		this.list.clear();
-		this.list.addAll(namespace.listContent());
+		this.setElements(namespace.listContent());
+		this.page = 0;
 		this.refresh(player);
 	}
 }

@@ -8,6 +8,9 @@ import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
+import org.bukkit.Sound;
+import org.bukkit.SoundCategory;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -30,13 +33,15 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	private @NotNull String name;
 	private @Nullable String message;
 	private @Nullable UnloadableWorldLocation location;
+	private double delay;
+	private @Nullable Sound sound;
 
 	@UnmodifiableView
 	private final @NotNull Map<@NotNull Integer, @NotNull CrateReward> rewardsUnmodifiable = Collections.unmodifiableMap(this.rewards);
 	@UnmodifiableView
 	private final @NotNull Collection<@NotNull CrateReward> rewardsValuesUnmodifiable = Collections.unmodifiableCollection(this.rewards.values());
 
-	public Crate(@NotNull CrateExpress plugin, @NotNull String id, int min, int max, @Nullable CrateKey key, @NotNull String name, @Nullable String message, @Nullable UnloadableWorldLocation location) {
+	public Crate(@NotNull CrateExpress plugin, @NotNull String id, int min, int max, @Nullable CrateKey key, @NotNull String name, @Nullable String message, @Nullable UnloadableWorldLocation location, double delay, @Nullable Sound sound) {
 		super(plugin);
 		this.id = id;
 		this.min = min;
@@ -45,6 +50,8 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 		this.name = name;
 		this.message = message;
 		this.location = location;
+		this.delay = delay;
+		this.sound = sound;
 	}
 
 	public void open(@NotNull Player player) {
@@ -163,5 +170,33 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 
 	public void setLocation(@Nullable UnloadableWorldLocation location) {
 		this.location = location;
+	}
+
+	public double getDelay() {
+		return this.delay;
+	}
+
+	public void setDelay(double delay) {
+		this.delay = delay;
+	}
+
+	public long getDelayMillis() {
+		return (long) (this.delay * 1000);
+	}
+
+	public @Nullable Sound getSound() {
+		return this.sound;
+	}
+
+	public void setSound(@Nullable Sound sound) {
+		this.sound = sound;
+	}
+
+	public void playSoundAtLocation() {
+		if (this.sound != null && this.location != null) {
+			World world = this.location.getWorld();
+			if (world != null)
+				world.playSound(this.location, this.sound, SoundCategory.BLOCKS, 1, 1);
+		}
 	}
 }

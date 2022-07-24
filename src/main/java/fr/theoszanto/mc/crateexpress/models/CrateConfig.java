@@ -233,6 +233,7 @@ public class CrateConfig extends PluginObject {
 
 	public static class Crates extends Section {
 		public static final int UNLIMITED_PLAYER_REWARDS = -1;
+		public static final int NO_CLAIM_NOTICE = -1;
 
 		public Crates(@NotNull CrateConfig config) {
 			super(config, "crates");
@@ -244,6 +245,22 @@ public class CrateConfig extends PluginObject {
 
 		public void setMaximumPlayerRewards(int maximumPlayerRewards) {
 			this.section.set("maximum-player-rewards", maximumPlayerRewards);
+		}
+
+		public int getClaimNoticeInterval() {
+			return this.section.getInt("claim-notice-interval", NO_CLAIM_NOTICE);
+		}
+
+		public void setClaimNoticeInterval(int claimNoticeInterval) {
+			this.section.set("claim-notice-interval", claimNoticeInterval);
+		}
+
+		public boolean isClaimNoticeOnLogin() {
+			return this.section.getBoolean("claim-notice-on-login", false);
+		}
+
+		public void setClaimNoticeOnLogin(boolean claimNoticeOnLogin) {
+			this.section.set("claim-notice-on-login", claimNoticeOnLogin);
 		}
 
 		@Contract(value = " -> new", pure = true)

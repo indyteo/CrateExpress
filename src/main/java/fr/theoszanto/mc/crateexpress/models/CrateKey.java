@@ -46,11 +46,13 @@ public class CrateKey extends PluginObject {
 		CrateGiveEvent event = new CrateGiveEvent(player, saving, cause, this, amount, commandSource, adminSource);
 		if (this.event(event)) {
 			CrateKey key = event.getKey();
-			if (saving)
+			if (saving) {
 				this.storage().getSource().saveReward(player, new CrateKeyReward(this.plugin, 0, key.getCrateId(), event.getAmount()));
-			else
+				this.i18nMessage(player, "action.key.stored", "key", ItemUtils.name(key.getItem()));
+			} else {
 				player.getInventory().addItem(ItemUtils.withAmount(key.getItem(), event.getAmount()));
-			this.i18nMessage(player, "action.key.receive", "key", ItemUtils.name(key.getItem()));
+				this.i18nMessage(player, "action.key.receive", "key", ItemUtils.name(key.getItem()));
+			}
 		}
 	}
 }

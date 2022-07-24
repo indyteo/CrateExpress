@@ -9,7 +9,9 @@ import fr.theoszanto.mc.crateexpress.resolvers.SimpleCrateResolver;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.LocationUtils;
 import fr.theoszanto.mc.express.utils.Registry;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -19,6 +21,8 @@ import java.util.Optional;
 
 public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	private int maximumPlayerRewards = -1;
+	private int claimNoticeInterval = -1;
+	private boolean claimNoticeOnLogin = false;
 	private @NotNull CrateResolver resolver;
 
 	public CrateRegistry(@NotNull CrateExpress plugin) {
@@ -31,6 +35,12 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 		for (Crate crate : this)
 			this.event(new CrateLoadEvent(crate));
 		this.maximumPlayerRewards = config.getMaximumPlayerRewards();
+		this.claimNoticeInterval = config.getClaimNoticeInterval();
+		if (this.claimNoticeInterval > 0) {
+			long intervalInTicks = this.claimNoticeInterval * 1200L;
+			this.plugin.getServer().getScheduler().runTaskTimer(this.plugin, () -> Bukkit.getOnlinePlayers().forEach(this::noticePlayerIfCanClaim), intervalInTicks, intervalInTicks);
+		}
+		this.claimNoticeOnLogin = config.isClaimNoticeOnLogin();
 		List<CrateConfig.SerializedPluginObject> resolversConfig = config.getResolvers();
 		if (resolversConfig.isEmpty())
 			this.resolver = new SimpleCrateResolver(this.plugin);
@@ -45,6 +55,9 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	@Override
 	public void reset() {
 		super.reset();
+		this.maximumPlayerRewards = -1;
+		this.claimNoticeInterval = -1;
+		this.claimNoticeOnLogin = false;
 		this.resolver = new NoopCrateResolver(this.plugin);
 	}
 
@@ -54,6 +67,16 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 
 	public int getMaximumPlayerRewards() {
 		return this.maximumPlayerRewards;
+	}
+
+	public boolean isClaimNoticeOnLogin() {
+		return this.claimNoticeOnLogin;
+	}
+
+	public void noticePlayerIfCanClaim(@NotNull Player player) {
+		int rewards = this.plugin.storage().getSource().countRewards(player);
+		if (rewards > 0)
+			this.i18nMessage(player, "crate.claim-notice", "count", rewards);
 	}
 
 	public @Nullable Crate resolve(@NotNull String name) {

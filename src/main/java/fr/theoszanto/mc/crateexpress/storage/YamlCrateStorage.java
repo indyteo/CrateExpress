@@ -12,6 +12,7 @@ import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.LocationUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
+import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -63,7 +64,15 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 					String message = data.getString("message", null);
 					String crateLocation = data.getString("location", null);
 					UnloadableWorldLocation location = crateLocation == null ? null : LocationUtils.fromString(crateLocation);
-					Crate crate = new Crate(this.plugin, id, min, max, key, name, message, location);
+					double delay = data.getDouble("delay", 0);
+					String crateSound = data.getString("sound", null);
+					Sound sound;
+					try {
+						sound = crateSound == null ? null : Sound.valueOf(crateSound.toUpperCase());
+					} catch (IllegalArgumentException e) {
+						sound = null;
+					}
+					Crate crate = new Crate(this.plugin, id, min, max, key, name, message, location, delay, sound);
 					ConfigurationSection items = data.getConfigurationSection("items");
 					if (items != null) {
 						for (String item : items.getKeys(false)) {
@@ -104,6 +113,9 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 				data.set("message", crate.getMessage());
 			if (crate.getLocation() != null)
 				data.set("location", LocationUtils.toString(crate.getLocation()));
+			data.set("delay", crate.getDelay());
+			if (crate.getSound() != null)
+				data.set("sound", crate.getSound().name());
 			ConfigurationSection items = data.createSection("items");
 			crate.getRewardsWithSlot().forEach((slot, reward) -> {
 				ConfigurationSection rewardData = items.createSection(slot.toString());

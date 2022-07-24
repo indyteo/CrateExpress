@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class CrateExpressCreateSubCommand extends CrateExpressSubCommand {
 	public CrateExpressCreateSubCommand(@NotNull CrateExpress plugin) {
@@ -31,7 +32,7 @@ public class CrateExpressCreateSubCommand extends CrateExpressSubCommand {
 			this.crates().get(crateId);
 			this.i18nMessage(sender, "command.create.already-exists", "crate", crateId);
 		} catch (IllegalArgumentException e) {
-			Crate crate = new Crate(this.plugin, crateId, 1, 1, null, crateId, null, null);
+			Crate crate = new Crate(this.plugin, crateId, 1, 1, null, crateId, null, null, 0, null);
 			this.crates().addCrate(crate);
 			this.i18nMessage(sender, "command.create.success", "crate", crateId);
 			new CrateEditGUI(this.plugin, crate).showToPlayer((Player) sender);
@@ -41,6 +42,6 @@ public class CrateExpressCreateSubCommand extends CrateExpressSubCommand {
 
 	@Override
 	public @Nullable List<@NotNull String> tabComplete(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
-		return null;
+		return args.length == 1 ? this.existingNamespaces().stream().map(namespace -> namespace + "/").collect(Collectors.toList()) : null;
 	}
 }

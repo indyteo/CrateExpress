@@ -1,6 +1,9 @@
 locale: "fr"
 crates:
   maximum-player-rewards: 135
+  # In minutes, negative to disable
+  claim-notice-interval: 30
+  claim-notice-on-login: true
   resolvers:
     0: # This resolver should always be present to ensure basic "by-name" resolving
       class: fr.theoszanto.mc.crateexpress.resolvers.SimpleCrateResolver

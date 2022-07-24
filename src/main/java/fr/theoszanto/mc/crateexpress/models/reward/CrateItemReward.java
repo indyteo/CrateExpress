@@ -15,7 +15,7 @@ public class CrateItemReward extends CrateReward {
 
 	@Override
 	public void reward(@NotNull Player player) throws RewardGiveException {
-		player.getInventory().addItem(this.item);
+		player.getInventory().addItem(this.item.clone());
 	}
 
 	@Override

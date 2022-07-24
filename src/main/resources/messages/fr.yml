@@ -17,13 +17,16 @@ crate:
       CrateCommandReward: "Commande"
       CrateOtherReward: "Autre caisse"
       CrateUnknownReward: "§cInconnu"
+  claim-notice: "§7Vous avez §e#{count}§7 récompense(s) en attente. Faites §e/crate claim§7 pour les récupérer !"
 action:
   crate:
     open: "§7Vous venez d'ouvrir une caisse §e#{crate}"
     need-key: "§cVous devez posséder la clé pour ouvrir une caisse §4#{crate}"
     too-much-rewards: "§cVous devez faire de la place dans votre §4/crate claim§c pour ouvrir la caisse §4#{crate}"
+    must-wait: "§cVous devez attendre encore §4#{delay}§c avant de pouvoir ouvrir la caisse §4#{crate}"
   key:
     receive: "§7Vous venez de recevoir une clé §e#{key}"
+    stored: "§7Vous venez de recevoir une clé §e#{key}§7. Votre inventaire étant plein, faites §e/crate claim§7 pour la récupérer !"
     use: "§cVous devez utiliser cette clé sur la caisse §4#{crate}"
 menu:
   title-style: "§8» #{title}§8 «"
@@ -116,13 +119,16 @@ menu:
       lore: |-
         §7Nombre de récompenses : §e#{min}§7 à §e#{max}
         §7Clé : §e#{key}
+        §7Position : §e#{location}
         §7Nom : §e#{name}
         §7Message : §e#{message}
-        §7Position : §e#{location}
+        §7Délai : §e#{delay}
+        §7Son : §e#{sound}
       no-key: "§cAucune"
-      no-message: "§cAucun"
       no-location: "§cAucune"
       location: "#{world}§7 (§e#{x}§7, §e#{y}§7, §e#{z}§7)"
+      no-message: "§cAucun"
+      no-sound: "§cAucun"
     min:
       name: "§bNombre minimum de récompenses : §3#{min}"
       lore: |-
@@ -145,6 +151,17 @@ menu:
         §6»§e Déposez l'objet correspondant ici pour la définir
         §6»§e Clic droit pour supprimer
         §6»§e Clic molette pour obtenir un exemplaire
+    location:
+      name: "§bPosition de la caisse : §3#{location}"
+      lore: |-
+        §7Position actuelle : §e#{location}
+        §7Ce paramètre défini la position de la caisse, ou si
+        §7non défini, la capacité à ouvrir depuis n'importe où
+        §6»§e Clic gauche pour définir sur le bloc visé
+        §6»§e Clic droit pour supprimer
+      teleport: "§6»§e Clic molette pour s'y téléporter"
+      none: "§cAucune position définie"
+      value: "#{world}§7 (§e#{x}§7, §e#{y}§7, §e#{z}§7)"
     name:
       name: "§bNom de la caisse : §3#{name}"
       lore: |-
@@ -166,20 +183,29 @@ menu:
         §7- §e<key>§7 : Nom de l'objet clé, ou §e<crate>
         §6»§e Clic gauche pour définir dans le chat
         §6»§e Clic droit pour supprimer
+      show: "§6»§e Clic molette pour visualiser"
       none: "§cAucun message défini"
       request: "§7Veuillez écrire le nouveau message d'ouverture de la caisse dans le chat :"
       timeout: "§cLe délais d'attente a été dépassé..."
-    location:
-      name: "§bPosition de la caisse : §3#{location}"
+    delay:
+      name: "§bDélai d'ouverture : §3#{delay}s"
       lore: |-
-        §7Position actuelle : §e#{location}
-        §7Ce paramètre défini la position de la caisse, ou si
-        §7non défini, la capacité à ouvrir depuis n'importe où
-        §6»§e Clic gauche pour définir sur le bloc visé
+        §7Ce paramètre défini la durée d'attente entre deux
+        §7ouvertures de cette caisse par un joueur (en secondes)
+        §6»§e Clic pour définir dans le chat
+      request: "§7Veuillez écrire le nouveau délai d'ouverture de la caisse dans le chat :"
+      invalid: "§cLe délai saisi n'est pas valide (nombre décimal, \".\" pour la virgule)"
+      timeout: "§cLe délais d'attente a été dépassé..."
+    sound:
+      name: "§bSon d'ouverture : §3#{sound}"
+      lore: |-
+        §7Son actuel : §e#{sound}
+        §7Ce paramètre défini le son joué
+        §7à l'ouverture de la caisse
+        §6»§e Clic gauche pour choisir
         §6»§e Clic droit pour supprimer
-        §6»§e Clic molette pour s'y téléporter
-      none: "§cAucune position définie"
-      value: "#{world}§7 (§e#{x}§7, §e#{y}§7, §e#{z}§7)"
+      play: "§6»§e Clic molette pour entendre le son"
+      none: "§cAucun son défini"
     delete:
       name: "§bSupprimer la caisse"
       lore: |-
@@ -191,6 +217,26 @@ menu:
     no-key: "§7Aucune clé définie pour cette caisse"
     lore: "§6»§e Clic pour sélectionner cette caisse"
     crate-id: "§8##{id}"
+  sound:
+    title: "Sélection d'un son"
+    header:
+      name: "§aListe des sons dans : §n#{namespace}"
+      lore: ""
+      root-namespace: "minecraft:"
+    stop:
+      name: "§cArrêter tous les sons"
+      lore: "§6»§e Clic pour arrêter tous les sons"
+    empty: "§cAucun son n'a été trouvé ici..."
+    value: "§bSon : §3#{key}"
+    lore: |-
+      §6»§e Clic gauche pour sélectionner
+      §6»§e Clic droit pour écouter
+      §6»§e Clic molette pour arrêter
+    value-key: "§8minecraft:#{key}"
+    namespace: "§bListe des sons dans : §3#{namespace}"
+    parent-namespace: "§7Revenir au parent"
+    enter-namespace: "§6»§e Clic pour y accéder"
+    namespace-prefix: "§8minecraft:#{prefix}."
   reward:
     title: "Récompense de la caisse #{crate}"
     weight:
