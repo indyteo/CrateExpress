@@ -51,6 +51,8 @@ menu:
     no-key: "§cAucune clé pour cette caisse"
     edit: "§7Éditer la caisse"
     give-key: "§6»§e Clic pour obtenir une clé"
+    disabled: "§cCette caisse est désactivée"
+    bypass-disabled: "§7Vous n'êtes pas soumis à cette restriction"
   list:
     title: "Liste des caisses"
     header:
@@ -71,6 +73,7 @@ menu:
       §7X : §e#{x}
       §7Y : §e#{y}
       §7Z : §e#{z}
+    disabled: "§c§lCette caisse est désactivée"
     edit: "§6»§e Clic gauche pour éditer"
     give: "§6»§e Clic molette pour obtenir une clé"
     teleport: "§6»§e Clic droit pour se téléporter"
@@ -124,11 +127,14 @@ menu:
         §7Message : §e#{message}
         §7Délai : §e#{delay}
         §7Son : §e#{sound}
+        §7Statut : §e#{status}
       no-key: "§cAucune"
       no-location: "§cAucune"
       location: "#{world}§7 (§e#{x}§7, §e#{y}§7, §e#{z}§7)"
       no-message: "§cAucun"
       no-sound: "§cAucun"
+      enabled: "§aActivée"
+      disabled: "§cDésactivée"
     min:
       name: "§bNombre minimum de récompenses : §3#{min}"
       lore: |-
@@ -206,6 +212,15 @@ menu:
         §6»§e Clic droit pour supprimer
       play: "§6»§e Clic molette pour entendre le son"
       none: "§cAucun son défini"
+    status:
+      name: "§bStatut de la caisse : §3#{status}"
+      lore: |-
+        §7Ce paramètre défini si la caisse est activée ou
+        §7désactivée, c'est à dire si les joueurs peuvent
+        §7l'ouvrir avec sa clé
+        §6»§e Clic pour inverser l'état
+      enabled: "§aActivée"
+      disabled: "§cDésactivée"
     delete:
       name: "§bSupprimer la caisse"
       lore: |-
@@ -456,3 +471,4 @@ misc:
   default-cmd-icon-name: "§7Commande"
   default-other-icon-name: "§7Caisse"
   cancelled-by-reload: "§cVotre action a été interrompue car le plugin a été rechargé"
+  insert-original: "§a§l§n[Cliquez ici pour insérer la valeur originale dans votre chat]"

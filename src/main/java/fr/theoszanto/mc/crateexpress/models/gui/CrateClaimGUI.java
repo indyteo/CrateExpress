@@ -26,7 +26,7 @@ public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableRe
 	}
 
 	@Override
-	protected void prepareGUI() {
+	protected void prepareGUI(@NotNull Player player) {
 		this.setButtons(slot(5, 0), slot(5, 8), slot(5, 2), slot(5, 6));
 		this.setEmptyIndicator(slot(2, 4), "menu.claim.empty");
 		if (!this.list.isEmpty())

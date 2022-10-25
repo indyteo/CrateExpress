@@ -24,7 +24,8 @@ public class CrateExpressHelpSubCommand extends CrateExpressSubCommand {
 		if (args.length == 0) {
 			this.i18nMessage(sender, "command.help.all-commands");
 			for (CrateExpressSubCommand subCommand : command.getSubCommands())
-				this.i18nRawMessage(sender, "command.help." + subCommand.getName(), "alias", alias, "subcommand", subCommand.getName());
+				if (subCommand.canExecute(sender, command, alias, subCommand.getName(), args))
+					this.i18nRawMessage(sender, "command.help." + subCommand.getName(), "alias", alias, "subcommand", subCommand.getName());
 		} else if (args.length == 1) {
 			String subCommandName = args[0];
 			CrateExpressSubCommand subCommand = command.subCommandByName(subCommandName);

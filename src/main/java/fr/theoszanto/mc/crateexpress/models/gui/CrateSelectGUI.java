@@ -29,8 +29,8 @@ public class CrateSelectGUI extends CrateListGUI {
 	}
 
 	@Override
-	protected void prepareGUI() {
-		super.prepareGUI();
+	protected void prepareGUI(@NotNull Player player) {
+		super.prepareGUI(player);
 		this.setEmptyIndicator(slot(1, 4), "menu.select.empty");
 	}
 

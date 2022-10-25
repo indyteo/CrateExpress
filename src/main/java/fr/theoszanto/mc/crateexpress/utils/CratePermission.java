@@ -7,6 +7,7 @@ public final class CratePermission {
 	public static final @NotNull String ALL = sub("*");
 
 	public static final @NotNull String UNLIMITED_CLAIM = sub("unlimited-claim");
+	public static final @NotNull String BYPASS_DISABLED = sub("bypass-disabled");
 
 	public static final class Command {
 		public static final @NotNull String BASE = CratePermission.sub("command");

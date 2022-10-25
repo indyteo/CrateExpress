@@ -49,7 +49,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	}
 
 	@Override
-	protected void prepareGUI() {
+	protected void prepareGUI(@NotNull Player player) {
 		this.setButtons(slot(4, 0), slot(4, 8), slot(4, 3), slot(4, 5));
 		this.setEmptyIndicator(slot(2, 4), "menu.list.empty");
 		this.set(slot(0, 4), new ItemBuilder(Material.OAK_SIGN, 1, this.i18n("menu.list.header.name", "namespace", this.namespace.isRoot() ? this.i18n("menu.list.header.root-namespace") : this.namespace.getName()), this.i18nLines("menu.list.header.lore")));
@@ -102,6 +102,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 				"y", location.getBlockY(),
 				"z", location.getBlockZ()
 		));
+		ItemUtils.addLoreConditionally(crate.isDisabled(), item, this.i18n("menu.list.disabled"));
 		ItemUtils.addLoreConditionally(player.hasPermission(CratePermission.Command.EDIT), item, this.i18n("menu.list.edit"));
 		ItemUtils.addLoreConditionally(key != null && player.hasPermission(CratePermission.Command.GIVE), item, this.i18n("menu.list.give"));
 		ItemUtils.addLoreConditionally(location != null && player.hasPermission(CratePermission.Command.TELEPORT), item, this.i18n("menu.list.teleport"));

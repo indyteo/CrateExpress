@@ -36,7 +36,7 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 	}
 
 	@Override
-	protected void prepareGUI() {
+	protected void prepareGUI(@NotNull Player player) {
 		this.setButtons(slot(4, 0), slot(4, 8), slot(4, 3), slot(4, 5));
 		this.setEmptyIndicator(slot(2, 4), "menu.sound.empty");
 		this.set(slot(0, 4), new ItemBuilder(Material.BELL, 1, this.i18n("menu.sound.header.name", "namespace", this.namespace.isRoot() ? this.i18n("menu.sound.header.root-namespace") : this.namespace.getName()), this.i18nLines("menu.sound.header.lore")));

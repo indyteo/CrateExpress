@@ -63,7 +63,8 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				"name", this.crate.getName(),
 				"message", message == null ? this.i18n("menu.manage.header.no-message") : message,
 				"delay", this.crate.getDelay(),
-				"sound", sound == null ? this.i18n("menu.manage.header.no-sound") : sound.getKey()
+				"sound", sound == null ? this.i18n("menu.manage.header.no-sound") : sound.getKey(),
+				"status", this.i18n("menu.manage.header." + (this.crate.isDisabled() ? "disabled" : "enabled"))
 		)));
 
 		// Go back & close buttons
@@ -84,6 +85,7 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				"y", location.getBlockY(),
 				"z", location.getBlockZ()
 		))).addLoreConditionally(location != null, this.i18n("menu.manage.location.teleport")), "location");
+		this.set(slot(1, 6), new ItemBuilder(this.crate.isDisabled() ? Material.GRAY_DYE : Material.LIME_DYE, 1, this.i18n("menu.manage.status.name", "status", this.i18n("menu.manage.status." + (this.crate.isDisabled() ? "disabled" : "enabled"))), this.i18nLines("menu.manage.status.lore")), "status");
 		this.set(slot(1, 7), new ItemBuilder(Material.TNT, 1, this.i18n("menu.manage.delete.name"), this.i18nLines("menu.manage.delete.lore")), "delete");
 		this.set(slot(2, 2), new ItemBuilder(Material.NAME_TAG, 1, this.i18n("menu.manage.name.name", "name", this.crate.getName()), this.i18nLines("menu.manage.name.lore")), "name");
 		this.set(slot(2, 3), new ItemBuilder(Material.BIRCH_SIGN, 1, this.i18n("menu.manage.message.name", "message", this.i18n(message == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.message.lore", "message", message == null ? this.i18n("menu.manage.message.none") : message)).addLoreConditionally(message != null, this.i18n("menu.manage.message.show")), "message");
@@ -166,13 +168,17 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				}
 			}
 			break;
+		case "status":
+			this.crate.setDisabled(!this.crate.isDisabled());
+			this.refresh(player);
+			break;
 		case "delete":
 			new CrateDeleteGUI(this.plugin, this.crate, this).showToPlayer(player);
 			break;
 		case "name":
 			this.i18nMessage(player, "menu.manage.name.request");
 			player.closeInventory();
-			this.spigot().requestChatMessage(player, 1, TimeUnit.MINUTES).whenComplete((name, timeout) -> {
+			this.spigot().requestChatEdition(player, this.crate.getName().replace('§', '&'), 1, TimeUnit.MINUTES).whenComplete((name, timeout) -> {
 				if (timeout == null)
 					this.crate.setName(ChatColor.translateAlternateColorCodes('&', name));
 				else
@@ -184,7 +190,7 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 			if (click.isLeftClick()) {
 				this.i18nMessage(player, "menu.manage.message.request");
 				player.closeInventory();
-				this.spigot().requestChatMessage(player, 1, TimeUnit.MINUTES).whenComplete((message, timeout) -> {
+				this.spigot().requestChatEdition(player, this.crate.getMessage() == null ? null : this.crate.getMessage().replace('§', '&'), 1, TimeUnit.MINUTES).whenComplete((message, timeout) -> {
 					if (timeout == null)
 						this.crate.setMessage(ChatColor.translateAlternateColorCodes('&', message));
 					else
@@ -203,7 +209,7 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 		case "delay":
 			this.i18nMessage(player, "menu.manage.delay.request");
 			player.closeInventory();
-			this.spigot().requestChatMessage(player, 1, TimeUnit.MINUTES).whenComplete((delay, timeout) -> {
+			this.spigot().requestChatEdition(player, Double.toString(this.crate.getDelay()), 1, TimeUnit.MINUTES).whenComplete((delay, timeout) -> {
 				if (timeout == null) {
 					try {
 						this.crate.setDelay(Double.parseDouble(delay));

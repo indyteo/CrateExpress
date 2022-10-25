@@ -35,13 +35,14 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	private @Nullable UnloadableWorldLocation location;
 	private double delay;
 	private @Nullable Sound sound;
+	private boolean disabled;
 
 	@UnmodifiableView
 	private final @NotNull Map<@NotNull Integer, @NotNull CrateReward> rewardsUnmodifiable = Collections.unmodifiableMap(this.rewards);
 	@UnmodifiableView
 	private final @NotNull Collection<@NotNull CrateReward> rewardsValuesUnmodifiable = Collections.unmodifiableCollection(this.rewards.values());
 
-	public Crate(@NotNull CrateExpress plugin, @NotNull String id, int min, int max, @Nullable CrateKey key, @NotNull String name, @Nullable String message, @Nullable UnloadableWorldLocation location, double delay, @Nullable Sound sound) {
+	public Crate(@NotNull CrateExpress plugin, @NotNull String id, int min, int max, @Nullable CrateKey key, @NotNull String name, @Nullable String message, @Nullable UnloadableWorldLocation location, double delay, @Nullable Sound sound, boolean disabled) {
 		super(plugin);
 		this.id = id;
 		this.min = min;
@@ -52,6 +53,7 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 		this.location = location;
 		this.delay = delay;
 		this.sound = sound;
+		this.disabled = disabled;
 	}
 
 	public void open(@NotNull Player player) {
@@ -198,5 +200,13 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 			if (world != null)
 				world.playSound(this.location, this.sound, SoundCategory.BLOCKS, 1, 1);
 		}
+	}
+
+	public boolean isDisabled() {
+		return this.disabled;
+	}
+
+	public void setDisabled(boolean disabled) {
+		this.disabled = disabled;
 	}
 }

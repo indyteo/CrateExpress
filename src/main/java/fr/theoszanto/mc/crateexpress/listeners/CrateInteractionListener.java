@@ -69,39 +69,42 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 			if (usedKeyCrate.isPresent()) {
 				assert item != null;
 				Crate crate = usedKeyCrate.get();
-				Location crateLocation = crate.getLocation();
-				if (crateLocation == null || (block != null && LocationUtils.blockEquals(block.getLocation(), crateLocation))) {
-					Pair<Player, Crate> pair = new Pair<>(player, crate);
-					Instant lastUsage = this.lastUsages.get(pair);
-					Instant now = Instant.now();
-					Duration delay = lastUsage == null ? Duration.ZERO : Duration.between(lastUsage, now).minusMillis(crate.getDelayMillis());
-					if (!delay.isNegative()) {
-						if (this.plugin.crates().noLimitToPlayerRewards() || player.hasPermission(CratePermission.UNLIMITED_CLAIM)
-								|| this.plugin.storage().getSource().countRewards(player) <= this.plugin.crates().getMaximumPlayerRewards()) {
-							CrateOpenInteractEvent e = new CrateOpenInteractEvent(crate, player, item, player.isSneaking() ? item.getAmount() : 1);
-							if (this.event(e)) {
-								int amount = e.getAmount();
-								if (e.doesConsumingKey())
-									item.setAmount(item.getAmount() - amount);
-								for (int i = 0; i < amount; i++)
-									crate.open(player);
-								this.i18nMessage(player, "action.crate.open", "crate", crate.getName());
-								if (e.doesBroadcastMessage()) {
-									String message = crate.getFormattedMessage(player);
-									if (message != null)
-										for (Player p : Bukkit.getOnlinePlayers())
-											p.sendMessage(message);
+				if (!crate.isDisabled() || player.hasPermission(CratePermission.BYPASS_DISABLED)) {
+					Location crateLocation = crate.getLocation();
+					if (crateLocation == null || (block != null && LocationUtils.blockEquals(block.getLocation(), crateLocation))) {
+						Pair<Player, Crate> pair = new Pair<>(player, crate);
+						Instant lastUsage = this.lastUsages.get(pair);
+						Instant now = Instant.now();
+						Duration delay = lastUsage == null ? Duration.ZERO : Duration.between(lastUsage, now).minusMillis(crate.getDelayMillis());
+						if (!delay.isNegative()) {
+							if (this.plugin.crates().noLimitToPlayerRewards() || player.hasPermission(CratePermission.UNLIMITED_CLAIM)
+									|| this.plugin.storage().getSource().countRewards(player) <= this.plugin.crates().getMaximumPlayerRewards()) {
+								CrateOpenInteractEvent e = new CrateOpenInteractEvent(crate, player, item, player.isSneaking() ? item.getAmount() : 1);
+								if (this.event(e)) {
+									int amount = e.getAmount();
+									if (e.doesConsumingKey())
+										item.setAmount(item.getAmount() - amount);
+									for (int i = 0; i < amount; i++)
+										crate.open(player);
+									this.i18nMessage(player, "action.crate.open", "crate", crate.getName());
+									if (e.doesBroadcastMessage()) {
+										String message = crate.getFormattedMessage(player);
+										if (message != null)
+											for (Player p : Bukkit.getOnlinePlayers())
+												p.sendMessage(message);
+									}
+									if (e.doesPlaySound())
+										crate.playSoundAtLocation();
+									this.lastUsages.put(pair, now);
 								}
-								if (e.doesPlaySound())
-									crate.playSoundAtLocation();
-								this.lastUsages.put(pair, now);
-							}
+							} else
+								this.i18nMessage(player, "action.crate.too-much-rewards", "crate", crate.getName());
 						} else
-							this.i18nMessage(player, "action.crate.too-much-rewards", "crate", crate.getName());
+							this.i18nMessage(player, "action.crate.must-wait", "crate", crate.getName(), "delay", TimeUtils.formatDuration(delay));
 					} else
-						this.i18nMessage(player, "action.crate.must-wait", "crate", crate.getName(), "delay", TimeUtils.formatDuration(delay));
+						this.i18nMessage(player, "action.key.use", "crate", crate.getName());
 				} else
-					this.i18nMessage(player, "action.key.use", "crate", crate.getName());
+					this.i18nMessage(player, "action.crate.disabled", "crate", crate.getName());
 				event.setCancelled(true);
 			} else if (clickedCrate.isPresent()) {
 				this.i18nMessage(player, "action.crate.need-key", "crate", clickedCrate.get().getName());

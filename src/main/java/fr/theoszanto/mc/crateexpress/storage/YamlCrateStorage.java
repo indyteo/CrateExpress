@@ -72,7 +72,8 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 					} catch (IllegalArgumentException e) {
 						sound = null;
 					}
-					Crate crate = new Crate(this.plugin, id, min, max, key, name, message, location, delay, sound);
+					boolean disabled = data.getBoolean("disabled", false);
+					Crate crate = new Crate(this.plugin, id, min, max, key, name, message, location, delay, sound, disabled);
 					ConfigurationSection items = data.getConfigurationSection("items");
 					if (items != null) {
 						for (String item : items.getKeys(false)) {
@@ -116,6 +117,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			data.set("delay", crate.getDelay());
 			if (crate.getSound() != null)
 				data.set("sound", crate.getSound().name());
+			data.set("disabled", crate.isDisabled());
 			ConfigurationSection items = data.createSection("items");
 			crate.getRewardsWithSlot().forEach((slot, reward) -> {
 				ConfigurationSection rewardData = items.createSection(slot.toString());

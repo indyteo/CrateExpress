@@ -25,7 +25,7 @@ public class CrateAddRewardGUI extends ExpressPaginatedGUI<CrateExpress, CrateRe
 	}
 
 	@Override
-	protected void prepareGUI() {
+	protected void prepareGUI(@NotNull Player player) {
 		// Borders
 		ItemBuilder border = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE, 1, "§r");
 		for (int i = 0; i < 9; i++) {

@@ -3,20 +3,20 @@ package fr.theoszanto.mc.crateexpress.utils;
 import java.util.Objects;
 
 public final class Pair<T, U> {
-	private final T t;
-	private final U u;
+	private final T first;
+	private final U second;
 
-	public Pair(T t, U u) {
-		this.t = t;
-		this.u = u;
+	public Pair(T first, U second) {
+		this.first = first;
+		this.second = second;
 	}
 
-	public T getT() {
-		return this.t;
+	public T getFirst() {
+		return this.first;
 	}
 
-	public U getU() {
-		return this.u;
+	public U getSecond() {
+		return this.second;
 	}
 
 	@Override
@@ -24,19 +24,19 @@ public final class Pair<T, U> {
 		if (this == o) return true;
 		if (o == null || getClass() != o.getClass()) return false;
 		Pair<?, ?> pair = (Pair<?, ?>) o;
-		if (!Objects.equals(t, pair.t)) return false;
-		return Objects.equals(u, pair.u);
+		if (!Objects.equals(this.first, pair.first)) return false;
+		return Objects.equals(this.second, pair.second);
 	}
 
 	@Override
 	public int hashCode() {
-		int result = t != null ? t.hashCode() : 0;
-		result = 31 * result + (u != null ? u.hashCode() : 0);
+		int result = this.first != null ? this.first.hashCode() : 0;
+		result = 31 * result + (this.second != null ? this.second.hashCode() : 0);
 		return result;
 	}
 
 	@Override
 	public String toString() {
-		return "[" + this.t + ", " + this.u + "]";
+		return "[" + this.first + ", " + this.second + "]";
 	}
 }
