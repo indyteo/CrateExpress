@@ -52,6 +52,8 @@ storage:
     5:
       class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateUnknownRewardYML
 money:
+  # NONE, COMMAND or VAULT
+  give-type: COMMAND
   # Be careful not to include any leading slash!
   give-command: "money give <player> <amount>"
   item: PAPER

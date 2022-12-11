@@ -2,6 +2,7 @@ package fr.theoszanto.mc.crateexpress.models;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.events.CrateConfigLoadEvent;
+import fr.theoszanto.mc.crateexpress.managers.MoneyManager;
 import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateRewardGUI;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import org.bukkit.Material;
@@ -175,6 +176,21 @@ public class CrateConfig extends PluginObject {
 	public static class Money extends Section {
 		public Money(@NotNull CrateConfig config) {
 			super(config, "money");
+		}
+
+		public @NotNull MoneyManager.GiveType getGiveType() {
+			String giveType = this.section.getString("give-type", null);
+			if (giveType == null)
+				throw new IllegalStateException("Missing money give type in config");
+			try {
+				return MoneyManager.GiveType.valueOf(giveType.toUpperCase());
+			} catch (IllegalArgumentException e) {
+				return MoneyManager.GiveType.NONE;
+			}
+		}
+
+		public void setGiveType(@NotNull MoneyManager.GiveType giveType) {
+			this.section.set("give-type", giveType.name());
 		}
 
 		public @NotNull String getGiveCommand() {

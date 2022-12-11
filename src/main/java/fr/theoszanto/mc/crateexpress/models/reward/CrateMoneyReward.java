@@ -1,7 +1,6 @@
 package fr.theoszanto.mc.crateexpress.models.reward;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -16,7 +15,7 @@ public class CrateMoneyReward extends CrateReward {
 	@Override
 	public void reward(@NotNull Player player) throws RewardGiveException {
 		try {
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), this.money().getMoneyGiveCommand(player, this.amount));
+			this.money().giveMoney(player, this.amount);
 		} catch (IllegalStateException e) {
 			throw new RewardGiveException(e.getMessage());
 		}
