@@ -11,6 +11,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class StorageManager extends PluginObject {
 	private @NotNull CrateStorage source;
@@ -27,6 +28,10 @@ public class StorageManager extends PluginObject {
 
 	public @Nullable CrateRewardStorage<?> getRewardSource(@NotNull String type) {
 		return this.rewardStorages.get(type);
+	}
+
+	public void migratePlayerData(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException {
+		this.source.migrateRewards(from, to);
 	}
 
 	public void resetStorageSource() {

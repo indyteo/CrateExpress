@@ -11,6 +11,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 public class NoopCrateStorage extends PluginObject implements CrateStorage {
 	public NoopCrateStorage(@NotNull CrateExpress plugin) {
@@ -56,6 +57,11 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 
 	@Override
 	public void deleteReward(@NotNull Player player, @NotNull String id) throws IllegalStateException {
+		this.notice();
+	}
+
+	@Override
+	public void migrateRewards(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException {
 		this.notice();
 	}
 

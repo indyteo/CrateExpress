@@ -56,10 +56,10 @@ public class CrateEditGUI extends ExpressGUI<CrateExpress> {
 			for (int i = 0; i < 5; i++)
 				for (int j = 0; j < 9; j++)
 					this.set(slot(i, j), ItemUtils.EMPTY, "reward");
-			int crateWeight = this.crate.totalWeight();
+			int crateWeight = (int) this.crate.totalWeight();
 			this.crate.getRewardsWithSlot().forEach((slot, reward) -> {
 				ItemStack item = reward.getIconWithChance(crateWeight);
-				ItemUtils.addLore(item, this.i18nLines("menu.edit.reward.info", "weight", reward.getWeight(), "total", crateWeight, "type", this.i18n("crate.reward.type." + reward.getClass().getSimpleName())));
+				ItemUtils.addLore(item, this.i18nLines("menu.edit.reward.info", "weight", (int) reward.getWeight(), "total", crateWeight, "type", this.i18n("crate.reward.type." + reward.getClass().getSimpleName())));
 				this.set(slot, item, "reward", reward);
 			});
 		}

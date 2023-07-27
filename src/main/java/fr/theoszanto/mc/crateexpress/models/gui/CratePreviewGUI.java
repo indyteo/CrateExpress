@@ -51,7 +51,7 @@ public class CratePreviewGUI extends ExpressGUI<CrateExpress> {
 		if (this.crate.isEmpty())
 			this.set(slot(0, 4), new ItemBuilder(Material.STRUCTURE_VOID, 1, this.i18n("menu.preview.empty")));
 		else {
-			int crateWeight = this.crate.totalWeight();
+			int crateWeight = (int) this.crate.totalWeight();
 			this.crate.getRewardsWithSlot().forEach((slot, reward) -> this.set(slot, reward.getIconWithChance(crateWeight)));
 		}
 	}

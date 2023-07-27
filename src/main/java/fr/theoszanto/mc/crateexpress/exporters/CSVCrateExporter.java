@@ -27,7 +27,7 @@ public class CSVCrateExporter extends CrateExporter {
 		double crateWeight = crate.totalWeight();
 		writer.write(DATA_HEADER);
 		for (CrateReward reward : crate) {
-			int rewardWeight = reward.getWeight();
+			int rewardWeight = (int) reward.getWeight();
 			// Type
 			writer.write(rewardType(reward));
 			writer.write(SEPARATOR);

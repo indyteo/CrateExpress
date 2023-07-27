@@ -24,8 +24,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,9 +37,14 @@ import java.util.stream.Stream;
 public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	private final @NotNull File cratesDir;
 	private final @NotNull File rewardsDir;
+	private final @NotNull List<@NotNull String> ignoreFiles;
 	private final @NotNull Map<@NotNull UUID, @NotNull Integer> rewardsCountCache = new HashMap<>();
 
 	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir) throws IllegalArgumentException {
+		this(plugin, cratesDir, rewardsDir, Collections.emptyList());
+	}
+
+	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir, @NotNull List<@NotNull String> ignoreFiles) throws IllegalArgumentException {
 		super(plugin);
 		this.cratesDir = new File(plugin.getDataFolder(), cratesDir);
 		if (!(this.cratesDir.exists() ? this.cratesDir.isDirectory() : this.cratesDir.mkdirs()))
@@ -45,12 +52,13 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		this.rewardsDir = new File(plugin.getDataFolder(), rewardsDir);
 		if (!(this.rewardsDir.exists() ? this.rewardsDir.isDirectory() : this.rewardsDir.mkdirs()))
 			throw new IllegalArgumentException("YamlStorage rewards directory is invalid: " + this.rewardsDir);
+		this.ignoreFiles = ignoreFiles;
 	}
 
 	@Override
 	public void loadCrates(@NotNull CrateRegistry registry) throws IllegalStateException {
 		Path cratePath = this.cratesDir.toPath();
-		try (Stream<Path> files = Files.find(cratePath, 10, YamlCrateStorage::crateFilesFilter)) {
+		try (Stream<Path> files = Files.find(cratePath, 10, this::crateFilesFilter)) {
 			files.forEach(path -> {
 				String id = crateIdFromFileName(cratePath.relativize(path).toString());
 				try {
@@ -217,6 +225,18 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		}
 	}
 
+	@Override
+	public void migrateRewards(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException {
+		try {
+			Path src = new File(this.rewardsDir, from + ".yml").toPath();
+			Path dst = new File(this.rewardsDir, to + ".yml").toPath();
+			Files.move(src, dst, StandardCopyOption.REPLACE_EXISTING);
+			this.rewardsCountCache.put(to, this.rewardsCountCache.remove(from));
+		} catch (IOException e) {
+			throw new IllegalStateException("Could not rename rewards file", e);
+		}
+	}
+
 	private @NotNull CrateReward deserializeReward(@NotNull ConfigurationSection reward) throws InvalidConfigurationException {
 		String type = reward.getString("type", "null");
 		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource(type);
@@ -243,7 +263,8 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		return crateId + ".yml";
 	}
 
-	private static boolean crateFilesFilter(@NotNull Path path, @NotNull BasicFileAttributes attributes) {
-		return attributes.isRegularFile() && path.toString().matches("^.*\\.ya?ml$");
+	private boolean crateFilesFilter(@NotNull Path path, @NotNull BasicFileAttributes attributes) {
+		String relativePath = path.relativize(this.cratesDir.toPath()).toString();
+		return attributes.isRegularFile() && relativePath.matches("^.*\\.ya?ml$") && !this.ignoreFiles.contains(relativePath);
 	}
 }

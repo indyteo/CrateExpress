@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.UUID;
 
 public interface CrateStorage extends Logged {
 	void loadCrates(@NotNull CrateRegistry registry) throws IllegalStateException;
@@ -34,4 +35,6 @@ public interface CrateStorage extends Logged {
 	int countRewards(@NotNull Player player) throws IllegalStateException;
 
 	void deleteReward(@NotNull Player player, @NotNull String id) throws IllegalStateException;
+
+	void migrateRewards(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException;
 }

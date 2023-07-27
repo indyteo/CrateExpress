@@ -22,7 +22,7 @@ public abstract class CrateRewardYML<T extends CrateReward> extends CrateRewardS
 			throw new IllegalArgumentException();
 		ConfigurationSection data = (ConfigurationSection) arguments[0];
 		data.set("type", reward.getType());
-		data.set("weight", reward.getWeight());
+		data.set("weight", (int) reward.getWeight());
 		this.serialize((T) reward, data);
 	}
 

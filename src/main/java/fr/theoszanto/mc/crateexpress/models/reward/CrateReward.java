@@ -77,7 +77,7 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 	}
 
 	@Override
-	public int getWeight() {
+	public double getWeight() {
 		return this.weight;
 	}
 

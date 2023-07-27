@@ -71,7 +71,7 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 		new CratePreviewGUI(this.plugin, this).showToPlayer(player);
 	}
 
-	public int totalWeight() {
+	public double totalWeight() {
 		return MathUtils.totalWeight(this.getRewards());
 	}
 

@@ -38,6 +38,7 @@ storage:
     options:
       - "./crates/"
       - "./rewards/"
+      - []
   rewards:
     0:
       class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateItemRewardYML
