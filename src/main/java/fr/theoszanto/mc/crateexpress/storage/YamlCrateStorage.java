@@ -27,7 +27,6 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -41,10 +40,10 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	private final @NotNull Map<@NotNull UUID, @NotNull Integer> rewardsCountCache = new HashMap<>();
 
 	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir) throws IllegalArgumentException {
-		this(plugin, cratesDir, rewardsDir, Collections.emptyList());
+		this(plugin, cratesDir, rewardsDir, new ArrayList<>());
 	}
 
-	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir, @NotNull List<@NotNull String> ignoreFiles) throws IllegalArgumentException {
+	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir, @NotNull ArrayList<@NotNull String> ignoreFiles) throws IllegalArgumentException {
 		super(plugin);
 		this.cratesDir = new File(plugin.getDataFolder(), cratesDir);
 		if (!(this.cratesDir.exists() ? this.cratesDir.isDirectory() : this.cratesDir.mkdirs()))
@@ -264,7 +263,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	private boolean crateFilesFilter(@NotNull Path path, @NotNull BasicFileAttributes attributes) {
-		String relativePath = path.relativize(this.cratesDir.toPath()).toString();
+		String relativePath = this.cratesDir.toPath().relativize(path).toString();
 		return attributes.isRegularFile() && relativePath.matches("^.*\\.ya?ml$") && !this.ignoreFiles.contains(relativePath);
 	}
 }
