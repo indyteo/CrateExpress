@@ -2,6 +2,7 @@ package fr.theoszanto.mc.crateexpress.models.reward;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.events.CrateRewardGiveEvent;
+import fr.theoszanto.mc.crateexpress.utils.FormatUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
@@ -15,10 +16,10 @@ import java.util.logging.Level;
 public abstract class CrateReward extends PluginObject implements Weighted {
 	private final @NotNull String type;
 	private @NotNull ItemStack icon;
-	private int weight;
+	private double weight;
 	private boolean physicalReward;
 
-	public CrateReward(@NotNull CrateExpress plugin, @NotNull String type, @NotNull ItemStack icon, int weight, boolean physicalReward) {
+	public CrateReward(@NotNull CrateExpress plugin, @NotNull String type, @NotNull ItemStack icon, double weight, boolean physicalReward) {
 		super(plugin);
 		this.type = type;
 		this.icon = icon;
@@ -57,10 +58,10 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 		this.storage().getSource().saveReward(player, this);
 	}
 
-	public @NotNull ItemStack getIconWithChance(int crateWeight) {
-		double chance = MathUtils.round(100 * this.weight / (double) crateWeight, 2);
+	public @NotNull ItemStack getIconWithChance(double crateWeight) {
+		double chance = MathUtils.round(100 * this.weight / crateWeight, 2);
 		ItemStack icon = this.getIcon().clone();
-		ItemUtils.addLore(icon, this.i18nLines("crate.preview.reward-chance", "chance", chance));
+		ItemUtils.addLore(icon, this.i18nLines("crate.preview.reward-chance", "chance", FormatUtils.noTrailingZeroDecimal(chance)));
 		return icon;
 	}
 
@@ -81,7 +82,7 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 		return this.weight;
 	}
 
-	public void setWeight(int weight) {
+	public void setWeight(double weight) {
 		this.weight = weight;
 	}
 

@@ -27,7 +27,7 @@ public class CrateUnknownRewardYML extends CrateRewardYML<CrateUnknownReward> {
 	}
 
 	@Override
-	public @NotNull CrateUnknownReward deserialize(@NotNull ConfigurationSection data, int weight) throws IllegalStateException {
+	public @NotNull CrateUnknownReward deserialize(@NotNull ConfigurationSection data, double weight) throws IllegalStateException {
 		Map<String, Object> unknownData = new HashMap<>();
 		for (String key : data.getKeys(true)) {
 			if (key.equals("type") || key.equals("weight"))

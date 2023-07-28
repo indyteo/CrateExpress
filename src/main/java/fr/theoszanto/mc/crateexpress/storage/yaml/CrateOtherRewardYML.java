@@ -19,7 +19,7 @@ public class CrateOtherRewardYML extends CrateRewardYML<CrateOtherReward> {
 	}
 
 	@Override
-	public @NotNull CrateOtherReward deserialize(@NotNull ConfigurationSection data, int weight) throws IllegalStateException {
+	public @NotNull CrateOtherReward deserialize(@NotNull ConfigurationSection data, double weight) throws IllegalStateException {
 		return new CrateOtherReward(this.plugin,
 				CrateRewardYML.requireItem(data, "icon"),
 				weight,

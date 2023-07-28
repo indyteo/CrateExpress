@@ -3,6 +3,7 @@ package fr.theoszanto.mc.crateexpress.exporters;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
+import fr.theoszanto.mc.crateexpress.utils.FormatUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -27,15 +28,15 @@ public class CSVCrateExporter extends CrateExporter {
 		double crateWeight = crate.totalWeight();
 		writer.write(DATA_HEADER);
 		for (CrateReward reward : crate) {
-			int rewardWeight = (int) reward.getWeight();
+			double rewardWeight = reward.getWeight();
 			// Type
 			writer.write(rewardType(reward));
 			writer.write(SEPARATOR);
 			// Weight
-			writer.write(Integer.toString(rewardWeight));
+			writer.write(FormatUtils.noTrailingZeroDecimal(rewardWeight));
 			writer.write(SEPARATOR);
 			// Chance
-			writer.write(Double.toString(MathUtils.round(100 * rewardWeight / crateWeight, 2)));
+			writer.write(FormatUtils.noTrailingZeroDecimal(MathUtils.round(100 * rewardWeight / crateWeight, 2)));
 			writer.write(SEPARATOR);
 			// Name
 			writer.write(ENCLOSURE);

@@ -11,7 +11,7 @@ public class CrateOtherReward extends CrateReward {
 	private final @NotNull String other;
 	private boolean random;
 
-	public CrateOtherReward(@NotNull CrateExpress plugin, @NotNull ItemStack icon, int weight, @NotNull String other, boolean random) {
+	public CrateOtherReward(@NotNull CrateExpress plugin, @NotNull ItemStack icon, double weight, @NotNull String other, boolean random) {
 		super(plugin, "other", icon, weight, true);
 		this.other = other;
 		this.random = random;

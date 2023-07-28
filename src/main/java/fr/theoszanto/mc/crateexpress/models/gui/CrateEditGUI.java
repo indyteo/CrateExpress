@@ -5,6 +5,7 @@ import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateAddRewardGUI;
 import fr.theoszanto.mc.crateexpress.models.gui.reward.CrateDeleteRewardGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
+import fr.theoszanto.mc.crateexpress.utils.FormatUtils;
 import fr.theoszanto.mc.express.gui.ExpressGUI;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
@@ -56,10 +57,13 @@ public class CrateEditGUI extends ExpressGUI<CrateExpress> {
 			for (int i = 0; i < 5; i++)
 				for (int j = 0; j < 9; j++)
 					this.set(slot(i, j), ItemUtils.EMPTY, "reward");
-			int crateWeight = (int) this.crate.totalWeight();
+			double crateWeight = this.crate.totalWeight();
 			this.crate.getRewardsWithSlot().forEach((slot, reward) -> {
 				ItemStack item = reward.getIconWithChance(crateWeight);
-				ItemUtils.addLore(item, this.i18nLines("menu.edit.reward.info", "weight", (int) reward.getWeight(), "total", crateWeight, "type", this.i18n("crate.reward.type." + reward.getClass().getSimpleName())));
+				ItemUtils.addLore(item, this.i18nLines("menu.edit.reward.info",
+						"weight", FormatUtils.noTrailingZeroDecimal(reward.getWeight()),
+						"total", FormatUtils.noTrailingZeroDecimal(crateWeight),
+						"type", this.i18n("crate.reward.type." + reward.getClass().getSimpleName())));
 				this.set(slot, item, "reward", reward);
 			});
 		}

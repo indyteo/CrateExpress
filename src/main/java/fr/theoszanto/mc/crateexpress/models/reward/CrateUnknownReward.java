@@ -10,14 +10,14 @@ public class CrateUnknownReward extends CrateReward {
 	private final @NotNull String type;
 	private final @NotNull Object data;
 
-	public CrateUnknownReward(@NotNull CrateExpress plugin, int weight, @NotNull String type, @NotNull Object data) {
+	public CrateUnknownReward(@NotNull CrateExpress plugin, double weight, @NotNull String type, @NotNull Object data) {
 		super(plugin, "unknown", new ItemBuilder(Material.BARRIER, 1, plugin.i18n("crate.reward.unknown", "type", type)).build(), weight, false);
 		this.type = type;
 		this.data = data;
 	}
 
 	@Override
-	public void reward(@NotNull Player player) throws RewardGiveException {
+	protected void reward(@NotNull Player player) throws RewardGiveException {
 		throw new RewardGiveException("Unknown reward type: " + this.type);
 	}
 

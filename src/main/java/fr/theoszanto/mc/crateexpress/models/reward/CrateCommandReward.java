@@ -9,7 +9,7 @@ import org.jetbrains.annotations.NotNull;
 public class CrateCommandReward extends CrateReward {
 	private final @NotNull String command;
 
-	public CrateCommandReward(@NotNull CrateExpress plugin, @NotNull ItemStack icon, int weight, @NotNull String command, boolean needInventorySpace) {
+	public CrateCommandReward(@NotNull CrateExpress plugin, @NotNull ItemStack icon, double weight, @NotNull String command, boolean needInventorySpace) {
 		super(plugin, "command", icon, weight, needInventorySpace);
 		this.command = command;
 	}
@@ -25,7 +25,7 @@ public class CrateCommandReward extends CrateReward {
 	}
 
 	@Override
-	public void reward(@NotNull Player player) throws RewardGiveException {
+	protected void reward(@NotNull Player player) throws RewardGiveException {
 		Bukkit.dispatchCommand(Bukkit.getConsoleSender(), this.formattedCommand(player));
 	}
 

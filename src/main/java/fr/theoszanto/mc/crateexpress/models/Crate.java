@@ -36,13 +36,14 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	private double delay;
 	private @Nullable Sound sound;
 	private boolean disabled;
+	private boolean noPreview;
 
 	@UnmodifiableView
 	private final @NotNull Map<@NotNull Integer, @NotNull CrateReward> rewardsUnmodifiable = Collections.unmodifiableMap(this.rewards);
 	@UnmodifiableView
 	private final @NotNull Collection<@NotNull CrateReward> rewardsValuesUnmodifiable = Collections.unmodifiableCollection(this.rewards.values());
 
-	public Crate(@NotNull CrateExpress plugin, @NotNull String id, int min, int max, @Nullable CrateKey key, @NotNull String name, @Nullable String message, @Nullable UnloadableWorldLocation location, double delay, @Nullable Sound sound, boolean disabled) {
+	public Crate(@NotNull CrateExpress plugin, @NotNull String id, int min, int max, @Nullable CrateKey key, @NotNull String name, @Nullable String message, @Nullable UnloadableWorldLocation location, double delay, @Nullable Sound sound, boolean disabled, boolean noPreview) {
 		super(plugin);
 		this.id = id;
 		this.min = min;
@@ -54,6 +55,7 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 		this.delay = delay;
 		this.sound = sound;
 		this.disabled = disabled;
+		this.noPreview = noPreview;
 	}
 
 	public void open(@NotNull Player player) {
@@ -208,5 +210,13 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 
 	public void setDisabled(boolean disabled) {
 		this.disabled = disabled;
+	}
+
+	public boolean isNoPreview() {
+		return this.noPreview;
+	}
+
+	public void setNoPreview(boolean noPreview) {
+		this.noPreview = noPreview;
 	}
 }

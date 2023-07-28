@@ -112,16 +112,19 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 			}
 		} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) {
 			if (clickedCrate.isPresent()) {
-				Crate crate = clickedCrate.get();
-				if (this.event(new CratePreviewInteractEvent(crate, player, true)))
-					new CratePreviewGUI(this.plugin, crate).showToPlayer(player);
+				this.preview(clickedCrate.get(), player, true);
 				event.setCancelled(true);
 			} else if (usedKeyCrate.isPresent()) {
-				Crate crate = usedKeyCrate.get();
-				if (this.event(new CratePreviewInteractEvent(crate, player, false)))
-					new CratePreviewGUI(this.plugin, crate).showToPlayer(player);
+				this.preview(usedKeyCrate.get(), player, false);
 				event.setCancelled(true);
 			}
 		}
+	}
+
+	private void preview(@NotNull Crate crate, @NotNull Player player, boolean fromPhysicalCrate) {
+		if (crate.isNoPreview() && !player.hasPermission(CratePermission.BYPASS_NO_PREVIEW))
+			this.i18nMessage(player, "action.crate.no-preview", "crate", crate.getName());
+		else if (this.event(new CratePreviewInteractEvent(crate, player, fromPhysicalCrate)))
+			new CratePreviewGUI(this.plugin, crate).showToPlayer(player);
 	}
 }

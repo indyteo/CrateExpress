@@ -14,7 +14,7 @@ public class CrateKeyReward extends CrateReward {
 	private final @NotNull String key;
 	private int amount;
 
-	public CrateKeyReward(@NotNull CrateExpress plugin, int weight, @NotNull String key, int amount) {
+	public CrateKeyReward(@NotNull CrateExpress plugin, double weight, @NotNull String key, int amount) {
 		super(plugin, "key", ItemUtils.EMPTY, weight, true);
 		this.key = key;
 		this.amount = amount;
@@ -35,7 +35,7 @@ public class CrateKeyReward extends CrateReward {
 	}
 
 	@Override
-	public void reward(@NotNull Player player) throws RewardGiveException {
+	protected void reward(@NotNull Player player) throws RewardGiveException {
 		CrateKey key = this.fetchCrateKey();
 		if (key == null)
 			throw new RewardGiveException("Unknown key: " + this.key);

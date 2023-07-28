@@ -8,13 +8,13 @@ import org.jetbrains.annotations.NotNull;
 public class CrateItemReward extends CrateReward {
 	private final @NotNull ItemStack item;
 
-	public CrateItemReward(@NotNull CrateExpress plugin, int weight, @NotNull ItemStack item) {
+	public CrateItemReward(@NotNull CrateExpress plugin, double weight, @NotNull ItemStack item) {
 		super(plugin, "item", item, weight, true);
 		this.item = item;
 	}
 
 	@Override
-	public void reward(@NotNull Player player) throws RewardGiveException {
+	protected void reward(@NotNull Player player) throws RewardGiveException {
 		player.getInventory().addItem(this.item.clone());
 	}
 

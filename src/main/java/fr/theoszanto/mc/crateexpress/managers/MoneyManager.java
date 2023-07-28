@@ -2,6 +2,7 @@ package fr.theoszanto.mc.crateexpress.managers;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.CrateConfig;
+import fr.theoszanto.mc.crateexpress.utils.FormatUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import fr.theoszanto.mc.crateexpress.utils.VaultEconomy;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
@@ -61,7 +62,8 @@ public class MoneyManager extends PluginObject {
 	}
 
 	public @NotNull String formatMoney(double amount) {
-		return this.placementBefore ? this.currencySymbol + amount : amount + this.currencySymbol;
+		String format = FormatUtils.splitEveryThreeDigits(amount, true);
+		return this.placementBefore ? this.currencySymbol + format : format + this.currencySymbol;
 	}
 
 	public boolean isPhysical() {

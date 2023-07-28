@@ -22,7 +22,7 @@ public abstract class CrateRewardYML<T extends CrateReward> extends CrateRewardS
 			throw new IllegalArgumentException();
 		ConfigurationSection data = (ConfigurationSection) arguments[0];
 		data.set("type", reward.getType());
-		data.set("weight", (int) reward.getWeight());
+		data.set("weight", reward.getWeight());
 		this.serialize((T) reward, data);
 	}
 
@@ -31,13 +31,13 @@ public abstract class CrateRewardYML<T extends CrateReward> extends CrateRewardS
 		if (arguments.length != 1 || !(arguments[0] instanceof ConfigurationSection))
 			throw new IllegalArgumentException();
 		ConfigurationSection data = (ConfigurationSection) arguments[0];
-		int weight = data.getInt("weight", 1);
+		double weight = data.getDouble("weight", 1);
 		return this.deserialize(data, weight);
 	}
 
 	protected abstract void serialize(@NotNull T reward, @NotNull ConfigurationSection data);
 
-	protected abstract @NotNull T deserialize(@NotNull ConfigurationSection data, int weight) throws IllegalStateException;
+	protected abstract @NotNull T deserialize(@NotNull ConfigurationSection data, double weight) throws IllegalStateException;
 
 	protected static @NotNull String requireString(@NotNull ConfigurationSection data, @NotNull String key) throws IllegalStateException {
 		return assertNotNull(data.getString(key, null), key, "string");

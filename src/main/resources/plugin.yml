@@ -24,12 +24,16 @@ permissions:
     children:
       crateexpress.unlimited-claim: true
       crateexpress.bypass-disabled: true
+      crateexpress.bypass-no-preview: true
       crateexpress.command.*: true
   crateexpress.unlimited-claim:
     description: "Grant permission to bypass claim size limit"
     default: op
   crateexpress.bypass-disabled:
     description: "Grant permission to open disabled crates"
+    default: op
+  crateexpress.bypass-no-preview:
+    description: "Grant permission to preview crates even when disabled"
     default: op
   crateexpress.command.*:
     description: "Grant access to all /crateexpress subcommands"

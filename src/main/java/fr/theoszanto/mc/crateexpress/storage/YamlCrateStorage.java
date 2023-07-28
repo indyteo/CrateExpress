@@ -80,7 +80,8 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 						sound = null;
 					}
 					boolean disabled = data.getBoolean("disabled", false);
-					Crate crate = new Crate(this.plugin, id, min, max, key, name, message, location, delay, sound, disabled);
+					boolean noPreview = data.getBoolean("no-preview", false);
+					Crate crate = new Crate(this.plugin, id, min, max, key, name, message, location, delay, sound, disabled, noPreview);
 					ConfigurationSection items = data.getConfigurationSection("items");
 					if (items != null) {
 						for (String item : items.getKeys(false)) {
@@ -125,6 +126,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			if (crate.getSound() != null)
 				data.set("sound", crate.getSound().name());
 			data.set("disabled", crate.isDisabled());
+			data.set("no-preview", crate.isNoPreview());
 			ConfigurationSection items = data.createSection("items");
 			crate.getRewardsWithSlot().forEach((slot, reward) -> {
 				ConfigurationSection rewardData = items.createSection(slot.toString());
@@ -214,10 +216,15 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			YamlConfiguration data = new YamlConfiguration();
 			data.load(file);
 			boolean exists = data.contains(id);
+			if (exists) {
+				Integer newCount = this.rewardsCountCache.computeIfPresent(uuid, (u, count) -> count > 0 ? count - 1 : 0);
+				if (newCount != null && newCount == 0) {
+					if (file.delete())
+						return;
+				}
+			}
 			data.set(id, null);
 			data.save(file);
-			if (exists)
-				this.rewardsCountCache.computeIfPresent(uuid, (u, count) -> count > 0 ? count - 1 : 0);
 		} catch (FileNotFoundException ignored) {
 		} catch (IOException | InvalidConfigurationException e) {
 			throw new IllegalStateException("Could not delete reward for player: " + player.getName() + " (" + uuid + ")", e);
@@ -263,7 +270,17 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	private boolean crateFilesFilter(@NotNull Path path, @NotNull BasicFileAttributes attributes) {
+		if (!attributes.isRegularFile())
+			return false;
 		String relativePath = this.cratesDir.toPath().relativize(path).toString();
-		return attributes.isRegularFile() && relativePath.matches("^.*\\.ya?ml$") && !this.ignoreFiles.contains(relativePath);
+		if (!relativePath.matches("^.*\\.ya?ml$"))
+			return false;
+		for (String ignore : this.ignoreFiles) {
+			if (ignore.equalsIgnoreCase(relativePath))
+				return false;
+			if (ignore.endsWith("/") && relativePath.startsWith(ignore))
+				return false;
+		}
+		return true;
 	}
 }

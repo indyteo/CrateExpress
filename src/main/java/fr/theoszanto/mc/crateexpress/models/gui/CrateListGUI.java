@@ -103,6 +103,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 				"z", location.getBlockZ()
 		));
 		ItemUtils.addLoreConditionally(crate.isDisabled(), item, this.i18n("menu.list.disabled"));
+		ItemUtils.addLoreConditionally(crate.isNoPreview(), item, this.i18n("menu.list.no-preview"));
 		ItemUtils.addLoreConditionally(player.hasPermission(CratePermission.Command.EDIT), item, this.i18n("menu.list.edit"));
 		ItemUtils.addLoreConditionally(key != null && player.hasPermission(CratePermission.Command.GIVE), item, this.i18n("menu.list.give"));
 		ItemUtils.addLoreConditionally(location != null && player.hasPermission(CratePermission.Command.TELEPORT), item, this.i18n("menu.list.teleport"));

@@ -7,13 +7,13 @@ import org.jetbrains.annotations.NotNull;
 public class CrateMoneyReward extends CrateReward {
 	private final double amount;
 
-	public CrateMoneyReward(@NotNull CrateExpress plugin, int weight, double amount) {
+	public CrateMoneyReward(@NotNull CrateExpress plugin, double weight, double amount) {
 		super(plugin, "money", plugin.money().getItem(amount), weight, plugin.money().isPhysical());
 		this.amount = amount;
 	}
 
 	@Override
-	public void reward(@NotNull Player player) throws RewardGiveException {
+	protected void reward(@NotNull Player player) throws RewardGiveException {
 		try {
 			this.money().giveMoney(player, this.amount);
 		} catch (IllegalStateException e) {

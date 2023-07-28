@@ -4,6 +4,7 @@ import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.gui.CrateEditGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
+import fr.theoszanto.mc.crateexpress.utils.FormatUtils;
 import fr.theoszanto.mc.express.gui.ExpressGUI;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import org.bukkit.Material;
@@ -18,7 +19,7 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends ExpressGUI<C
 	private final @NotNull Crate crate;
 	protected final @Nullable T reward;
 	private final int slot;
-	private int weight;
+	private double weight;
 
 	public CrateRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate) {
 		this(plugin, crate, null, -1);
@@ -32,11 +33,11 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends ExpressGUI<C
 		this.weight = 1;
 	}
 
-	public int getWeight() {
-		return this.reward == null ? this.weight : (int) this.reward.getWeight();
+	public double getWeight() {
+		return this.reward == null ? this.weight : this.reward.getWeight();
 	}
 
-	public void setWeight(int weight) {
+	public void setWeight(double weight) {
 		if (this.reward == null)
 			this.weight = weight;
 		else
@@ -46,8 +47,8 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends ExpressGUI<C
 	protected abstract void setupButtons(@NotNull Player player);
 
 	protected final void setWeightButton(int slot) {
-		int weight = this.getWeight();
-		this.set(slot, new ItemBuilder(Material.ANVIL, weight, this.i18n("menu.reward.weight.name", "weight", weight), this.i18nLines("menu.reward.weight.lore", "total", this.crate.totalWeight()))
+		double weight = this.getWeight();
+		this.set(slot, new ItemBuilder(Material.ANVIL, (int) Math.round(weight), this.i18n("menu.reward.weight.name", "weight", FormatUtils.noTrailingZeroDecimal(weight)), this.i18nLines("menu.reward.weight.lore", "total", FormatUtils.noTrailingZeroDecimal(this.crate.totalWeight())))
 				.addLoreConditionally(weight > 1, this.i18n("menu.reward.weight.decrease"))
 				.addLore(this.i18n("menu.reward.weight.increase")), "weight");
 	}

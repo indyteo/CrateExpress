@@ -5,6 +5,7 @@ import fr.theoszanto.mc.crateexpress.events.CrateGiveEvent;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
+import fr.theoszanto.mc.crateexpress.utils.FormatUtils;
 import fr.theoszanto.mc.express.gui.ExpressGUI;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
@@ -62,9 +63,10 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				),
 				"name", this.crate.getName(),
 				"message", message == null ? this.i18n("menu.manage.header.no-message") : message,
-				"delay", this.crate.getDelay(),
+				"delay", FormatUtils.noTrailingZeroDecimal(this.crate.getDelay()),
 				"sound", sound == null ? this.i18n("menu.manage.header.no-sound") : sound.getKey(),
-				"status", this.i18n("menu.manage.header." + (this.crate.isDisabled() ? "disabled" : "enabled"))
+				"status", this.i18n("menu.manage.header." + (this.crate.isDisabled() ? "disabled" : "enabled")),
+				"preview", this.i18n("menu.manage.header." + (this.crate.isNoPreview() ? "disabled" : "enabled"))
 		)));
 
 		// Go back & close buttons
@@ -86,11 +88,14 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				"z", location.getBlockZ()
 		))).addLoreConditionally(location != null, this.i18n("menu.manage.location.teleport")), "location");
 		this.set(slot(1, 6), new ItemBuilder(this.crate.isDisabled() ? Material.GRAY_DYE : Material.LIME_DYE, 1, this.i18n("menu.manage.status.name", "status", this.i18n("menu.manage.status." + (this.crate.isDisabled() ? "disabled" : "enabled"))), this.i18nLines("menu.manage.status.lore")), "status");
-		this.set(slot(1, 7), new ItemBuilder(Material.TNT, 1, this.i18n("menu.manage.delete.name"), this.i18nLines("menu.manage.delete.lore")), "delete");
+		this.set(slot(1, 7), new ItemBuilder(this.crate.isNoPreview() ? Material.ENDER_PEARL : Material.ENDER_EYE, 1, this.i18n("menu.manage.preview.name", "preview", this.i18n("menu.manage.preview." + (this.crate.isNoPreview() ? "disabled" : "enabled"))), this.i18nLines("menu.manage.preview.lore")), "preview");
 		this.set(slot(2, 2), new ItemBuilder(Material.NAME_TAG, 1, this.i18n("menu.manage.name.name", "name", this.crate.getName()), this.i18nLines("menu.manage.name.lore")), "name");
 		this.set(slot(2, 3), new ItemBuilder(Material.BIRCH_SIGN, 1, this.i18n("menu.manage.message.name", "message", this.i18n(message == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.message.lore", "message", message == null ? this.i18n("menu.manage.message.none") : message)).addLoreConditionally(message != null, this.i18n("menu.manage.message.show")), "message");
-		this.set(slot(2, 5), new ItemBuilder(Material.CLOCK, 1, this.i18n("menu.manage.delay.name", "delay", this.crate.getDelay()), this.i18nLines("menu.manage.delay.lore")), "delay");
+		this.set(slot(2, 5), new ItemBuilder(Material.CLOCK, 1, this.i18n("menu.manage.delay.name", "delay", FormatUtils.noTrailingZeroDecimal(this.crate.getDelay())), this.i18nLines("menu.manage.delay.lore")), "delay");
 		this.set(slot(2, 6), new ItemBuilder(Material.BELL, 1, this.i18n("menu.manage.sound.name", "sound", this.i18n(sound == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.sound.lore", "sound", sound == null ? this.i18n("menu.manage.sound.none") : sound.getKey())).addLoreConditionally(sound != null, this.i18n("menu.manage.sound.play")), "sound");
+
+		// Delete button
+		this.set(slot(3, 4), new ItemBuilder(Material.TNT, 1, this.i18n("menu.manage.delete.name"), this.i18nLines("menu.manage.delete.lore")), "delete");
 	}
 
 	@Override
@@ -172,8 +177,9 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 			this.crate.setDisabled(!this.crate.isDisabled());
 			this.refresh(player);
 			break;
-		case "delete":
-			new CrateDeleteGUI(this.plugin, this.crate, this).showToPlayer(player);
+		case "preview":
+			this.crate.setNoPreview(!this.crate.isNoPreview());
+			this.refresh(player);
 			break;
 		case "name":
 			this.i18nMessage(player, "menu.manage.name.request");
@@ -209,7 +215,7 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 		case "delay":
 			this.i18nMessage(player, "menu.manage.delay.request");
 			player.closeInventory();
-			this.spigot().requestChatEdition(player, Double.toString(this.crate.getDelay()), 1, TimeUnit.MINUTES).whenComplete((delay, timeout) -> {
+			this.spigot().requestChatEdition(player, FormatUtils.noTrailingZeroDecimal(this.crate.getDelay()), 1, TimeUnit.MINUTES).whenComplete((delay, timeout) -> {
 				if (timeout == null) {
 					try {
 						this.crate.setDelay(Double.parseDouble(delay));
@@ -230,6 +236,9 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				this.refresh(player);
 			} else if (click == ClickType.MIDDLE && sound != null)
 				player.playSound(player.getLocation(), sound, SoundCategory.MASTER, 1, 1);
+			break;
+		case "delete":
+			new CrateDeleteGUI(this.plugin, this.crate, this).showToPlayer(player);
 			break;
 		}
 		return true;

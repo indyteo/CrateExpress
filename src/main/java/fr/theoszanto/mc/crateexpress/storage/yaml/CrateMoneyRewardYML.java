@@ -16,7 +16,7 @@ public class CrateMoneyRewardYML extends CrateRewardYML<CrateMoneyReward> {
 	}
 
 	@Override
-	public @NotNull CrateMoneyReward deserialize(@NotNull ConfigurationSection data, int weight) throws IllegalStateException {
+	public @NotNull CrateMoneyReward deserialize(@NotNull ConfigurationSection data, double weight) throws IllegalStateException {
 		double amount = data.getDouble("amount", Double.NaN);
 		if (Double.isNaN(amount))
 			throw new IllegalStateException("Missing amount value for crate money reward");
