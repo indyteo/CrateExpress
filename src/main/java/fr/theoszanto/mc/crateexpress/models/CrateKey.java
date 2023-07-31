@@ -32,8 +32,8 @@ public class CrateKey extends PluginObject {
 		return this.item;
 	}
 
-	public void giveTo(@NotNull Player player, int amount, @NotNull CommandSender commandSource) {
-		this.giveTo(player, amount, CrateGiveEvent.Cause.GIVE_COMMAND, commandSource, null);
+	public void giveTo(@NotNull Player player, int amount, @NotNull CommandSender commandSource, boolean all) {
+		this.giveTo(player, amount, all ? CrateGiveEvent.Cause.GIVE_ALL_COMMAND : CrateGiveEvent.Cause.GIVE_TO_COMMAND, commandSource, null);
 	}
 
 	public void giveTo(@NotNull Player player, int amount, @NotNull CrateGiveEvent.AdminGUIGiveButton adminSource) {

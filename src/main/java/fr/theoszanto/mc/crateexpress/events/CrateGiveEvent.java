@@ -93,7 +93,11 @@ public class CrateGiveEvent extends Event implements Cancellable {
 	}
 
 	public enum Cause {
-		GIVE_COMMAND, ADMIN_GIVE
+		GIVE_TO_COMMAND, GIVE_ALL_COMMAND, ADMIN_GIVE;
+
+		public boolean isGiveCommand() {
+			return this == GIVE_TO_COMMAND || this == GIVE_ALL_COMMAND;
+		}
 	}
 
 	public enum AdminGUIGiveButton {

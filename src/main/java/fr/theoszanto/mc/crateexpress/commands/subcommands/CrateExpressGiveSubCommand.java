@@ -34,6 +34,7 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 		int i = 0;
 		String target = args[i++];
 		Collection<? extends Player> targets;
+		boolean all = false;
 		if (target.equals("to")) {
 			if (args.length < 3)
 				return false;
@@ -47,6 +48,7 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 		} else if (target.equals("all")) {
 			if (args.length < 2)
 				return false;
+			all = true;
 			targets = Bukkit.getOnlinePlayers();
 		} else
 			return false;
@@ -76,7 +78,7 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 			}
 		}
 		for (Player player : targets)
-			key.giveTo(player, amount, sender);
+			key.giveTo(player, amount, sender, all);
 		this.i18nMessage(sender, "command.give.success");
 		return true;
 	}
