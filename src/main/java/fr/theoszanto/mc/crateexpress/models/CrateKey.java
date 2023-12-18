@@ -3,6 +3,7 @@ package fr.theoszanto.mc.crateexpress.models;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.events.CrateGiveEvent;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateKeyReward;
+import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.command.CommandSender;
@@ -47,7 +48,7 @@ public class CrateKey extends PluginObject {
 		if (this.event(event)) {
 			CrateKey key = event.getKey();
 			if (saving) {
-				this.storage().getSource().saveReward(player, new CrateKeyReward(this.plugin, 0, key.getCrateId(), event.getAmount()));
+				this.storage().getSource().saveReward(player, new CrateKeyReward(this.plugin, CrateReward.generateRandomId(), 0, key.getCrateId(), event.getAmount()));
 				this.i18nMessage(player, "action.key.stored", "key", ItemUtils.name(key.getItem()));
 			} else {
 				player.getInventory().addItem(ItemUtils.withAmount(key.getItem(), event.getAmount()));

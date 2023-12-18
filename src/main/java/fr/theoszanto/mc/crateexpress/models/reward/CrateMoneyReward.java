@@ -7,8 +7,8 @@ import org.jetbrains.annotations.NotNull;
 public class CrateMoneyReward extends CrateReward {
 	private final double amount;
 
-	public CrateMoneyReward(@NotNull CrateExpress plugin, double weight, double amount) {
-		super(plugin, "money", plugin.money().getItem(amount), weight, plugin.money().isPhysical());
+	public CrateMoneyReward(@NotNull CrateExpress plugin, @NotNull String id, double weight, double amount) {
+		super(plugin, id, "money", plugin.money().getItem(amount), weight, plugin.money().isPhysical());
 		this.amount = amount;
 	}
 

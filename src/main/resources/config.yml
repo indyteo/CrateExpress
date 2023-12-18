@@ -38,6 +38,7 @@ storage:
     options:
       - "./crates/"
       - "./rewards/"
+      - "./stats/"
       - []
   rewards:
     0:

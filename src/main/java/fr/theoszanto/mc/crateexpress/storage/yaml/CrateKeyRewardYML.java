@@ -17,10 +17,10 @@ public class CrateKeyRewardYML extends CrateRewardYML<CrateKeyReward> {
 	}
 
 	@Override
-	public @NotNull CrateKeyReward deserialize(@NotNull ConfigurationSection data, double weight) throws IllegalStateException {
+	public @NotNull CrateKeyReward deserialize(@NotNull ConfigurationSection data, @NotNull String id, double weight) throws IllegalStateException {
 		int amount = data.getInt("amount", -1);
 		if (amount < 0 || amount > 64)
 			throw new IllegalStateException("Missing (or invalid) key amount for crate key reward");
-		return new CrateKeyReward(this.plugin, weight, CrateRewardYML.requireString(data, "key"), amount);
+		return new CrateKeyReward(this.plugin, id, weight, CrateRewardYML.requireString(data, "key"), amount);
 	}
 }

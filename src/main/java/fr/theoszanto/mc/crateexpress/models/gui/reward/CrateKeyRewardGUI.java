@@ -5,6 +5,7 @@ import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.models.gui.CrateSelectGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateKeyReward;
+import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -77,7 +78,7 @@ public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 	protected @NotNull CrateKeyReward createReward() throws IllegalStateException {
 		if (this.key == null)
 			throw new IllegalStateException();
-		return new CrateKeyReward(this.plugin, this.getWeight(), this.key, this.amount);
+		return new CrateKeyReward(this.plugin, CrateReward.generateRandomId(), this.getWeight(), this.key, this.amount);
 	}
 
 	@Override

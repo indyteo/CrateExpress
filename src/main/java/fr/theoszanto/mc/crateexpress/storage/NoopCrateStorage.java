@@ -65,6 +65,16 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 		this.notice();
 	}
 
+	@Override
+	public void crateOpenStats(@NotNull Player player, @NotNull Crate crate, @NotNull List<@NotNull CrateReward> rewards) throws IllegalStateException {
+		this.notice();
+	}
+
+	@Override
+	public void migratePlayerStats(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException {
+		this.notice();
+	}
+
 	private void notice() {
 		this.warn("NoopStorage is not able to save/load any data!");
 	}

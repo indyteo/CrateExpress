@@ -32,6 +32,7 @@ public class StorageManager extends PluginObject {
 
 	public void migratePlayerData(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException {
 		this.source.migrateRewards(from, to);
+		this.source.migratePlayerStats(from, to);
 	}
 
 	public void resetStorageSource() {

@@ -37,4 +37,8 @@ public interface CrateStorage extends Logged {
 	void deleteReward(@NotNull Player player, @NotNull String id) throws IllegalStateException;
 
 	void migrateRewards(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException;
+
+	void crateOpenStats(@NotNull Player player, @NotNull Crate crate, @NotNull List<@NotNull CrateReward> rewards) throws IllegalStateException;
+
+	void migratePlayerStats(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException;
 }

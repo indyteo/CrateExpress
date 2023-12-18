@@ -3,6 +3,7 @@ package fr.theoszanto.mc.crateexpress.models.gui.reward;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateItemReward;
+import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Material;
@@ -43,7 +44,7 @@ public class CrateItemRewardGUI extends CrateRewardGUI<CrateItemReward> {
 	protected @NotNull CrateItemReward createReward() throws IllegalStateException {
 		if (this.item == null)
 			throw new IllegalStateException();
-		return new CrateItemReward(this.plugin, this.getWeight(), this.item);
+		return new CrateItemReward(this.plugin, CrateReward.generateRandomId(), this.getWeight(), this.item);
 	}
 
 	@Override

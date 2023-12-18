@@ -26,32 +26,43 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	private final @NotNull File cratesDir;
 	private final @NotNull File rewardsDir;
+	private final @NotNull File statsDir;
 	private final @NotNull List<@NotNull String> ignoreFiles;
 	private final @NotNull Map<@NotNull UUID, @NotNull Integer> rewardsCountCache = new HashMap<>();
 
-	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir) throws IllegalArgumentException {
-		this(plugin, cratesDir, rewardsDir, new ArrayList<>());
+	private static final @NotNull SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
+	private static final @NotNull SimpleDateFormat TIME_FORMAT = new SimpleDateFormat("HH:mm:ss");
+
+	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir, @NotNull String statsDir) throws IllegalArgumentException {
+		this(plugin, cratesDir, rewardsDir, statsDir, new ArrayList<>());
 	}
 
-	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir, @NotNull ArrayList<@NotNull String> ignoreFiles) throws IllegalArgumentException {
+	public YamlCrateStorage(@NotNull CrateExpress plugin, @NotNull String cratesDir, @NotNull String rewardsDir, @NotNull String statsDir, @NotNull ArrayList<@NotNull String> ignoreFiles) throws IllegalArgumentException {
 		super(plugin);
-		this.cratesDir = new File(plugin.getDataFolder(), cratesDir);
-		if (!(this.cratesDir.exists() ? this.cratesDir.isDirectory() : this.cratesDir.mkdirs()))
-			throw new IllegalArgumentException("YamlStorage crates directory is invalid: " + this.cratesDir);
-		this.rewardsDir = new File(plugin.getDataFolder(), rewardsDir);
-		if (!(this.rewardsDir.exists() ? this.rewardsDir.isDirectory() : this.rewardsDir.mkdirs()))
-			throw new IllegalArgumentException("YamlStorage rewards directory is invalid: " + this.rewardsDir);
+		this.cratesDir = this.initDir(cratesDir, "crates");
+		this.rewardsDir = this.initDir(rewardsDir, "rewards");
+		this.statsDir = this.initDir(statsDir, "stats");
 		this.ignoreFiles = ignoreFiles;
+	}
+
+	protected @NotNull File initDir(@NotNull String dir, @NotNull String name) {
+		File file = new File(this.plugin.getDataFolder(), dir);
+		if (!(file.exists() ? file.isDirectory() : file.mkdirs()))
+			throw new IllegalArgumentException("YamlStorage " + name + " directory is invalid: " + file);
+		return file;
 	}
 
 	@Override
@@ -63,15 +74,14 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 				try {
 					YamlConfiguration data = new YamlConfiguration();
 					data.load(path.toFile());
-					int min = data.getInt("min", 1);
-					int max = data.getInt("max", 1);
+					boolean disabled = data.getBoolean("disabled", false);
 					String crateKey = data.getString("key", null);
 					CrateKey key = crateKey == null ? null : new CrateKey(this.plugin, id, ItemUtils.fromString(crateKey));
+					List<UnloadableWorldLocation> locations = data.contains("locations") ? data.getStringList("locations").stream().map(LocationUtils::fromString).collect(Collectors.toCollection(ArrayList::new)) : null;
+					double delay = data.getDouble("delay", 0);
+					boolean noPreview = data.getBoolean("no-preview", false);
 					String name = data.getString("name", id);
 					String message = data.getString("message", null);
-					String crateLocation = data.getString("location", null);
-					UnloadableWorldLocation location = crateLocation == null ? null : LocationUtils.fromString(crateLocation);
-					double delay = data.getDouble("delay", 0);
 					String crateSound = data.getString("sound", null);
 					Sound sound;
 					try {
@@ -79,9 +89,11 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 					} catch (IllegalArgumentException e) {
 						sound = null;
 					}
-					boolean disabled = data.getBoolean("disabled", false);
-					boolean noPreview = data.getBoolean("no-preview", false);
-					Crate crate = new Crate(this.plugin, id, min, max, key, name, message, location, delay, sound, disabled, noPreview);
+					boolean random = data.getBoolean("random", true);
+					boolean allowDuplicates = data.getBoolean("allow-duplicates", true);
+					int min = data.getInt("min", 1);
+					int max = data.getInt("max", 1);
+					Crate crate = new Crate(this.plugin, id, disabled, key, locations, delay, noPreview, name, message, sound, random, allowDuplicates, min, max);
 					ConfigurationSection items = data.getConfigurationSection("items");
 					if (items != null) {
 						for (String item : items.getKeys(false)) {
@@ -112,21 +124,23 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		try {
 			File file = new File(this.cratesDir, fileNameFromCrateId(id));
 			YamlConfiguration data = new YamlConfiguration();
-			data.set("min", crate.getMin());
-			data.set("max", crate.getMax());
+			data.set("disabled", crate.isDisabled());
 			CrateKey key = crate.getKey();
 			if (key != null)
 				data.set("key", ItemUtils.toString(key.getItem()));
+			if (crate.getLocations() != null)
+				data.set("locations", crate.getLocations().stream().map(LocationUtils::toString).collect(Collectors.toList()));
+			data.set("delay", crate.getDelay());
+			data.set("no-preview", crate.isNoPreview());
 			data.set("name", crate.getName());
 			if (crate.getMessage() != null)
 				data.set("message", crate.getMessage());
-			if (crate.getLocation() != null)
-				data.set("location", LocationUtils.toString(crate.getLocation()));
-			data.set("delay", crate.getDelay());
 			if (crate.getSound() != null)
 				data.set("sound", crate.getSound().name());
-			data.set("disabled", crate.isDisabled());
-			data.set("no-preview", crate.isNoPreview());
+			data.set("random", crate.isRandom());
+			data.set("allow-duplicates", crate.doesAllowDuplicates());
+			data.set("min", crate.getMin());
+			data.set("max", crate.getMax());
 			ConfigurationSection items = data.createSection("items");
 			crate.getRewardsWithSlot().forEach((slot, reward) -> {
 				ConfigurationSection rewardData = items.createSection(slot.toString());
@@ -243,6 +257,61 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		}
 	}
 
+	@Override
+	public void crateOpenStats(@NotNull Player player, @NotNull Crate crate, @NotNull List<@NotNull CrateReward> rewards) throws IllegalStateException {
+		try {
+			// Increase global stats
+			this.saveCrateOpenStats(this.statsDir, crate, rewards);
+
+			// Increase player stats
+			File playerStatsDir = new File(this.statsDir, player.getUniqueId().toString());
+			this.saveCrateOpenStats(playerStatsDir, crate, rewards);
+
+			// Log rewards received
+			Date now = new Date();
+			File playerRewardsLogStatsFile = new File(playerStatsDir, DATE_FORMAT.format(now) + ".yml");
+			YamlConfiguration playerDailyRewardsStats = new YamlConfiguration();
+			try {
+				playerDailyRewardsStats.load(playerRewardsLogStatsFile);
+			} catch (FileNotFoundException ignored) {}
+			int n = MathUtils.nextAvailableInt(playerDailyRewardsStats.getKeys(false));
+			for (CrateReward reward : rewards) {
+				ConfigurationSection playerRewardStats = playerDailyRewardsStats.createSection(Integer.toString(n++));
+				playerRewardStats.set("time", TIME_FORMAT.format(now));
+				playerRewardStats.set("reward", reward.getId());
+				playerRewardStats.set("crate", crate.getId());
+			}
+			playerDailyRewardsStats.save(playerRewardsLogStatsFile);
+		} catch (IOException | InvalidConfigurationException e) {
+			throw new IllegalStateException("Could not save stats for crate opening", e);
+		}
+	}
+
+	private void saveCrateOpenStats(@NotNull File dir, @NotNull Crate crate, @NotNull List<@NotNull CrateReward> rewards) throws IOException, InvalidConfigurationException {
+		File cratesStatsFile = new File(dir, "crates.yml");
+		YamlConfiguration cratesStats = new YamlConfiguration();
+		try {
+			cratesStats.load(cratesStatsFile);
+		} catch (FileNotFoundException ignored) {}
+		ConfigurationSection crateStats = getOrCreateSection(cratesStats, crate.getId());
+		crateStats.set("times-opened", crateStats.getInt("times-opened", 0) + 1);
+		ConfigurationSection rewardsStats = getOrCreateSection(crateStats, "rewards-given");
+		for (CrateReward reward : rewards)
+			rewardsStats.set(reward.getId(), rewardsStats.getInt(reward.getId(), 0) + 1);
+		cratesStats.save(cratesStatsFile);
+	}
+
+	@Override
+	public void migratePlayerStats(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException {
+		try {
+			Path src = new File(this.statsDir, from.toString()).toPath();
+			Path dst = new File(this.statsDir, to.toString()).toPath();
+			Files.move(src, dst, StandardCopyOption.REPLACE_EXISTING);
+		} catch (IOException e) {
+			throw new IllegalStateException("Could not rename stats directory", e);
+		}
+	}
+
 	private @NotNull CrateReward deserializeReward(@NotNull ConfigurationSection reward) throws InvalidConfigurationException {
 		String type = reward.getString("type", "null");
 		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource(type);
@@ -260,12 +329,12 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		rewardStorage.serializeReward(reward, data);
 	}
 
-	private static @NotNull String crateIdFromFileName(@NotNull String fileName) {
+	protected static @NotNull String crateIdFromFileName(@NotNull String fileName) {
 		int lastDot = fileName.lastIndexOf('.');
 		return lastDot == -1 ? fileName : fileName.substring(0, lastDot);
 	}
 
-	private static @NotNull String fileNameFromCrateId(@NotNull String crateId) {
+	protected static @NotNull String fileNameFromCrateId(@NotNull String crateId) {
 		return crateId + ".yml";
 	}
 
@@ -282,5 +351,11 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 				return false;
 		}
 		return true;
+	}
+
+	@NotNull
+	private static ConfigurationSection getOrCreateSection(@NotNull ConfigurationSection cratesStats, @NotNull String key) {
+		ConfigurationSection crateStats = cratesStats.getConfigurationSection(key);
+		return crateStats == null ? cratesStats.createSection(key) : crateStats;
 	}
 }

@@ -19,8 +19,9 @@ public class CrateCommandRewardYML extends CrateRewardYML<CrateCommandReward> {
 	}
 
 	@Override
-	public @NotNull CrateCommandReward deserialize(@NotNull ConfigurationSection data, double weight) throws IllegalStateException {
+	public @NotNull CrateCommandReward deserialize(@NotNull ConfigurationSection data, @NotNull String id, double weight) throws IllegalStateException {
 		return new CrateCommandReward(this.plugin,
+				id,
 				CrateRewardYML.requireItem(data, "icon"),
 				weight,
 				CrateRewardYML.requireString(data, "command"),

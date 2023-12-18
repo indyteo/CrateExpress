@@ -1,6 +1,7 @@
 package fr.theoszanto.mc.crateexpress.models.gui;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
+import fr.theoszanto.mc.crateexpress.commands.subcommands.CrateExpressTeleportSubCommand;
 import fr.theoszanto.mc.crateexpress.events.CrateGiveEvent;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateElement;
@@ -22,6 +23,7 @@ import org.bukkit.inventory.meta.BundleMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
 import java.util.stream.Collectors;
@@ -95,18 +97,18 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 			item = new ItemBuilder(Material.CHEST, 1, crate.getName(), this.i18nLines("menu.list.no-key")).build();
 		else
 			item = key.getItem().clone();
-		UnloadableWorldLocation location = crate.getLocation();
-		ItemUtils.addLore(item, location == null ? this.i18nLines("menu.list.no-location") : this.i18nLines("menu.list.location",
-				"world", location.getWorldName(),
-				"x", location.getBlockX(),
-				"y", location.getBlockY(),
-				"z", location.getBlockZ()
-		));
+		List<UnloadableWorldLocation> locations = crate.getLocations();
+		ItemUtils.addLore(item, locations == null || locations.isEmpty() ? this.i18nLines("menu.list.no-location") : locations.size() == 1 ? this.i18nLines("menu.list.location",
+				"world", locations.get(0).getWorldName(),
+				"x", locations.get(0).getBlockX(),
+				"y", locations.get(0).getBlockY(),
+				"z", locations.get(0).getBlockZ()
+		) : this.i18nLines("menu.list.multiple-locations", "count", locations.size()));
 		ItemUtils.addLoreConditionally(crate.isDisabled(), item, this.i18n("menu.list.disabled"));
 		ItemUtils.addLoreConditionally(crate.isNoPreview(), item, this.i18n("menu.list.no-preview"));
 		ItemUtils.addLoreConditionally(player.hasPermission(CratePermission.Command.EDIT), item, this.i18n("menu.list.edit"));
 		ItemUtils.addLoreConditionally(key != null && player.hasPermission(CratePermission.Command.GIVE), item, this.i18n("menu.list.give"));
-		ItemUtils.addLoreConditionally(location != null && player.hasPermission(CratePermission.Command.TELEPORT), item, this.i18n("menu.list.teleport"));
+		ItemUtils.addLoreConditionally(locations != null && !locations.isEmpty() && player.hasPermission(CratePermission.Command.TELEPORT), item, this.i18n("menu.list.teleport"));
 		ItemUtils.addLore(item, this.i18n("menu.list.crate-id", "id", crate.getId()));
 		return item;
 	}
@@ -137,15 +139,9 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 			}
 		} else if (click.isRightClick()) {
 			if (player.hasPermission(CratePermission.Command.TELEPORT)) {
-				UnloadableWorldLocation location = crate.getLocation();
-				if (location != null) {
-					if (location.isWorldLoaded()) {
-						player.closeInventory();
-						player.teleport(location.clone().add(0.5, 0, 0.5));
-						this.i18nMessage(player, "command.teleport.success", "crate", crate.getName());
-					} else
-						this.i18nMessage(player, "command.teleport.unloaded-world", "world", location.getWorldName());
-				}
+				List<UnloadableWorldLocation> locations = crate.getLocations();
+				if (locations != null && !locations.isEmpty() && CrateExpressTeleportSubCommand.teleportOrOpenSelectMenu(this, crate, player))
+					player.closeInventory();
 			}
 		}
 		return true;

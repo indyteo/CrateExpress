@@ -9,12 +9,10 @@ import org.jetbrains.annotations.Nullable;
 
 public class CrateOtherReward extends CrateReward {
 	private final @NotNull String other;
-	private boolean random;
 
-	public CrateOtherReward(@NotNull CrateExpress plugin, @NotNull ItemStack icon, double weight, @NotNull String other, boolean random) {
-		super(plugin, "other", icon, weight, true);
+	public CrateOtherReward(@NotNull CrateExpress plugin, @NotNull String id, @NotNull ItemStack icon, double weight, @NotNull String other) {
+		super(plugin, id, "other", icon, weight, true);
 		this.other = other;
-		this.random = random;
 	}
 
 	private @Nullable Crate fetchOtherCrate() {
@@ -30,11 +28,7 @@ public class CrateOtherReward extends CrateReward {
 		Crate other = this.fetchOtherCrate();
 		if (other == null)
 			throw new RewardGiveException("Unknown crate: " + this.other);
-		if (this.random)
-			other.open(player);
-		else
-			for (CrateReward reward : other.getRewards())
-				reward.giveRewardTo(player);
+		other.open(player);
 	}
 
 	@Override
@@ -44,13 +38,5 @@ public class CrateOtherReward extends CrateReward {
 
 	public @NotNull String getOther() {
 		return this.other;
-	}
-
-	public boolean isRandom() {
-		return this.random;
-	}
-
-	public void setRandom(boolean random) {
-		this.random = random;
 	}
 }

@@ -8,8 +8,8 @@ import org.jetbrains.annotations.NotNull;
 public class CrateItemReward extends CrateReward {
 	private final @NotNull ItemStack item;
 
-	public CrateItemReward(@NotNull CrateExpress plugin, double weight, @NotNull ItemStack item) {
-		super(plugin, "item", item, weight, true);
+	public CrateItemReward(@NotNull CrateExpress plugin, @NotNull String id, double weight, @NotNull ItemStack item) {
+		super(plugin, id, "item", item, weight, true);
 		this.item = item;
 	}
 

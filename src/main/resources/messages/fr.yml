@@ -21,15 +21,19 @@ crate:
 action:
   crate:
     open: "§7Vous venez d'ouvrir une caisse §e#{crate}"
-    need-key: "§cVous devez posséder la clé pour ouvrir une caisse §4#{crate}"
+    need-key:
+      message: "§cVous devez posséder la clé pour ouvrir une caisse §4#{crates}"
+      delimiter: "§c, §4"
     too-much-rewards: "§cVous devez faire de la place dans votre §4/crate claim§c pour ouvrir la caisse §4#{crate}"
     must-wait: "§cVous devez attendre encore §4#{delay}§c avant de pouvoir ouvrir la caisse §4#{crate}"
     disabled: "§cLa caisse §4#{crate}§c est désactivée"
-    no-preview: "§cVous ne pouvez pas prévisualiser la caisse §4#{crate}"
+    no-preview-here: "§cVous ne pouvez pas prévisualiser de caisse ici"
   key:
     receive: "§7Vous venez de recevoir une clé §e#{key}"
     stored: "§7Vous venez de recevoir une clé §e#{key}§7. Votre inventaire étant plein, faites §e/crate claim§7 pour la récupérer !"
     use: "§cVous devez utiliser cette clé sur la caisse §4#{crate}"
+    cannot-use: "§cVous ne pouvez pas utiliser cette clé. Est-ce une ancienne clé ?"
+    cannot-use-here: "§cVous ne pouvez pas utiliser cette clé ici. Utilisez-la sur la caisse correspondante !"
 menu:
   title-style: "§8» #{title}§8 «"
   previous: "§7Page précédente (§e#{page}§7/#{total})"
@@ -75,6 +79,7 @@ menu:
       §7X : §e#{x}
       §7Y : §e#{y}
       §7Z : §e#{z}
+    multiple-locations: "§e#{count}§7 positions définies"
     disabled: "§c§lCette caisse est désactivée"
     no-preview: "§c§lLa prévisualisation est désactivée"
     edit: "§6»§e Clic gauche pour éditer"
@@ -123,36 +128,39 @@ menu:
     header:
       name: "§aGestion des paramètres de la caisse"
       lore: |-
-        §7Nombre de récompenses : §e#{min}§7 à §e#{max}
+        §7Statut : §e#{status}
         §7Clé : §e#{key}
         §7Position : §e#{location}
+        §7Délai : §e#{delay}s
+        §7Prévisualisation : §e#{preview}
         §7Nom : §e#{name}
         §7Message : §e#{message}
-        §7Délai : §e#{delay}s
         §7Son : §e#{sound}
-        §7Statut : §e#{status}
-        §7Prévisualisation : §e#{preview}
+        §7Mode : §e#{random}
       no-key: "§cAucune"
       no-location: "§cAucune"
       location: "#{world}§7 (§e#{x}§7, §e#{y}§7, §e#{z}§7)"
+      multiple-locations: "§e#{count}§7 positions définies"
       no-message: "§cAucun"
       no-sound: "§cAucun"
       enabled: "§aActivée"
       disabled: "§cDésactivée"
-    min:
-      name: "§bNombre minimum de récompenses : §3#{min}"
+      random:
+        enabled: "§aAléatoire"
+        disabled: "§cPack"
+        settings: |-
+          §7Paramètres d'aléatoire :
+          §7- Doublons : §e#{duplicates}
+          §7- Nombre de récompenses : §e#{min}§7 à §e#{max}
+    status:
+      name: "§bStatut de la caisse : §3#{status}"
       lore: |-
-        §7Ce paramètre défini la borne inférieure du nombre de
-        §7récompenses données au joueur à l'ouverture (max 10)
-      decrease: "§6»§e Clic droit pour diminuer"
-      increase: "§6»§e Clic gauche pour augmenter"
-    max:
-      name: "§bNombre maximum de récompenses : §3#{max}"
-      lore: |-
-        §7Ce paramètre défini la borne supérieure du nombre de
-        §7récompenses données au joueur à l'ouverture (max 10)
-      decrease: "§6»§e Clic droit pour diminuer"
-      increase: "§6»§e Clic gauche pour augmenter"
+        §7Ce paramètre défini si la caisse est activée ou
+        §7désactivée, c'est à dire si les joueurs peuvent
+        §7l'ouvrir avec sa clé
+        §6»§e Clic pour inverser l'état
+      enabled: "§aActivée"
+      disabled: "§cDésactivée"
     key:
       name: "§bClé de la caisse : §3#{key}"
       lore: |-
@@ -167,11 +175,30 @@ menu:
         §7Position actuelle : §e#{location}
         §7Ce paramètre défini la position de la caisse, ou si
         §7non défini, la capacité à ouvrir depuis n'importe où
-        §6»§e Clic gauche pour définir sur le bloc visé
+        §6»§e Clic gauche pour définir des positions
         §6»§e Clic droit pour supprimer
       teleport: "§6»§e Clic molette pour s'y téléporter"
       none: "§cAucune position définie"
       value: "#{world}§7 (§e#{x}§7, §e#{y}§7, §e#{z}§7)"
+      multiple: "#{count}§7 positions définies"
+    delay:
+      name: "§bDélai d'ouverture : §3#{delay}s"
+      lore: |-
+        §7Ce paramètre défini la durée d'attente entre deux
+        §7ouvertures de cette caisse par un joueur (en secondes)
+        §6»§e Clic pour définir dans le chat
+      request: "§7Veuillez écrire le nouveau délai d'ouverture de la caisse dans le chat :"
+      invalid: "§cLe délai saisi n'est pas valide (nombre décimal, \".\" pour la virgule)"
+      timeout: "§cLe délai d'attente a été dépassé..."
+    preview:
+      name: "§bPrévisualisation : §3#{preview}"
+      lore: |-
+        §7Ce paramètre défini si la prévisualisation de la
+        §7caisse est activée ou désactivée, c'est à dire
+        §7si les joueurs peuvent voir son contenu
+        §6»§e Clic pour inverser l'état
+      enabled: "§aActivée"
+      disabled: "§cDésactivée"
     name:
       name: "§bNom de la caisse : §3#{name}"
       lore: |-
@@ -197,15 +224,6 @@ menu:
       none: "§cAucun message défini"
       request: "§7Veuillez écrire le nouveau message d'ouverture de la caisse dans le chat :"
       timeout: "§cLe délai d'attente a été dépassé..."
-    delay:
-      name: "§bDélai d'ouverture : §3#{delay}s"
-      lore: |-
-        §7Ce paramètre défini la durée d'attente entre deux
-        §7ouvertures de cette caisse par un joueur (en secondes)
-        §6»§e Clic pour définir dans le chat
-      request: "§7Veuillez écrire le nouveau délai d'ouverture de la caisse dans le chat :"
-      invalid: "§cLe délai saisi n'est pas valide (nombre décimal, \".\" pour la virgule)"
-      timeout: "§cLe délai d'attente a été dépassé..."
     sound:
       name: "§bSon d'ouverture : §3#{sound}"
       lore: |-
@@ -216,24 +234,35 @@ menu:
         §6»§e Clic droit pour supprimer
       play: "§6»§e Clic molette pour entendre le son"
       none: "§cAucun son défini"
-    status:
-      name: "§bStatut de la caisse : §3#{status}"
+    random:
+      name: "§bMode : §3#{random}"
       lore: |-
-        §7Ce paramètre défini si la caisse est activée ou
-        §7désactivée, c'est à dire si les joueurs peuvent
-        §7l'ouvrir avec sa clé
+        §7Ce paramètre défini si les récompenses sont
+        §7aléatoires ou non, c'est à dire si les joueurs
+        §7reçoivent une partie ou toutes les récompenses
         §6»§e Clic pour inverser l'état
-      enabled: "§aActivée"
-      disabled: "§cDésactivée"
-    preview:
-      name: "§bPrévisualisation : §3#{preview}"
+      enabled: "§aAléatoire"
+      disabled: "§cPack"
+    duplicates:
+      name: "§bDoublons : §3#{duplicates}"
       lore: |-
-        §7Ce paramètre défini si la prévisualisation de la
-        §7caisse est activée ou désactivée, c'est à dire
-        §7si les joueurs peuvent voir son contenu
+        §7Ce paramètre défini si un joueur peut obtenir
+        §72x la même récompense avec une seule clé ou pas
         §6»§e Clic pour inverser l'état
-      enabled: "§aActivée"
-      disabled: "§cDésactivée"
+    min:
+      name: "§bNombre minimum de récompenses : §3#{min}"
+      lore: |-
+        §7Ce paramètre défini la borne inférieure du nombre de
+        §7récompenses données au joueur à l'ouverture (max 10)
+      decrease: "§6»§e Clic droit pour diminuer"
+      increase: "§6»§e Clic gauche pour augmenter"
+    max:
+      name: "§bNombre maximum de récompenses : §3#{max}"
+      lore: |-
+        §7Ce paramètre défini la borne supérieure du nombre de
+        §7récompenses données au joueur à l'ouverture (max 10)
+      decrease: "§6»§e Clic droit pour diminuer"
+      increase: "§6»§e Clic gauche pour augmenter"
     delete:
       name: "§bSupprimer la caisse"
       lore: |-
@@ -265,6 +294,60 @@ menu:
     parent-namespace: "§7Revenir au parent"
     enter-namespace: "§6»§e Clic pour y accéder"
     namespace-prefix: "§8minecraft:#{prefix}."
+  interact-select:
+    open:
+      title: "Choix de la caisse"
+      empty: "§cAucune caisse ne peut être ouverte"
+      header:
+        name: "§aChoisissez la caisse à ouvrir"
+        lore: ""
+      no-key: "§7Aucune clé définie pour cette caisse"
+      lore: |-
+        §7Caisse : §e#{crate}
+        §6»§e Clic pour ouvrir cette caisse
+      id: "§8##{id}"
+    preview:
+      title: "Choix de la caisse"
+      empty: "§cAucune caisse ne peut être prévisualisée"
+      header:
+        name: "§aChoisissez la caisse à prévisualiser"
+        lore: ""
+      no-key: "§7Aucune clé définie pour cette caisse"
+      lore: |-
+        §7Caisse : §e#{crate}
+        §6»§e Clic pour prévisualiser cette caisse
+      id: "§8##{id}"
+  teleport-select:
+    title: "Choix de la téléportation"
+    empty: "§cAucune position définie"
+    header:
+      name: "§aChoisissez la position à laquelle vous téléporter"
+      lore: "§7Caisse : §e#{crate}"
+    location:
+      name: "§7Monde: §e#{world}"
+      lore: |-
+        §7X: §e#{x}
+        §7Y: §e#{y}
+        §7Z: §e#{z}
+      select: "§6»§e Clic pour vous téléporter à cette position"
+      unloaded: "§cVous ne pouvez pas vous téléporter à un monde déchargé"
+  locations:
+    title: "Gestion des positions"
+    empty: "§cAucune position définie"
+    header:
+      name: "§aGérez la position de la caisse"
+      lore: "§7Caisse : §e#{crate}"
+    add:
+      name: "§aAjouter une position"
+      lore: "§6»§e Clic pour définir sur le bloc visé"
+    location:
+      name: "§7Monde: §e#{world}"
+      lore: |-
+        §7X: §e#{x}
+        §7Y: §e#{y}
+        §7Z: §e#{z}
+        §7Monde chargé : #{loaded}
+        §6»§e Clic pour supprimer cette position
   reward:
     title: "Récompense de la caisse #{crate}"
     weight:
@@ -397,8 +480,8 @@ menu:
         name: "§eGestion de la récompense de type autre caisse"
         lore: |-
           §7Contrôlez les paramètres de la récompense
-          §7Vous pouvez modifier l'icône, le poids et si la
-          §7récompense est aléatoire ou non, mais pas l'autre caisse
+          §7Vous pouvez modifier l'icône et le poids,
+          §7mais pas l'autre caisse
       icon:
         name: "§bIcône de la récompense : §3#{icon}"
         lore: |-
@@ -413,14 +496,6 @@ menu:
           §7récompense
           §6»§e Clic pour sélectionner la caisse
         none: "§cAucune"
-      random:
-        name: "§bRécompense aléatoire : §3#{random}"
-        lore: |-
-          §7Ce paramètre défini si la récompense est aléatoire ou
-          §7non, c'est à dire si on choisi aléatoirement des
-          §7récompenses dans la caisse à donner au joueur ou bien
-          §7si on donne l'intégralitée des récompenses
-          §6»§e Clic pour inverser l'état
     delete:
       title: "Suppression d'une récompense pour #{crate}"
       warning:
@@ -455,6 +530,9 @@ command:
     success: "§7Caisse §e#{crate}§7 créée avec succès"
   teleport:
     no-location: "§cAucune position définie"
+    invalid-index: "§cVous devez spécifier un numéro de position entre §41§c et §4#{max}§c (§4#{index}§c est invalide)"
+    needs-index: "§7Cette caisse a plusieurs positions. Vous devez préciser entre §e1§7 et §e#{max}§7 :"
+    location: "§7- §e#{index}§7 : §e#{world}§7 (§e#{x}§7, §e#{y}§7, §e#{z}§7)"
     unloaded-world: "§cLe monde #{world} n'est pas chargé"
     success: "§7Vous avez été téléporté à la caisse §e#{crate}"
   export:

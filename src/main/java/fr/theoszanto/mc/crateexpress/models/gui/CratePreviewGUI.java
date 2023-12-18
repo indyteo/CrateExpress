@@ -39,13 +39,17 @@ public class CratePreviewGUI extends ExpressGUI<CrateExpress> {
 		}
 		this.set(slot(this.rows - 1, 1), keyItem, key == null ? "" : "key");
 		this.setCloseButton(slot(this.rows - 1, 7));
-		if (this.crate.isDisabled())
+		int editSlotCol;
+		if (this.crate.isDisabled()) {
 			this.set(slot(this.rows - 1, 3), new ItemBuilder(Material.BARRIER, 1, this.i18n("menu.preview.disabled"))
 					.addLoreConditionally(player.hasPermission(CratePermission.BYPASS_DISABLED), this.i18n("menu.preview.bypass-disabled")));
+			editSlotCol = 5;
+		} else
+			editSlotCol = 4;
 
 		// Edition button
 		if (player.hasPermission(CratePermission.Command.EDIT))
-			this.set(slot(this.rows - 1, 5), new ItemBuilder(Material.CHEST, 1, this.i18n("menu.preview.edit")), "edit");
+			this.set(slot(this.rows - 1, editSlotCol), new ItemBuilder(Material.CHEST, 1, this.i18n("menu.preview.edit")), "edit");
 
 		// Content
 		if (this.crate.isEmpty())

@@ -9,6 +9,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.world.WorldLoadEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
 public class WorldListener extends ExpressListener<CrateExpress> {
 	public WorldListener(@NotNull CrateExpress plugin) {
 		super(plugin);
@@ -19,9 +21,13 @@ public class WorldListener extends ExpressListener<CrateExpress> {
 		World world = event.getWorld();
 		String name = world.getName();
 		for (Crate crate : this.plugin.crates()) {
-			UnloadableWorldLocation location = crate.getLocation();
-			if (location != null && location.getWorldName().equals(name))
-				location.setWorld(world);
+			List<UnloadableWorldLocation> locations = crate.getLocations();
+			if (locations != null) {
+				for (UnloadableWorldLocation location : locations) {
+					if (location.getWorldName().equals(name))
+						location.setWorld(world);
+				}
+			}
 		}
 	}
 }

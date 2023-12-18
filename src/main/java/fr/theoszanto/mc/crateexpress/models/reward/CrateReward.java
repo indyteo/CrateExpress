@@ -11,16 +11,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.UUID;
 import java.util.logging.Level;
 
 public abstract class CrateReward extends PluginObject implements Weighted {
+	private final @NotNull String id;
 	private final @NotNull String type;
 	private @NotNull ItemStack icon;
 	private double weight;
 	private boolean physicalReward;
 
-	public CrateReward(@NotNull CrateExpress plugin, @NotNull String type, @NotNull ItemStack icon, double weight, boolean physicalReward) {
+	public CrateReward(@NotNull CrateExpress plugin, @NotNull String id, @NotNull String type, @NotNull ItemStack icon, double weight, boolean physicalReward) {
 		super(plugin);
+		this.id = id;
 		this.type = type;
 		this.icon = icon;
 		this.weight = weight;
@@ -65,6 +68,10 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 		return icon;
 	}
 
+	public @NotNull String getId() {
+		return this.id;
+	}
+
 	public @NotNull String getType() {
 		return this.type;
 	}
@@ -92,6 +99,23 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 
 	protected void setPhysicalReward(boolean physicalReward) {
 		this.physicalReward = physicalReward;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		CrateReward that = (CrateReward) o;
+		return this.id.equals(that.id);
+	}
+
+	@Override
+	public int hashCode() {
+		return this.id.hashCode();
+	}
+
+	public static @NotNull String generateRandomId() {
+		return UUID.randomUUID().toString().substring(0, 8);
 	}
 
 	protected static class RewardGiveException extends Exception {
