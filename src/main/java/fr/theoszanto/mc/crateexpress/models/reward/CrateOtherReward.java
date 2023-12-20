@@ -28,7 +28,7 @@ public class CrateOtherReward extends CrateReward {
 		Crate other = this.fetchOtherCrate();
 		if (other == null)
 			throw new RewardGiveException("Unknown crate: " + this.other);
-		other.open(player);
+		other.open(player, false);
 	}
 
 	@Override

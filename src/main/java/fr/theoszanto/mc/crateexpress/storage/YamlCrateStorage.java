@@ -4,9 +4,11 @@ import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
+import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.storage.yaml.CrateRewardYML;
+import fr.theoszanto.mc.crateexpress.utils.MapUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.LocationUtils;
@@ -18,6 +20,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,7 +31,6 @@ import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -178,7 +180,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			ConfigurationSection rewardData = data.createSection(Integer.toString(MathUtils.nextAvailableInt(data.getKeys(false))));
 			this.serializeReward(rewardData, reward);
 			data.save(file);
-			this.rewardsCountCache.compute(uuid, (u, count) -> count == null ? 1 : count + 1);
+			this.rewardsCountCache.compute(uuid, MapUtils.INCREASE);
 		} catch (IOException | InvalidConfigurationException e) {
 			throw new IllegalStateException("Could not save reward for player: " + player.getName() + " (" + uuid + ")", e);
 		}
@@ -232,10 +234,8 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			boolean exists = data.contains(id);
 			if (exists) {
 				Integer newCount = this.rewardsCountCache.computeIfPresent(uuid, (u, count) -> count > 0 ? count - 1 : 0);
-				if (newCount != null && newCount == 0) {
-					if (file.delete())
-						return;
-				}
+				if (newCount != null && newCount == 0 && file.delete())
+					return;
 			}
 			data.set(id, null);
 			data.save(file);
@@ -258,47 +258,116 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
-	public void crateOpenStats(@NotNull Player player, @NotNull Crate crate, @NotNull List<@NotNull CrateReward> rewards) throws IllegalStateException {
+	public int getOpenStats(@NotNull Crate crate) throws IllegalStateException {
+		try {
+			File cratesStatsFile = new File(this.statsDir, "crates.yml");
+			YamlConfiguration cratesStats = new YamlConfiguration();
+			cratesStats.load(cratesStatsFile);
+			return cratesStats.getInt(crate.getId() + ".times-opened", 0);
+		} catch (IOException | InvalidConfigurationException e) {
+			throw new IllegalStateException("Could not get stats of crate opening", e);
+		}
+	}
+
+	@Override
+	@SuppressWarnings("deprecation")
+	public void updateStats(@NotNull List<@NotNull StatsRecord> stats) throws IllegalStateException {
+		// Aggregate stats to improve file write perfs
+		Map<String, CrateStatsUpdate> crateStatsUpdates = new HashMap<>();
+		Map<UUID, PlayerStatsUpdate> playerStatsUpdates = new HashMap<>();
+		for (StatsRecord stat : stats) {
+			UUID player = stat.getPlayer();
+			String crate = stat.getCrate();
+			PlayerStatsUpdate playerStatsUpdate = playerStatsUpdates.computeIfAbsent(player, PlayerStatsUpdate::new);
+			playerStatsUpdate.logs.add(stat);
+			CrateStatsUpdate crateStatsUpdate = crateStatsUpdates.computeIfAbsent(crate, CrateStatsUpdate::new);
+			CrateStatsUpdate playerCrateStatsUpdate = playerStatsUpdate.crateStatsUpdates.computeIfAbsent(crate, CrateStatsUpdate::new);
+			crateStatsUpdate.timesOpened++;
+			playerCrateStatsUpdate.timesOpened++;
+			for (String reward : stat.getRewards()) {
+				crateStatsUpdate.rewardsGiven.compute(reward, MapUtils.INCREASE);
+				playerCrateStatsUpdate.rewardsGiven.compute(reward, MapUtils.INCREASE);
+			}
+		}
+
 		try {
 			// Increase global stats
-			this.saveCrateOpenStats(this.statsDir, crate, rewards);
+			this.updateCratesStats(this.statsDir, crateStatsUpdates);
 
 			// Increase player stats
-			File playerStatsDir = new File(this.statsDir, player.getUniqueId().toString());
-			this.saveCrateOpenStats(playerStatsDir, crate, rewards);
+			for (Map.Entry<UUID, PlayerStatsUpdate> entry : playerStatsUpdates.entrySet()) {
+				File playerStatsDir = new File(this.statsDir, entry.getKey().toString());
+				PlayerStatsUpdate playerStatsUpdate = entry.getValue();
+				this.updateCratesStats(playerStatsDir, playerStatsUpdate.crateStatsUpdates);
 
-			// Log rewards received
-			Date now = new Date();
-			File playerRewardsLogStatsFile = new File(playerStatsDir, DATE_FORMAT.format(now) + ".yml");
-			YamlConfiguration playerDailyRewardsStats = new YamlConfiguration();
-			try {
-				playerDailyRewardsStats.load(playerRewardsLogStatsFile);
-			} catch (FileNotFoundException ignored) {}
-			int n = MathUtils.nextAvailableInt(playerDailyRewardsStats.getKeys(false));
-			for (CrateReward reward : rewards) {
-				ConfigurationSection playerRewardStats = playerDailyRewardsStats.createSection(Integer.toString(n++));
-				playerRewardStats.set("time", TIME_FORMAT.format(now));
-				playerRewardStats.set("reward", reward.getId());
-				playerRewardStats.set("crate", crate.getId());
+				// Log rewards received
+				if (playerStatsUpdate.logs.isEmpty())
+					continue;
+				StatsRecord stat = playerStatsUpdate.logs.get(0);
+				int day = stat.getDate().getDay();
+				File playerRewardsLogStatsFile = new File(playerStatsDir, DATE_FORMAT.format(stat.getDate()) + ".yml");
+				YamlConfiguration playerDailyRewardsStats = new YamlConfiguration();
+				try {
+					playerDailyRewardsStats.load(playerRewardsLogStatsFile);
+				} catch (FileNotFoundException ignored) {}
+				for (StatsRecord log : playerStatsUpdate.logs) {
+					// Ensure all the logs are on the same day
+					if (log.getDate().getDay() != day) {
+						// If not, change current file (this should very rarely happen)
+						day = stat.getDate().getDay();
+						playerDailyRewardsStats.save(playerRewardsLogStatsFile);
+						playerRewardsLogStatsFile = new File(playerStatsDir, DATE_FORMAT.format(stat.getDate()) + ".yml");
+						playerDailyRewardsStats = new YamlConfiguration();
+						try {
+							playerDailyRewardsStats.load(playerRewardsLogStatsFile);
+						} catch (FileNotFoundException ignored) {}
+					}
+					// Save log
+					String time = TIME_FORMAT.format(log.getDate());
+					int n = MathUtils.nextAvailableInt(playerDailyRewardsStats.getKeys(false));
+					for (String reward : log.getRewards()) {
+						ConfigurationSection playerRewardStats = playerDailyRewardsStats.createSection(Integer.toString(n++));
+						playerRewardStats.set("time", time);
+						playerRewardStats.set("reward", reward);
+						playerRewardStats.set("crate", log.getCrate());
+					}
+				}
+				playerDailyRewardsStats.save(playerRewardsLogStatsFile);
 			}
-			playerDailyRewardsStats.save(playerRewardsLogStatsFile);
 		} catch (IOException | InvalidConfigurationException e) {
 			throw new IllegalStateException("Could not save stats for crate opening", e);
 		}
 	}
 
-	private void saveCrateOpenStats(@NotNull File dir, @NotNull Crate crate, @NotNull List<@NotNull CrateReward> rewards) throws IOException, InvalidConfigurationException {
+	private static class CrateStatsUpdate {
+		private int timesOpened = 0;
+		private final @NotNull Map<@NotNull String, @NotNull Integer> rewardsGiven = new HashMap<>();
+
+		private CrateStatsUpdate(@Nullable Object ignored) {}
+	}
+
+	private static class PlayerStatsUpdate {
+		private final @NotNull Map<@NotNull String, @NotNull CrateStatsUpdate> crateStatsUpdates = new HashMap<>();
+		private final @NotNull List<@NotNull StatsRecord> logs = new ArrayList<>();
+
+		private PlayerStatsUpdate(@Nullable Object ignored) {}
+	}
+
+	private void updateCratesStats(@NotNull File dir, @NotNull Map<@NotNull String, @NotNull CrateStatsUpdate> crateStatsUpdates) throws IOException, InvalidConfigurationException {
 		File cratesStatsFile = new File(dir, "crates.yml");
 		YamlConfiguration cratesStats = new YamlConfiguration();
 		try {
 			cratesStats.load(cratesStatsFile);
 		} catch (FileNotFoundException ignored) {}
-		ConfigurationSection crateStats = getOrCreateSection(cratesStats, crate.getId());
-		crateStats.set("times-opened", crateStats.getInt("times-opened", 0) + 1);
-		ConfigurationSection rewardsStats = getOrCreateSection(crateStats, "rewards-given");
-		for (CrateReward reward : rewards)
-			rewardsStats.set(reward.getId(), rewardsStats.getInt(reward.getId(), 0) + 1);
-		cratesStats.save(cratesStatsFile);
+		for (Map.Entry<String, CrateStatsUpdate> entry : crateStatsUpdates.entrySet()) {
+			ConfigurationSection crateStats = getOrCreateSection(cratesStats, entry.getKey());
+			CrateStatsUpdate crateStatsUpdate = entry.getValue();
+			crateStats.set("times-opened", crateStats.getInt("times-opened", 0) + crateStatsUpdate.timesOpened);
+			ConfigurationSection rewardsStats = getOrCreateSection(crateStats, "rewards-given");
+			for (Map.Entry<String, Integer> reward : crateStatsUpdate.rewardsGiven.entrySet())
+				rewardsStats.set(reward.getKey(), rewardsStats.getInt(reward.getKey(), 0) + reward.getValue());
+			cratesStats.save(cratesStatsFile);
+		}
 	}
 
 	@Override

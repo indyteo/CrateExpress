@@ -4,53 +4,38 @@ import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.commands.CrateExpressCommand;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-public class CrateExpressOpenSubCommand extends CrateExpressSubCommand {
-	public CrateExpressOpenSubCommand(@NotNull CrateExpress plugin) {
-		super(plugin, "open");
+public class CrateExpressStatsSubCommand extends CrateExpressSubCommand {
+	public CrateExpressStatsSubCommand(@NotNull CrateExpress plugin) {
+		super(plugin, "stats", "stat");
 	}
 
 	@Override
 	public boolean canExecute(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
-		return sender.hasPermission(CratePermission.Command.OPEN);
+		return sender.hasPermission(CratePermission.Command.STATS);
 	}
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
-		if (args.length != 2)
+		if (args.length != 1)
 			return false;
-		String playerName = args[0];
-		Player player = Bukkit.getPlayer(playerName);
-		if (player == null) {
-			this.i18nMessage(sender, "command.unknown-player", "player", playerName);
-			return true;
-		}
-		String crateId = args[1];
-		Crate crate;
+		String crateId = args[0];
 		try {
-			crate = this.crates().get(crateId);
+			Crate crate = this.crates().get(crateId);
+			this.i18nMessage(sender, "command.stats", "crate", crate.getName(), "open", this.stats().getTimesOpened(crate));
 		} catch (IllegalArgumentException e) {
 			this.i18nMessage(sender, "command.unknown-crate", "crate", crateId);
-			return true;
 		}
-		crate.open(player, true);
-		this.i18nMessage(sender, "command.open", "crate", crate.getName(), "player", player.getName());
 		return true;
 	}
 
 	@Override
 	public @Nullable List<@NotNull String> tabComplete(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
-		if (args.length == 1)
-			return this.onlinePlayers();
-		if (args.length == 2)
-			return this.existingCrates();
-		return null;
+		return args.length == 1 ? this.existingCrates() : null;
 	}
 }

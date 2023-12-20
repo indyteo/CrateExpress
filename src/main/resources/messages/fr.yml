@@ -540,6 +540,7 @@ command:
       format: "§cLa caisse n'a pas pu être exportée vers le format §4#{format}"
       file: "§cLa caisse n'a pas pu être exportée vers le fichier §4#{file}"
     success: "§7La caisse §e#{crate}§7 a été exportée avec succès dans §e#{file}"
+  stats: "§7La caisse §e#{crate}§7 a été ouverte §e#{open}§7 fois"
   help:
     all-commands: "§bListe des commandes disponibles :"
     claim: "§e/#{alias} #{subcommand}§8 » §7Ouvre le menu des récompenses en attente"
@@ -553,6 +554,7 @@ command:
     list: "§e/#{alias} #{subcommand}§8 » §7Affiche la liste des caisses existantes"
     open: "§e/#{alias} #{subcommand} <joueur> <caisse>§8 » §7Fait ouvrir une caisse à un joueur, sans utiliser de clé"
     preview: "§e/#{alias} #{subcommand} <caisse>§8 » §7Prévisualise le contenu d'une caisse"
+    stats: "§e/#{alias} #{subcommand} <caisse>§8 » §7Afficher les statistiques d'une caisse"
     reload: "§e/#{alias} #{subcommand}§8 » §7Recharge le plugin (configuration et récompenses)"
     teleport: "§e/#{alias} #{subcommand} <caisse>§8 » §7Se téléporter à une caisse"
     version: "§e/#{alias} #{subcommand}§8 » §7Affiche la version du plugin"

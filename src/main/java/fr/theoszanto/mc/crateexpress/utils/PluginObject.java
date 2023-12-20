@@ -4,6 +4,7 @@ import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.managers.ExportManager;
 import fr.theoszanto.mc.crateexpress.managers.MoneyManager;
 import fr.theoszanto.mc.crateexpress.managers.RewardsManager;
+import fr.theoszanto.mc.crateexpress.managers.StatsManager;
 import fr.theoszanto.mc.crateexpress.managers.StorageManager;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
 import fr.theoszanto.mc.express.ExpressObject;
@@ -25,6 +26,10 @@ public abstract class PluginObject extends ExpressObject<CrateExpress> implement
 
 	public final @NotNull RewardsManager rewards() {
 		return this.plugin.rewards();
+	}
+
+	public final @NotNull StatsManager stats() {
+		return this.plugin.stats();
 	}
 
 	public final @NotNull MoneyManager money() {

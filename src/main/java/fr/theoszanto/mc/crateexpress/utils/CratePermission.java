@@ -21,6 +21,7 @@ public final class CratePermission {
 		public static final @NotNull String GIVE = sub("give");
 		public static final @NotNull String RELOAD = sub("reload");
 		public static final @NotNull String LIST = sub("list");
+		public static final @NotNull String STATS = sub("stats");
 		public static final @NotNull String CREATE = sub("create");
 		public static final @NotNull String EDIT = sub("edit");
 		public static final @NotNull String EXPORT = sub("export");

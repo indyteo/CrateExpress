@@ -66,7 +66,7 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 		this.max = max;
 	}
 
-	public void open(@NotNull Player player) {
+	public void open(@NotNull Player player, boolean recordStats) {
 		List<CrateReward> rewards = new ArrayList<>();
 		if (this.random) {
 			if (!this.isEmpty()) {
@@ -79,7 +79,8 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 			rewards.addAll(this.getRewards());
 		if (this.event(new CrateOpenEvent(this, player, rewards))) {
 			rewards.forEach(reward -> reward.giveRewardTo(player));
-			this.storage().getSource().crateOpenStats(player, this, rewards);
+			if (recordStats)
+				this.stats().recordStats(StatsRecord.of(player, this, rewards));
 		}
 	}
 

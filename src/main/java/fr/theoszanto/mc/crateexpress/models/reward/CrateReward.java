@@ -62,8 +62,10 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 	}
 
 	public @NotNull ItemStack getIconWithChance(double crateWeight) {
-		double chance = MathUtils.round(100 * this.weight / crateWeight, 2);
 		ItemStack icon = this.getIcon().clone();
+		if (crateWeight <= 0)
+			return icon;
+		double chance = MathUtils.round(100 * this.weight / crateWeight, 2);
 		ItemUtils.addLore(icon, this.i18nLines("crate.preview.reward-chance", "chance", FormatUtils.noTrailingZeroDecimal(chance)));
 		return icon;
 	}

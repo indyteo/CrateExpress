@@ -3,6 +3,7 @@ package fr.theoszanto.mc.crateexpress;
 import fr.theoszanto.mc.crateexpress.managers.ExportManager;
 import fr.theoszanto.mc.crateexpress.managers.MoneyManager;
 import fr.theoszanto.mc.crateexpress.managers.RewardsManager;
+import fr.theoszanto.mc.crateexpress.managers.StatsManager;
 import fr.theoszanto.mc.crateexpress.managers.StorageManager;
 import fr.theoszanto.mc.crateexpress.models.CrateConfig;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
@@ -19,6 +20,7 @@ public final class CrateExpress extends ExpressPlugin<CrateExpress> {
 	private final @NotNull MoneyManager money = new MoneyManager(this);
 	private final @NotNull CrateRegistry crates = new CrateRegistry(this);
 	private final @NotNull RewardsManager rewards = new RewardsManager(this);
+	private final @NotNull StatsManager stats = new StatsManager(this);
 	private final @NotNull ExportManager export = new ExportManager(this);
 
 	public CrateExpress() {
@@ -54,6 +56,9 @@ public final class CrateExpress extends ExpressPlugin<CrateExpress> {
 		// Initializing rewards module
 		this.rewards.load(this.config.getRewardsConfig());
 
+		// Initializing stats module
+		this.stats.load();
+
 		// Initializing export module
 		this.export.loadExporters(this.config.getExportConfig());
 	}
@@ -61,6 +66,7 @@ public final class CrateExpress extends ExpressPlugin<CrateExpress> {
 	@Override
 	protected void reset() {
 		this.export.reset();
+		this.stats.reset();
 		this.rewards.reset();
 		this.crates.reset();
 		this.money.reset();
@@ -81,6 +87,10 @@ public final class CrateExpress extends ExpressPlugin<CrateExpress> {
 
 	public @NotNull RewardsManager rewards() {
 		return this.rewards;
+	}
+
+	public @NotNull StatsManager stats() {
+		return this.stats;
 	}
 
 	public @NotNull ExportManager export() {

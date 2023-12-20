@@ -2,6 +2,7 @@ package fr.theoszanto.mc.crateexpress.storage;
 
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
+import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.express.utils.Logged;
@@ -38,7 +39,9 @@ public interface CrateStorage extends Logged {
 
 	void migrateRewards(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException;
 
-	void crateOpenStats(@NotNull Player player, @NotNull Crate crate, @NotNull List<@NotNull CrateReward> rewards) throws IllegalStateException;
+	int getOpenStats(@NotNull Crate crate) throws IllegalStateException;
+
+	void updateStats(@NotNull List<@NotNull StatsRecord> stats) throws IllegalStateException;
 
 	void migratePlayerStats(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException;
 }

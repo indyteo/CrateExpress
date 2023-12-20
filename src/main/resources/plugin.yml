@@ -49,6 +49,7 @@ permissions:
       crateexpress.command.list: true
       crateexpress.command.open: true
       crateexpress.command.preview: true
+      crateexpress.command.stats: true
       crateexpress.command.reload: true
       crateexpress.command.teleport: true
       crateexpress.command.version: true
@@ -81,6 +82,9 @@ permissions:
     default: op
   crateexpress.command.preview:
     description: "Grant access to /crateexpress preview command"
+    default: op
+  crateexpress.command.stats:
+    description: "Grant access to /crateexpress stats command"
     default: op
   crateexpress.command.reload:
     description: "Grant access to /crateexpress reload command"

@@ -107,7 +107,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 									item.setAmount(item.getAmount() - amount);
 								// Open crate
 								for (int i = 0; i < amount; i++)
-									crate.open(player);
+									crate.open(player, true);
 								this.i18nMessage(player, "action.crate.open", "crate", crate.getName());
 								// Broadcast message if necessary
 								if (e.doesBroadcastMessage()) {
