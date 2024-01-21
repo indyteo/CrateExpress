@@ -14,15 +14,21 @@ import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -59,19 +65,47 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 	}
 
 	@EventHandler
+	private void onPlayerInteractEntity(@NotNull PlayerInteractEntityEvent event) {
+		if (event.getHand() == EquipmentSlot.OFF_HAND)
+			return;
+		Entity entity = event.getRightClicked();
+		if (entity.getType() != EntityType.INTERACTION)
+			return;
+		Player player = event.getPlayer();
+		this.crateInteraction(player, player.getInventory().getItemInMainHand(), entity.getLocation(), true, event);
+	}
+
+	@EventHandler
+	private void onEntityDamageByEntity(@NotNull EntityDamageByEntityEvent event) {
+		Entity entity = event.getEntity();
+		if (entity.getType() != EntityType.INTERACTION)
+			return;
+		Entity damager = event.getDamager();
+		if (damager.getType() != EntityType.PLAYER)
+			return;
+		Player player = (Player) damager;
+		this.crateInteraction(player, player.getInventory().getItemInMainHand(), entity.getLocation(), false, event);
+	}
+
+	@EventHandler
 	private void onPlayerInteract(@NotNull PlayerInteractEvent event) {
 		if (event.getHand() == EquipmentSlot.OFF_HAND)
 			return;
 		Player player = event.getPlayer();
 		if (this.droppers.containsKey(player))
 			return;
-		ItemStack item = event.getItem();
-		Block block = event.getClickedBlock();
 		Action action = event.getAction();
-		List<Crate> clickedCrates = this.plugin.crates().byLocation(block == null ? null : block.getLocation());
+		if (action == Action.PHYSICAL)
+			return;
+		Block block = event.getClickedBlock();
+		this.crateInteraction(player, event.getItem(), block == null ? null : block.getLocation(), action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK, event);
+	}
+
+	private void crateInteraction(@NotNull Player player, @Nullable ItemStack item, @Nullable Location location, boolean isRightClick, @NotNull Cancellable event) {
+		List<Crate> clickedCrates = this.plugin.crates().byLocation(location);
 		List<Crate> usedKeyCrates = this.plugin.crates().byItem(item);
 		// If the interaction is a right click => Open crate
-		if (action == Action.RIGHT_CLICK_AIR || action == Action.RIGHT_CLICK_BLOCK) {
+		if (isRightClick) {
 			// If the player didn't use a key
 			if (usedKeyCrates.isEmpty()) {
 				// Maybe the player clicked on a crate
@@ -118,7 +152,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 								}
 								// Play sound if necessary
 								if (e.doesPlaySound())
-									crate.playSoundAtLocation(crate.isOpenableAnywhere() || block == null ? player.getLocation() : block.getLocation());
+									crate.playSoundAtLocation(crate.isOpenableAnywhere() || location == null ? player.getLocation() : location);
 								// Record crate usage by this player
 								this.lastUsages.put(pair, now);
 							}
@@ -134,7 +168,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 					// Check if player can use the crate
 					if (!crate.isDisabled() || player.hasPermission(CratePermission.BYPASS_DISABLED)) {
 						// Check if crate can be opened from here
-						if (block == null ? crate.isOpenableAnywhere() : crate.isOpenableAtLocation(block.getLocation()))
+						if (location == null ? crate.isOpenableAnywhere() : crate.isOpenableAtLocation(location))
 							openCrate.accept(crate);
 						else
 							this.i18nMessage(player, "action.key.use", "crate", crate.getName());
@@ -154,12 +188,10 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 
 					// Filter crate openable here
 					usedKeyCratesStream = accessibleCrates.stream();
-					if (block == null)
+					if (location == null)
 						usedKeyCratesStream = usedKeyCratesStream.filter(Crate::isOpenableAnywhere);
-					else {
-						Location location = block.getLocation();
+					else
 						usedKeyCratesStream = usedKeyCratesStream.filter(crate -> crate.isOpenableAtLocation(location));
-					}
 
 					List<Crate> crates = usedKeyCratesStream.collect(Collectors.toList());
 					if (crates.isEmpty()) {
@@ -174,7 +206,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 						new CrateInteractSelectGUI(this.plugin, crates, true, openCrate).showToPlayer(player);
 				}
 			}
-		} else if (action == Action.LEFT_CLICK_AIR || action == Action.LEFT_CLICK_BLOCK) { // Left click => Preview
+		} else { // Left click => Preview
 			// Check if there is a crate to preview
 			if (clickedCrates.isEmpty() && usedKeyCrates.isEmpty())
 				return;
