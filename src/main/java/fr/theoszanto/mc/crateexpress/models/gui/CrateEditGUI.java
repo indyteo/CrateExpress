@@ -125,7 +125,7 @@ public class CrateEditGUI extends ExpressGUI<CrateExpress> {
 						this.i18nMessage(player, "menu.edit.reward.unknown");
 					}
 				} else if (click == ClickType.MIDDLE)
-					reward.giveRewardTo(player);
+					reward.giveRewardTo(player, true);
 			}
 			return true;
 		}

@@ -78,7 +78,7 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 		} else
 			rewards.addAll(this.getRewards());
 		if (this.event(new CrateOpenEvent(this, player, rewards))) {
-			rewards.forEach(reward -> reward.giveRewardTo(player));
+			rewards.forEach(reward -> reward.giveRewardTo(player, true));
 			if (recordStats)
 				this.stats().recordStats(StatsRecord.of(player, this, rewards));
 		}

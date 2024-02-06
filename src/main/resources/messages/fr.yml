@@ -7,8 +7,8 @@ crate:
     money-lore: ""
   reward:
     give: "§7Vous avez reçu : §e#{reward}"
-    save: "§cVotre inventaire est plein. Récompense stockée : §4#{reward}"
-    error: "§cUne erreur est survenue. Récompense stockée : §4#{reward}"
+    save: "§cVotre inventaire est plein. Récompense stockée : §4#{reward}§8 (/crate claim)"
+    error: "§cUne erreur est survenue. Récompense stockée : §4#{reward}§8 (/crate claim)"
     unknown: "§cRécompense de type inconnu : §4#{type}"
     type:
       CrateItemReward: "Objet"
@@ -45,12 +45,16 @@ menu:
     title: "Récompenses en attente"
     empty: "§cAucune récompense en attente..."
     slow-down: "§cVeuillez cliquer moins vite, une opération est déjà en cours..."
+    reward: |-
+      §6»§e Clic pour récupérer
+      §6»§e Drop pour supprimer
     all:
       name: "§bTout récupérer"
       lore: |-
         §7Récupérer autant de récompenses en attente
         §7que possible (remplit l'inventaire)
         §6»§e Clic pour récupérer
+        §6»§e Drop pour supprimer toutes les récompenses
   preview:
     title: "Prévisualisation : #{crate}"
     empty: "§cCette caisse est vide"

@@ -246,6 +246,15 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
+	public void clearRewards(@NotNull Player player) throws IllegalStateException {
+		UUID uuid = player.getUniqueId();
+		File file = new File(this.rewardsDir, uuid + ".yml");
+		if (!file.delete())
+			throw new IllegalStateException("Could not clear rewards for player: " + player.getName() + " (" + uuid + ")");
+		this.rewardsCountCache.remove(uuid);
+	}
+
+	@Override
 	public void migrateRewards(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException {
 		try {
 			Path src = new File(this.rewardsDir, from + ".yml").toPath();

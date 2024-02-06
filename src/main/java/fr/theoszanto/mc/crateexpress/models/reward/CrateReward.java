@@ -30,22 +30,26 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 		this.physicalReward = physicalReward;
 	}
 
-	public boolean giveRewardTo(@NotNull Player player) {
+	public boolean giveRewardTo(@NotNull Player player, boolean saveRewardIfUnableToGive) {
 		boolean savingReward = this.physicalReward && player.getInventory().firstEmpty() == -1;
 		CrateRewardGiveEvent event = new CrateRewardGiveEvent(player, this, savingReward);
 		CrateReward reward = event.getReward();
 		if (event.isSavingReward()) {
-			reward.save(player);
-			this.i18nMessage(player, "crate.reward.save", "reward", reward.describe());
+			if (saveRewardIfUnableToGive) {
+				reward.save(player);
+				this.i18nMessage(player, "crate.reward.save", "reward", reward.describe());
+			}
 			return false;
 		} else {
 			try {
 				reward.reward(player);
 				return true;
 			} catch (RewardGiveException e) {
-				this.getLogger().log(Level.WARNING, "Unable to reward player " + player.getName() + " (" + player.getUniqueId() + "): " + e.getMessage() + "! Saving reward instead", e);
-				reward.save(player);
-				this.i18nMessage(player, "crate.reward.error", "reward", reward.describe());
+				if (saveRewardIfUnableToGive) {
+					this.getLogger().log(Level.WARNING, "Unable to reward player " + player.getName() + " (" + player.getUniqueId() + "): " + e.getMessage() + "! Saving reward instead", e);
+					reward.save(player);
+					this.i18nMessage(player, "crate.reward.error", "reward", reward.describe());
+				}
 				return false;
 			}
 		}
