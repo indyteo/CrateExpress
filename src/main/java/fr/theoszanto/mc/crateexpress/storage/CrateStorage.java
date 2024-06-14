@@ -5,10 +5,12 @@ import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
 import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
+import fr.theoszanto.mc.crateexpress.models.reward.HistoricalReward;
 import fr.theoszanto.mc.express.utils.Logged;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -44,6 +46,8 @@ public interface CrateStorage extends Logged {
 	int getOpenStats(@NotNull Crate crate) throws IllegalStateException;
 
 	void updateStats(@NotNull List<@NotNull StatsRecord> stats) throws IllegalStateException;
+
+	@NotNull List<@NotNull HistoricalReward> listHistory(@NotNull Player player, @NotNull Date date) throws IllegalStateException;
 
 	void migratePlayerStats(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException;
 }

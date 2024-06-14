@@ -41,6 +41,7 @@ permissions:
     children:
       crateexpress.command.access: true
       crateexpress.command.claim: true
+      crateexpress.command.history: true
       crateexpress.command.create: true
       crateexpress.command.delete: true
       crateexpress.command.edit: true
@@ -58,6 +59,9 @@ permissions:
     default: true
   crateexpress.command.claim:
     description: "Grant access to /crateexpress claim command"
+    default: true
+  crateexpress.command.history:
+    description: "Grant access to /crateexpress history command"
     default: true
   crateexpress.command.create:
     description: "Grant access to /crateexpress create command"

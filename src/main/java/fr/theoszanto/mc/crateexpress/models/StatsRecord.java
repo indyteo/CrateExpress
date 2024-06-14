@@ -6,16 +6,14 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 public class StatsRecord {
 	private final @NotNull Date date;
-	private final @NotNull UUID player;
-	private final @NotNull String crate;
-	private final @NotNull List<@NotNull String> rewards;
+	private final @NotNull Player player;
+	private final @NotNull Crate crate;
+	private final @NotNull List<@NotNull CrateReward> rewards;
 
-	public StatsRecord(@NotNull Date date, @NotNull UUID player, @NotNull String crate, @NotNull List<@NotNull String> rewards) {
+	public StatsRecord(@NotNull Date date, @NotNull Player player, @NotNull Crate crate, @NotNull List<@NotNull CrateReward> rewards) {
 		this.date = date;
 		this.player = player;
 		this.crate = crate;
@@ -26,24 +24,15 @@ public class StatsRecord {
 		return this.date;
 	}
 
-	public @NotNull UUID getPlayer() {
+	public @NotNull Player getPlayer() {
 		return this.player;
 	}
 
-	public @NotNull String getCrate() {
+	public @NotNull Crate getCrate() {
 		return this.crate;
 	}
 
-	public @NotNull List<@NotNull String> getRewards() {
+	public @NotNull List<@NotNull CrateReward> getRewards() {
 		return this.rewards;
-	}
-
-	public static @NotNull StatsRecord of(@NotNull Player player, @NotNull Crate crate, @NotNull List<@NotNull CrateReward> rewards) {
-		return new StatsRecord(
-				new Date(),
-				player.getUniqueId(),
-				crate.getId(),
-				rewards.stream().map(CrateReward::getId).collect(Collectors.toList())
-		);
 	}
 }

@@ -22,6 +22,7 @@ import org.jetbrains.annotations.UnmodifiableView;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -79,8 +80,10 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 			rewards.addAll(this.getRewards());
 		if (this.event(new CrateOpenEvent(this, player, rewards))) {
 			rewards.forEach(reward -> reward.giveRewardTo(player, true));
-			if (recordStats)
-				this.stats().recordStats(StatsRecord.of(player, this, rewards));
+			if (recordStats) {
+				Date date = new Date();
+				this.stats().recordStats(new StatsRecord(date, player, this, rewards));
+			}
 		}
 	}
 
@@ -121,6 +124,13 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 
 	public @Nullable CrateReward getReward(int slot) {
 		return this.rewards.get(slot);
+	}
+
+	public @Nullable CrateReward getReward(@NotNull String id) {
+		return this.getRewards().stream()
+				.filter(reward -> reward.getId().equals(id))
+				.findAny()
+				.orElse(null);
 	}
 
 	public void addReward(int slot, @NotNull CrateReward reward) {

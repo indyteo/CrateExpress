@@ -7,9 +7,11 @@ import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
 import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
+import fr.theoszanto.mc.crateexpress.models.reward.HistoricalReward;
 import fr.theoszanto.mc.crateexpress.storage.yaml.CrateRewardYML;
 import fr.theoszanto.mc.crateexpress.utils.MapUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
+import fr.theoszanto.mc.crateexpress.utils.TimeUtils;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.LocationUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
@@ -29,8 +31,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -279,23 +283,22 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
-	@SuppressWarnings("deprecation")
 	public void updateStats(@NotNull List<@NotNull StatsRecord> stats) throws IllegalStateException {
 		// Aggregate stats to improve file write perfs
 		Map<String, CrateStatsUpdate> crateStatsUpdates = new HashMap<>();
-		Map<UUID, PlayerStatsUpdate> playerStatsUpdates = new HashMap<>();
+		Map<Player, PlayerStatsUpdate> playerStatsUpdates = new HashMap<>();
 		for (StatsRecord stat : stats) {
-			UUID player = stat.getPlayer();
-			String crate = stat.getCrate();
+			Player player = stat.getPlayer();
+			Crate crate = stat.getCrate();
 			PlayerStatsUpdate playerStatsUpdate = playerStatsUpdates.computeIfAbsent(player, PlayerStatsUpdate::new);
 			playerStatsUpdate.logs.add(stat);
-			CrateStatsUpdate crateStatsUpdate = crateStatsUpdates.computeIfAbsent(crate, CrateStatsUpdate::new);
-			CrateStatsUpdate playerCrateStatsUpdate = playerStatsUpdate.crateStatsUpdates.computeIfAbsent(crate, CrateStatsUpdate::new);
+			CrateStatsUpdate crateStatsUpdate = crateStatsUpdates.computeIfAbsent(crate.getId(), CrateStatsUpdate::new);
+			CrateStatsUpdate playerCrateStatsUpdate = playerStatsUpdate.crateStatsUpdates.computeIfAbsent(crate.getId(), CrateStatsUpdate::new);
 			crateStatsUpdate.timesOpened++;
 			playerCrateStatsUpdate.timesOpened++;
-			for (String reward : stat.getRewards()) {
-				crateStatsUpdate.rewardsGiven.compute(reward, MapUtils.INCREASE);
-				playerCrateStatsUpdate.rewardsGiven.compute(reward, MapUtils.INCREASE);
+			for (CrateReward reward : stat.getRewards()) {
+				crateStatsUpdate.rewardsGiven.compute(reward.getId(), MapUtils.INCREASE);
+				playerCrateStatsUpdate.rewardsGiven.compute(reward.getId(), MapUtils.INCREASE);
 			}
 		}
 
@@ -304,28 +307,25 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			this.updateCratesStats(this.statsDir, crateStatsUpdates);
 
 			// Increase player stats
-			for (Map.Entry<UUID, PlayerStatsUpdate> entry : playerStatsUpdates.entrySet()) {
-				File playerStatsDir = new File(this.statsDir, entry.getKey().toString());
+			for (Map.Entry<Player, PlayerStatsUpdate> entry : playerStatsUpdates.entrySet()) {
+				File playerStatsDir = new File(this.statsDir, entry.getKey().getUniqueId().toString());
 				PlayerStatsUpdate playerStatsUpdate = entry.getValue();
 				this.updateCratesStats(playerStatsDir, playerStatsUpdate.crateStatsUpdates);
 
 				// Log rewards received
 				if (playerStatsUpdate.logs.isEmpty())
 					continue;
-				StatsRecord stat = playerStatsUpdate.logs.get(0);
-				int day = stat.getDate().getDay();
-				File playerRewardsLogStatsFile = new File(playerStatsDir, DATE_FORMAT.format(stat.getDate()) + ".yml");
-				YamlConfiguration playerDailyRewardsStats = new YamlConfiguration();
-				try {
-					playerDailyRewardsStats.load(playerRewardsLogStatsFile);
-				} catch (FileNotFoundException ignored) {}
+				Date date = null;
+				File playerRewardsLogStatsFile = null;
+				YamlConfiguration playerDailyRewardsStats = null;
 				for (StatsRecord log : playerStatsUpdate.logs) {
-					// Ensure all the logs are on the same day
-					if (log.getDate().getDay() != day) {
+					// Ensure all the logs are on the same day (except initialization)
+					if (date == null || TimeUtils.compareIgnoringTime(date, log.getDate()) != 0) {
 						// If not, change current file (this should very rarely happen)
-						day = stat.getDate().getDay();
-						playerDailyRewardsStats.save(playerRewardsLogStatsFile);
-						playerRewardsLogStatsFile = new File(playerStatsDir, DATE_FORMAT.format(stat.getDate()) + ".yml");
+						if (date != null)
+							playerDailyRewardsStats.save(playerRewardsLogStatsFile);
+						date = log.getDate();
+						playerRewardsLogStatsFile = new File(playerStatsDir, DATE_FORMAT.format(date) + ".yml");
 						playerDailyRewardsStats = new YamlConfiguration();
 						try {
 							playerDailyRewardsStats.load(playerRewardsLogStatsFile);
@@ -334,11 +334,11 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 					// Save log
 					String time = TIME_FORMAT.format(log.getDate());
 					int n = MathUtils.nextAvailableInt(playerDailyRewardsStats.getKeys(false));
-					for (String reward : log.getRewards()) {
+					for (CrateReward reward : log.getRewards()) {
 						ConfigurationSection playerRewardStats = playerDailyRewardsStats.createSection(Integer.toString(n++));
 						playerRewardStats.set("time", time);
-						playerRewardStats.set("reward", reward);
-						playerRewardStats.set("crate", log.getCrate());
+						playerRewardStats.set("reward", reward.getId());
+						playerRewardStats.set("crate", log.getCrate().getId());
 					}
 				}
 				playerDailyRewardsStats.save(playerRewardsLogStatsFile);
@@ -376,6 +376,44 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			for (Map.Entry<String, Integer> reward : crateStatsUpdate.rewardsGiven.entrySet())
 				rewardsStats.set(reward.getKey(), rewardsStats.getInt(reward.getKey(), 0) + reward.getValue());
 			cratesStats.save(cratesStatsFile);
+		}
+	}
+
+	@Override
+	public @NotNull List<@NotNull HistoricalReward> listHistory(@NotNull Player player, @NotNull Date date) throws IllegalStateException {
+		String uuid = player.getUniqueId().toString();
+		try {
+			File playerStatsDir = new File(this.statsDir, uuid);
+			File playerRewardsLogFile = new File(playerStatsDir, DATE_FORMAT.format(date) + ".yml");
+			YamlConfiguration playerDailyRewards = new YamlConfiguration();
+			playerDailyRewards.load(playerRewardsLogFile);
+			List<HistoricalReward> history = new ArrayList<>();
+			for (String key : playerDailyRewards.getKeys(false)) {
+				try {
+					ConfigurationSection playerReward = playerDailyRewards.getConfigurationSection(key);
+					assert playerReward != null;
+					String timeStr = playerReward.getString("time");
+					String crateStr = playerReward.getString("crate");
+					String rewardStr = playerReward.getString("reward");
+					if (timeStr == null || crateStr == null || rewardStr == null)
+						throw new IllegalStateException("Missing reward data");
+					Date datetime = TimeUtils.cloneWithTime(date, TIME_FORMAT.parse(timeStr));
+					Crate crate = this.crates().resolve(crateStr);
+					if (crate == null)
+						throw new IllegalStateException("Unknown crate (" + crateStr + ")");
+					CrateReward reward = crate.getReward(rewardStr);
+					if (reward == null)
+						throw new IllegalStateException("Unknown reward (" + rewardStr + ", in crate " + crate.getId() + ")");
+					history.add(new HistoricalReward(datetime, crate, reward));
+				} catch (ParseException | IllegalStateException e) {
+					this.warn("Could not parse history element (player: " + player.getName() + ", " + uuid + "): " + e.getMessage());
+				}
+			}
+			return history;
+		} catch (FileNotFoundException e) {
+			return new ArrayList<>();
+		} catch (IOException | InvalidConfigurationException e) {
+			throw new IllegalStateException("Could not list history for player: " + player.getName() + " (" + uuid + ")", e);
 		}
 	}
 

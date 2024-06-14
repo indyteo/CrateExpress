@@ -63,6 +63,60 @@ menu:
     give-key: "§6»§e Clic pour obtenir une clé"
     disabled: "§cCette caisse est désactivée"
     bypass-disabled: "§7Vous n'êtes pas soumis à cette restriction"
+  history:
+    title: "Historique de récompense"
+    header:
+      name: "§aHistorique de récompense des caisses"
+      lore: |-
+        §7Jour : §e#{date}
+        §7Caisses ouvertes : §e#{crates}
+        §7Récompenses obtenues : §e#{rewards}
+    day:
+      previous:
+        name: "§7Jour précédent"
+        lore: "§8#{date}"
+      next:
+        name: "§7Jour suivant"
+        lore: "§8#{date}"
+      today:
+        name: "§7Aujourd'hui"
+        lore: "§8#{date}"
+    help:
+      name: "§bComment ça marche ?"
+      lore: |-
+        
+        §7Chaque récompense que vous obtenez en ouvrant
+        §7une caisse est enregistrée. Ce menu vous montre,
+        §7jour par jour, l'historique de vos récompenses
+        §7regroupées par caisse.
+        
+        §7Chaque ligne correspond à une caisse, avec les
+        §7plus récentes en haut. Les récompenses sont
+        §7regroupées par heure d'obtention, avec les plus
+        §7récentes à gauche.
+        
+        §7Vous pouvez consulter votre historique jusqu'à
+        §730 jours en arrière, en utilisant les flèches
+        §7en haut du menu.
+    error:
+      name: "§4Une erreur est survenue !"
+      lore: |-
+        §7Votre historique de récompense n'a pas pu être
+        §7chargé. Veuillez réessayer, et si le problème
+        §7persiste, contactez un administrateur
+        §6»§e Clic pour réessayer
+    loading: "§cChargement des données en cours..."
+    empty: "§cAucune récompense ce jour"
+    scroll:
+      up: "§7Caisses plus récentes"
+      down: "§7Caisses plus anciennes"
+      left: "§7Récompenses plus récentes"
+      right: "§7Récompenses plus anciennes"
+    crate: |-
+      
+      §7Récompenses obtenues : §e#{count}
+      §7Dernière ouverture : §e#{time}
+    reward: "§7Heure : §e#{time}"
   list:
     title: "Liste des caisses"
     header:

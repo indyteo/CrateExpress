@@ -65,6 +65,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	}
 
 	@Override
+	@SuppressWarnings("UnstableApiUsage")
 	protected @Nullable ItemStack icon(@NotNull Player player, @NotNull CrateElement crateElement) {
 		if (crateElement.isCrate())
 			return this.crateIcon(player, (Crate) crateElement);

@@ -16,6 +16,7 @@ public final class CratePermission {
 
 		public static final @NotNull String ACCESS = sub("access");
 		public static final @NotNull String CLAIM = sub("claim");
+		public static final @NotNull String HISTORY = sub("history");
 		public static final @NotNull String OPEN = sub("open");
 		public static final @NotNull String PREVIEW = sub("preview");
 		public static final @NotNull String GIVE = sub("give");
