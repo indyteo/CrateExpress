@@ -172,8 +172,8 @@ menu:
         §7Contrôlez les paramètres de la caisse
     empty: "§cAucune récompense pour l'instant"
     reward:
+      weight: "§7Poids : §e#{weight}§7/#{total}"
       info: |-
-        §7Poids : §e#{weight}§7/#{total}
         §7Type : §e#{type}
         §6»§e Clic gauche pour déplacer
         §6»§e Clic droit pour éditer

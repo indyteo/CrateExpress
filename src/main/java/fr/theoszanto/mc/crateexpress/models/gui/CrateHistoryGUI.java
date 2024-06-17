@@ -4,6 +4,7 @@ import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.models.reward.HistoricalReward;
+import fr.theoszanto.mc.crateexpress.utils.CratePermission;
 import fr.theoszanto.mc.crateexpress.utils.Pair;
 import fr.theoszanto.mc.crateexpress.utils.TimeUtils;
 import fr.theoszanto.mc.express.gui.ExpressGUI;
@@ -79,14 +80,20 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 			this.history = history;
 			this.error = error != null;
 			if (!this.error) {
+				boolean hideNoPreview = !viewer.hasPermission(CratePermission.BYPASS_NO_PREVIEW);
 				int size = this.history.size();
+				if (hideNoPreview)
+					size -= (int) this.history.keySet().stream().filter(Crate::isNoPreview).count();
 				this.vScroll = 0;
 				this.vMax = Math.max(0, size - 4);
 				this.hScrolls = new int[size];
 				this.hMaxes = new int[size];
 				int i = 0;
-				for (List<HistoricalReward> rewards : this.history.values())
-					this.hMaxes[i++] = Math.max(0, computeSpacedWidth(rewards) - 6);
+				for (Map.Entry<Crate, List<HistoricalReward>> entry : this.history.entrySet()) {
+					if (hideNoPreview && entry.getKey().isNoPreview())
+						continue;
+					this.hMaxes[i++] = Math.max(0, computeSpacedWidth(entry.getValue()) - 6);
+				}
 			}
 			if (this.opened)
 				this.refresh(viewer);
@@ -108,7 +115,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 			this.shouldFetchData = false;
 		}
 
-		boolean self = player.equals(this.player);
+		boolean self = player.getUniqueId().equals(this.player.getUniqueId());
 
 		// Borders
 		ItemBuilder borderLight = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE, 1, "§r");
@@ -172,12 +179,20 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 			if (this.vScroll > 0)
 				this.set(slot(0, 0), new ItemBuilder(Material.ARROW, 1, this.i18n("menu.history.scroll.up")), "vScroll", this.vScroll - 1);
 
+			boolean hideNoPreview = !player.hasPermission(CratePermission.BYPASS_NO_PREVIEW);
 			Iterator<Map.Entry<Crate, List<HistoricalReward>>> iterator = this.history.entrySet().iterator();
-			for (int i = 0; i < this.vScroll && iterator.hasNext(); i++)
-				iterator.next();
+			for (int i = 0; i < this.vScroll && iterator.hasNext(); i++) {
+				Map.Entry<Crate, List<HistoricalReward>> entry = iterator.next();
+				if (hideNoPreview && entry.getKey().isNoPreview())
+					i--;
+			}
 			for (int i = 0; i < 4 && iterator.hasNext(); i++) {
 				Map.Entry<Crate, List<HistoricalReward>> entry = iterator.next();
 				Crate crate = entry.getKey();
+				if (hideNoPreview && entry.getKey().isNoPreview()) {
+					i--;
+					continue;
+				}
 				List<HistoricalReward> rewards = entry.getValue();
 
 				int row = 1 + i;
