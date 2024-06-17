@@ -8,6 +8,7 @@ import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.models.reward.HistoricalReward;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -85,7 +86,7 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
-	public @NotNull List<@NotNull HistoricalReward> listHistory(@NotNull Player player, @NotNull Date date) throws IllegalStateException {
+	public @NotNull List<@NotNull HistoricalReward> listHistory(@NotNull OfflinePlayer player, @NotNull Date date) throws IllegalStateException {
 		this.notice();
 		return Collections.emptyList();
 	}

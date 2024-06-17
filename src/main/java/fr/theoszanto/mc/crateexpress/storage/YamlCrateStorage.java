@@ -16,6 +16,7 @@ import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.LocationUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -380,7 +381,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
-	public @NotNull List<@NotNull HistoricalReward> listHistory(@NotNull Player player, @NotNull Date date) throws IllegalStateException {
+	public @NotNull List<@NotNull HistoricalReward> listHistory(@NotNull OfflinePlayer player, @NotNull Date date) throws IllegalStateException {
 		String uuid = player.getUniqueId().toString();
 		try {
 			File playerStatsDir = new File(this.statsDir, uuid);

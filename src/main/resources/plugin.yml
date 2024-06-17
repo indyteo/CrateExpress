@@ -41,7 +41,6 @@ permissions:
     children:
       crateexpress.command.access: true
       crateexpress.command.claim: true
-      crateexpress.command.history: true
       crateexpress.command.create: true
       crateexpress.command.delete: true
       crateexpress.command.edit: true
@@ -54,14 +53,12 @@ permissions:
       crateexpress.command.reload: true
       crateexpress.command.teleport: true
       crateexpress.command.version: true
+      crateexpress.command.history.*: true
   crateexpress.command.access:
     description: "Grant access to basic /crateexpress (help|info) commands"
     default: true
   crateexpress.command.claim:
     description: "Grant access to /crateexpress claim command"
-    default: true
-  crateexpress.command.history:
-    description: "Grant access to /crateexpress history command"
     default: true
   crateexpress.command.create:
     description: "Grant access to /crateexpress create command"
@@ -98,4 +95,16 @@ permissions:
     default: op
   crateexpress.command.version:
     description: "Grant access to /crateexpress version command"
+    default: op
+  crateexpress.command.history.*:
+    description: "Grant access to complete /crateexpress history command"
+    default: op
+    children:
+      crateexpress.command.history.self: true
+      crateexpress.command.history.other: true
+  crateexpress.command.history.self:
+    description: "Grant access to /crateexpress history command"
+    default: true
+  crateexpress.command.history.other:
+    description: "Grant access to /crateexpress history <player> command"
     default: op

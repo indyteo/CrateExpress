@@ -67,10 +67,16 @@ menu:
     title: "Historique de récompense"
     header:
       name: "§aHistorique de récompense des caisses"
-      lore: |-
-        §7Jour : §e#{date}
-        §7Caisses ouvertes : §e#{crates}
-        §7Récompenses obtenues : §e#{rewards}
+      lore:
+        self: |-
+          §7Jour : §e#{date}
+          §7Caisses ouvertes : §e#{crates}
+          §7Récompenses obtenues : §e#{rewards}
+        other: |-
+          §7Joueur : §e#{player}
+          §7Date : §e#{date}
+          §7Caisses ouvertes : §e#{crates}
+          §7Récompenses obtenues : §e#{rewards}
     day:
       previous:
         name: "§7Jour précédent"
@@ -98,6 +104,11 @@ menu:
         §7Vous pouvez consulter votre historique jusqu'à
         §730 jours en arrière, en utilisant les flèches
         §7en haut du menu.
+    player:
+      name: "§bHistorique de §3#{player}"
+      lore: |-
+        §7Vous consultez actuellement l'historique
+        §7de récompense d'un autre joueur
     error:
       name: "§4Une erreur est survenue !"
       lore: |-
@@ -599,9 +610,12 @@ command:
       file: "§cLa caisse n'a pas pu être exportée vers le fichier §4#{file}"
     success: "§7La caisse §e#{crate}§7 a été exportée avec succès dans §e#{file}"
   stats: "§7La caisse §e#{crate}§7 a été ouverte §e#{open}§7 fois"
+  history:
+    invalid-date: "§cLa date saisie (§4#{date}§c) ne correspond pas au format (§4#{format}§c)"
   help:
     all-commands: "§bListe des commandes disponibles :"
     claim: "§e/#{alias} #{subcommand}§8 » §7Ouvre le menu des récompenses en attente"
+    history: "§e/#{alias} #{subcommand}§8 » §7Affiche l'historique des récompenses des caisses"
     create: "§e/#{alias} #{subcommand} <caisse>§8 » §7Crée une nouvelle caisse et ouvre son menu d'édition"
     delete: "§e/#{alias} #{subcommand} <caisse>§8 » §7Supprime une caisse existante (nécessite une confirmation)"
     edit: "§e/#{alias} #{subcommand} <caisse>§8 » §7Ouvre le menu d'édition d'une caisse"

@@ -7,6 +7,7 @@ import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.models.reward.HistoricalReward;
 import fr.theoszanto.mc.express.utils.Logged;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -47,7 +48,7 @@ public interface CrateStorage extends Logged {
 
 	void updateStats(@NotNull List<@NotNull StatsRecord> stats) throws IllegalStateException;
 
-	@NotNull List<@NotNull HistoricalReward> listHistory(@NotNull Player player, @NotNull Date date) throws IllegalStateException;
+	@NotNull List<@NotNull HistoricalReward> listHistory(@NotNull OfflinePlayer player, @NotNull Date date) throws IllegalStateException;
 
 	void migratePlayerStats(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException;
 }
