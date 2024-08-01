@@ -20,10 +20,11 @@ public class CrateExpressVersionSubCommand extends CrateExpressSubCommand {
 	}
 
 	@Override
+	@SuppressWarnings("UnstableApiUsage") // PluginMeta
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
 		if (args.length != 0)
 			return false;
-		this.i18nMessage(sender, "command.version", "version", this.plugin.getDescription().getVersion());
+		this.i18nMessage(sender, "command.version", "version", this.plugin.getPluginMeta().getVersion());
 		return true;
 	}
 

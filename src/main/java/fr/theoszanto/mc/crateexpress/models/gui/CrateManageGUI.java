@@ -11,7 +11,6 @@ import fr.theoszanto.mc.express.gui.ExpressGUI;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -182,7 +181,7 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 			player.closeInventory();
 			this.spigot().requestChatEdition(player, this.crate.getName().replace('§', '&'), 1, TimeUnit.MINUTES).whenComplete((name, timeout) -> {
 				if (timeout == null)
-					this.crate.setName(ChatColor.translateAlternateColorCodes('&', name));
+					this.crate.setName(ItemUtils.translateAmpersandColorCodes(name));
 				else
 					this.i18nMessage(player, "menu.manage.name.timeout");
 				this.run(() -> this.showToPlayer(player));
@@ -194,7 +193,7 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				player.closeInventory();
 				this.spigot().requestChatEdition(player, this.crate.getMessage() == null ? null : this.crate.getMessage().replace('§', '&'), 1, TimeUnit.MINUTES).whenComplete((message, timeout) -> {
 					if (timeout == null)
-						this.crate.setMessage(ChatColor.translateAlternateColorCodes('&', message));
+						this.crate.setMessage(ItemUtils.translateAmpersandColorCodes(message));
 					else
 						this.i18nMessage(player, "menu.manage.message.timeout");
 					this.run(() -> this.showToPlayer(player));

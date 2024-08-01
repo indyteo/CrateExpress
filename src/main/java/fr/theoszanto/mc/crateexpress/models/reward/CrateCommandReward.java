@@ -1,6 +1,7 @@
 package fr.theoszanto.mc.crateexpress.models.reward;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
+import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -35,7 +36,7 @@ public class CrateCommandReward extends CrateReward {
 
 	private @NotNull String formattedCommand(@NotNull Player player) {
 		return this.command.replaceAll("<player>", player.getName())
-				.replaceAll("<display>", player.getDisplayName())
+				.replaceAll("<display>", ItemUtils.COMPONENT_SERIALIZER.serialize(player.displayName()))
 				.replaceAll("<uuid>", player.getUniqueId().toString());
 	}
 }

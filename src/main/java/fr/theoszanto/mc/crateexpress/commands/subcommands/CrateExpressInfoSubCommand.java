@@ -3,8 +3,8 @@ package fr.theoszanto.mc.crateexpress.commands.subcommands;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.commands.CrateExpressCommand;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
+import io.papermc.paper.plugin.configuration.PluginMeta;
 import org.bukkit.command.CommandSender;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -21,10 +21,11 @@ public class CrateExpressInfoSubCommand extends CrateExpressSubCommand {
 	}
 
 	@Override
+	@SuppressWarnings("UnstableApiUsage") // PluginMeta
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
 		if (args.length != 0)
 			return false;
-		PluginDescriptionFile desc = this.plugin.getDescription();
+		PluginMeta desc = this.plugin.getPluginMeta();
 		for (String line : this.i18nLines("command.info",
 				"plugin", desc.getName(),
 				"authors", String.join(", ", desc.getAuthors()),

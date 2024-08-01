@@ -34,7 +34,7 @@ public class CrateExpressHistorySubCommand extends CrateExpressSubCommand {
 	}
 
 	@Override
-	@SuppressWarnings({ "deprecation", "ConstantValue" })
+	@SuppressWarnings("ConstantValue")
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
 		if (args.length > 2)
 			return false;

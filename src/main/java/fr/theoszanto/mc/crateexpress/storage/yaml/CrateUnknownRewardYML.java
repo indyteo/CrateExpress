@@ -17,8 +17,7 @@ public class CrateUnknownRewardYML extends CrateRewardYML<CrateUnknownReward> {
 	public void serialize(@NotNull CrateUnknownReward reward, @NotNull ConfigurationSection data) {
 		data.set("type", reward.getUnknownType()); // Overwrite "unknown" type with the actual unknown type
 		Object unknownData = reward.getData();
-		if (unknownData instanceof Map) {
-			Map<?, ?> unknownDataMap = (Map<?, ?>) unknownData;
+		if (unknownData instanceof Map<?, ?> unknownDataMap) {
 			unknownDataMap.forEach((key, value) -> {
 				if (key instanceof String)
 					data.set((String) key, value);

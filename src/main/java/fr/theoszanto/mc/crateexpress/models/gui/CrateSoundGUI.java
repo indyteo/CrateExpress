@@ -52,16 +52,12 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 
 	@Override
 	protected @Nullable ItemStack icon(@NotNull Player player, @NotNull SoundElement element) {
-		if (element.isValue()) {
-			SoundValue value = (SoundValue) element;
+		if (element instanceof SoundValue value)
 			return new ItemBuilder(this.getIcon(value.getName().toUpperCase(), Material.PAPER), 1, this.i18n("menu.sound.value", "key", value.getKey()), this.i18nLines("menu.sound.lore"))
 					.addLore(this.i18n("menu.sound.value-key", "key", value.getKey())).build();
-		}
-		if (element.isNamespace()) {
-			SoundNamespace namespace = (SoundNamespace) element;
+		if (element instanceof SoundNamespace namespace)
 			return new ItemBuilder(this.getIcon(namespace.getName().toUpperCase(), Material.BOOK), 1, this.i18n("menu.sound.namespace", "namespace", namespace.getName()), this.i18nLines("menu.sound.enter-namespace"))
-					.addLore(this.i18n("menu.sound.namespace-prefix", "prefix", namespace.getPrefix())).build();
-		}
+					.addLore(this.i18n("menu.sound.namespace-prefix", "prefix", namespace.prefix())).build();
 		return null;
 	}
 
@@ -88,17 +84,16 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 
 	@Override
 	protected boolean onClickOnElement(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull SoundElement element) {
-		if (element.isValue()) {
-			SoundValue value = (SoundValue) element;
+		if (element instanceof SoundValue value) {
 			if (click.isLeftClick()) {
-				this.onSelect.accept(value.getValue());
+				this.onSelect.accept(value.value());
 				player.closeInventory();
 			} else if (click.isRightClick())
-				player.playSound(player.getLocation(), value.getValue(), SoundCategory.MASTER, 1, 1);
+				player.playSound(player.getLocation(), value.value(), SoundCategory.MASTER, 1, 1);
 			else if (click == ClickType.MIDDLE)
-				player.stopSound(value.getValue(), SoundCategory.MASTER);
-		} else if (element.isNamespace())
-			this.openNamespace(player, (SoundNamespace) element);
+				player.stopSound(value.value(), SoundCategory.MASTER);
+		} else if (element instanceof SoundNamespace namespace)
+			this.openNamespace(player, namespace);
 		return true;
 	}
 
@@ -131,41 +126,23 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 	}
 
 	public interface SoundElement extends Comparable<SoundElement> {
-		default boolean isValue() {
-			return this instanceof SoundValue;
-		}
-
-		default boolean isNamespace() {
-			return this instanceof SoundNamespace;
-		}
-
 		@Override
 		default int compareTo(@NotNull SoundElement other) {
-			if (this.isNamespace()) {
-				if (other.isNamespace())
-					return ((SoundNamespace) this).getPrefix().compareToIgnoreCase(((SoundNamespace) other).getPrefix());
+			if (this instanceof SoundNamespace thisNamespace) {
+				if (other instanceof SoundNamespace otherNamespace)
+					return thisNamespace.prefix().compareToIgnoreCase(otherNamespace.prefix());
 				return -1;
 			}
-			if (this.isValue()) {
-				if (other.isValue())
-					return ((SoundValue) this).getKey().compareToIgnoreCase(((SoundValue) other).getKey());
+			if (this instanceof SoundValue thisValue) {
+				if (other instanceof SoundValue otherValue)
+					return thisValue.getKey().compareToIgnoreCase(otherValue.getKey());
 				return 1;
 			}
 			return 1;
 		}
 	}
 
-	public static class SoundValue implements SoundElement {
-		private final @NotNull Sound value;
-
-		public SoundValue(@NotNull Sound value) {
-			this.value = value;
-		}
-
-		public @NotNull Sound getValue() {
-			return this.value;
-		}
-
+	public record SoundValue(@NotNull Sound value) implements SoundElement {
 		public @NotNull String getKey() {
 			return this.value.getKey().getKey();
 		}
@@ -180,19 +157,9 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 		}
 	}
 
-	public static class SoundNamespace implements SoundElement {
-		private final @NotNull String prefix;
-
+	public record SoundNamespace(@NotNull String prefix) implements SoundElement {
 		public static final @NotNull SoundNamespace ROOT = new SoundNamespace("");
 		public static final char SEPARATOR = '.';
-
-		public SoundNamespace(@NotNull String prefix) {
-			this.prefix = prefix;
-		}
-
-		public @NotNull String getPrefix() {
-			return this.prefix;
-		}
 
 		public @NotNull String getName() {
 			int sep = this.prefix.lastIndexOf(SEPARATOR);

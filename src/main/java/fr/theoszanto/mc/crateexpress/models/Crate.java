@@ -220,7 +220,7 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	public @Nullable String getFormattedMessage(@NotNull Player player) {
 		return this.message == null ? null : this.prefix() + this.message
 				.replaceAll("<player>", player.getName())
-				.replaceAll("<display>", player.getDisplayName())
+				.replaceAll("<display>", ItemUtils.COMPONENT_SERIALIZER.serialize(player.displayName()))
 				.replaceAll("<crate>", this.name)
 				.replaceAll("<key>", this.key == null ? this.name : ItemUtils.name(this.key.getItem()));
 	}

@@ -180,7 +180,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 					if (!player.hasPermission(CratePermission.BYPASS_DISABLED))
 						usedKeyCratesStream = usedKeyCratesStream.filter(((Predicate<Crate>) Crate::isDisabled).negate());
 
-					List<Crate> accessibleCrates = usedKeyCratesStream.collect(Collectors.toList());
+					List<Crate> accessibleCrates = usedKeyCratesStream.toList();
 					if (accessibleCrates.isEmpty()) {
 						this.i18nMessage(player, "action.key.cannot-use", "key", ItemUtils.name(item));
 						return;

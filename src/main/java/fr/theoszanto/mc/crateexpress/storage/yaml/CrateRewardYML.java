@@ -18,9 +18,8 @@ public abstract class CrateRewardYML<T extends CrateReward> extends CrateRewardS
 	@SuppressWarnings("unchecked")
 	@Override
 	public final void serializeReward(@NotNull CrateReward reward, @Nullable Object @NotNull... arguments) {
-		if (arguments.length != 1 || !(arguments[0] instanceof ConfigurationSection))
+		if (arguments.length != 1 || !(arguments[0] instanceof ConfigurationSection data))
 			throw new IllegalArgumentException();
-		ConfigurationSection data = (ConfigurationSection) arguments[0];
 		data.set("id", reward.getId());
 		data.set("type", reward.getType());
 		data.set("weight", reward.getWeight());
@@ -29,9 +28,8 @@ public abstract class CrateRewardYML<T extends CrateReward> extends CrateRewardS
 
 	@Override
 	public final @NotNull T deserializeReward(@Nullable Object @NotNull... arguments) throws IllegalStateException {
-		if (arguments.length != 1 || !(arguments[0] instanceof ConfigurationSection))
+		if (arguments.length != 1 || !(arguments[0] instanceof ConfigurationSection data))
 			throw new IllegalArgumentException();
-		ConfigurationSection data = (ConfigurationSection) arguments[0];
 		String id = data.getString("id");
 		double weight = data.getDouble("weight", 1);
 		return this.deserialize(data, id == null ? CrateReward.generateRandomId() : id, weight);

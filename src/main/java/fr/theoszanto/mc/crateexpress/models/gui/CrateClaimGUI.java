@@ -41,7 +41,7 @@ public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableRe
 
 	@Override
 	protected @NotNull ItemStack icon(@NotNull Player player, @NotNull ClaimableReward element) {
-		ItemStack icon = element.getReward().getIcon().clone();
+		ItemStack icon = element.reward().getIcon().clone();
 		ItemUtils.addLore(icon, this.i18nLines("menu.claim.reward"));
 		return icon;
 	}
@@ -55,12 +55,12 @@ public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableRe
 		this.processing = true;
 		if (click == ClickType.DROP || click == ClickType.CONTROL_DROP) {
 			this.list.remove(element);
-			this.plugin.storage().getSource().deleteReward(player, element.getId());
+			this.plugin.storage().getSource().deleteReward(player, element.id());
 			this.recomputePageMax();
 			this.refresh(player);
 		} else {
 			PlayerInventory inventory = player.getInventory();
-			if ((inventory.firstEmpty() != -1 || !element.getReward().isPhysicalReward()) && this.claimReward(player, element)) {
+			if ((inventory.firstEmpty() != -1 || !element.reward().isPhysicalReward()) && this.claimReward(player, element)) {
 				this.recomputePageMax();
 				this.refresh(player);
 			}
@@ -97,10 +97,10 @@ public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableRe
 
 	private boolean claimReward(@NotNull Player player, @NotNull ClaimableReward reward) {
 		// Try to give it to player and remove it from current pending rewards if successful
-		if (reward.getReward().giveRewardTo(player, false)) {
+		if (reward.reward().giveRewardTo(player, false)) {
 			this.list.remove(reward);
 			// Remove stored pending reward
-			this.plugin.storage().getSource().deleteReward(player, reward.getId());
+			this.plugin.storage().getSource().deleteReward(player, reward.id());
 			return true;
 		}
 		return false;

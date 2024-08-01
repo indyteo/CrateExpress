@@ -47,7 +47,7 @@ public class MoneyManager extends PluginObject {
 		if (this.moneyGiveCommand == null)
 			throw new IllegalStateException("Money module not initialized");
 		return this.moneyGiveCommand.replaceAll("<player>", player.getName())
-				.replaceAll("<display>", player.getDisplayName())
+				.replaceAll("<display>", ItemUtils.COMPONENT_SERIALIZER.serialize(player.displayName()))
 				.replaceAll("<uuid>", player.getUniqueId().toString())
 				.replaceAll("<amount>", Double.toString(amount));
 	}

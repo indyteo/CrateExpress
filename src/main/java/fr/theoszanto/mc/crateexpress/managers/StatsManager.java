@@ -59,7 +59,7 @@ public class StatsManager extends PluginObject {
 
 	public void recordStats(@NotNull StatsRecord stats) {
 		this.pendingStats.offer(stats);
-		this.historyCache.remove(new Pair<>(stats.getPlayer().getUniqueId(), TimeUtils.cloneWithoutTime(stats.getDate())));
+		this.historyCache.remove(new Pair<>(stats.player().getUniqueId(), TimeUtils.cloneWithoutTime(stats.date())));
 	}
 
 	public void savePendingStats() {
@@ -83,14 +83,14 @@ public class StatsManager extends PluginObject {
 				try {
 					Map<Crate, List<HistoricalReward>> history = new HashMap<>();
 					for (HistoricalReward reward : this.storage().getSource().listHistory(player, date))
-						history.computeIfAbsent(reward.getCrate(), k -> new ArrayList<>()).add(reward);
+						history.computeIfAbsent(reward.crate(), k -> new ArrayList<>()).add(reward);
 					for (StatsRecord pending : this.pendingStats)
-						if (pending.getPlayer().getUniqueId().equals(player.getUniqueId()))
-							history.computeIfAbsent(pending.getCrate(), k -> new ArrayList<>()).addAll(pending.getRewards().stream()
-									.map(reward -> new HistoricalReward(pending.getDate(), pending.getCrate(), reward))
-									.collect(Collectors.toList()));
+						if (pending.player().getUniqueId().equals(player.getUniqueId()))
+							history.computeIfAbsent(pending.crate(), k -> new ArrayList<>()).addAll(pending.rewards().stream()
+									.map(reward -> new HistoricalReward(pending.date(), pending.crate(), reward))
+									.toList());
 					history.values().forEach(Collections::sort);
-					Map<Crate, Date> lastOpened = history.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get(0).getDate()));
+					Map<Crate, Date> lastOpened = history.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get(0).date()));
 					Map<Crate, List<HistoricalReward>> sortedHistory = new TreeMap<>(Comparator.comparing(lastOpened::get).reversed());
 					sortedHistory.putAll(history);
 					this.historyCache.put(cacheKey, sortedHistory);

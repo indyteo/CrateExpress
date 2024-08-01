@@ -77,7 +77,7 @@ public class TimeUtils {
 		long seconds = duration.getSeconds() % 60;
 		if (seconds > 0)
 			str.append(seconds).append("s ");
-		return str.length() == 0 ? "" : str.deleteCharAt(str.length() - 1).toString();
+		return str.isEmpty() ? "" : str.deleteCharAt(str.length() - 1).toString();
 	}
 
 	public static @NotNull Duration ceilToSecond(@NotNull Duration duration) {

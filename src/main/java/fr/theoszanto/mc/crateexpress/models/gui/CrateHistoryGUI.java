@@ -136,7 +136,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 				"player", this.player.getName(),
 				"date", DATE_FORMAT.format(this.date),
 				"crates", this.history == null ? 0 : this.history.size(),
-				"rewards", this.history == null ? 0 : this.history.values().stream().mapToInt(List::size).sum())).addFlag(ItemFlag.HIDE_POTION_EFFECTS));
+				"rewards", this.history == null ? 0 : this.history.values().stream().mapToInt(List::size).sum())).addFlag(ItemFlag.HIDE_ITEM_SPECIFICS));
 
 		// Next day button
 		if (TimeUtils.compareIgnoringTime(this.date, this.today) < 0) {
@@ -153,7 +153,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 
 		if (self)
 			// Help text
-			this.set(slot(5, 8), new ItemBuilder(Material.WRITTEN_BOOK, 1, this.i18n("menu.history.help.name"), this.i18nLines("menu.history.help.lore")).addFlag(ItemFlag.HIDE_POTION_EFFECTS));
+			this.set(slot(5, 8), new ItemBuilder(Material.WRITTEN_BOOK, 1, this.i18n("menu.history.help.name"), this.i18nLines("menu.history.help.lore")).addFlag(ItemFlag.HIDE_ITEM_SPECIFICS));
 		else {
 			// Player indicator
 			ItemStack head = new ItemBuilder(Material.PLAYER_HEAD, 1, this.i18n("menu.history.player.name", "player", this.player.getName()), this.i18nLines("menu.history.player.lore")).build();
@@ -206,7 +206,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 					item = new ItemBuilder(Material.CHEST, 1, crate.getName()).build();
 				else
 					item = key.getItem().clone();
-				ItemUtils.addLore(item, this.i18nLines("menu.history.crate", "count", rewards.size(), "time", TIME_FORMAT.format(rewards.get(0).getDate())));
+				ItemUtils.addLore(item, this.i18nLines("menu.history.crate", "count", rewards.size(), "time", TIME_FORMAT.format(rewards.get(0).date())));
 				this.set(slot(row, 0), item);
 
 				// Scroll left
@@ -216,7 +216,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 				List<HistoricalReward> spacedRewards = new ArrayList<>(hMax + 6);
 				for (int j = 0; j < rewards.size(); j++) {
 					HistoricalReward reward = rewards.get(j);
-					if (j > 0 && !reward.getDate().equals(rewards.get(j - 1).getDate()))
+					if (j > 0 && !reward.date().equals(rewards.get(j - 1).date()))
 						spacedRewards.add(null);
 					spacedRewards.add(reward);
 				}
@@ -227,8 +227,8 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 					if (reward == null)
 						icon = borderLight.build();
 					else {
-						icon = reward.getReward().getIconWithChance(crateWeight);
-						ItemUtils.addLore(icon, this.i18nLines("menu.history.reward", "time", TIME_FORMAT.format(reward.getDate())));
+						icon = reward.reward().getIconWithChance(crateWeight);
+						ItemUtils.addLore(icon, this.i18nLines("menu.history.reward", "time", TIME_FORMAT.format(reward.date())));
 					}
 					this.set(slot(row, 2 + j), icon);
 				}
@@ -259,7 +259,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 			break;
 		case "hScroll":
 			Pair<Integer, Integer> pair = data.getUserData();
-			this.hScrolls[pair.getFirst()] = pair.getSecond();
+			this.hScrolls[pair.first()] = pair.second();
 			this.refresh(player);
 			break;
 		}
@@ -275,7 +275,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 	private static int computeSpacedWidth(@NotNull List<@NotNull HistoricalReward> rewards) {
 		int n = 0;
 		for (int j = 0; j < rewards.size(); j++, n++)
-			if (j > 0 && !rewards.get(j).getDate().equals(rewards.get(j - 1).getDate()))
+			if (j > 0 && !rewards.get(j).date().equals(rewards.get(j - 1).date()))
 				n++;
 		return n;
 	}
