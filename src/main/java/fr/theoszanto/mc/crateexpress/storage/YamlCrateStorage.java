@@ -29,6 +29,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.nio.file.attribute.BasicFileAttributes;
@@ -191,29 +192,6 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		}
 	}
 
-	public void migratePlayerRewards() {
-		File[] files = this.rewardsDir.listFiles();
-		assert files != null;
-		for (File file : files) {
-			try {
-				YamlConfiguration data = new YamlConfiguration();
-				data.load(file);
-				for (String id : data.getKeys(false)) {
-					ConfigurationSection rewardDataOld = data.getConfigurationSection(id);
-					assert rewardDataOld != null;
-					CrateReward reward = this.deserializeReward(rewardDataOld);
-					data.set(id, null);
-					ConfigurationSection rewardDataNew = data.createSection(id);
-					this.serializeReward(rewardDataNew, reward);
-				}
-				data.save(file);
-			} catch (FileNotFoundException ignored) {
-			} catch (IOException | InvalidConfigurationException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
 	@Override
 	public @NotNull List<@NotNull ClaimableReward> listRewards(@NotNull Player player) throws IllegalStateException {
 		String uuid = player.getUniqueId().toString();
@@ -289,6 +267,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			Path dst = new File(this.rewardsDir, to + ".yml").toPath();
 			Files.move(src, dst, StandardCopyOption.REPLACE_EXISTING);
 			this.rewardsCountCache.put(to, this.rewardsCountCache.remove(from));
+		} catch (NoSuchFileException ignored) {
 		} catch (IOException e) {
 			throw new IllegalStateException("Could not rename rewards file", e);
 		}
