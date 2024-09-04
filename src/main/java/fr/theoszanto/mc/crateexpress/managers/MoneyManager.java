@@ -22,6 +22,7 @@ public class MoneyManager extends PluginObject {
 	private @NotNull String currencySymbol = "";
 	private boolean placementBefore = true;
 	private boolean physical = false;
+	private boolean round = false;
 
 	public MoneyManager(@NotNull CrateExpress plugin) {
 		super(plugin);
@@ -35,7 +36,7 @@ public class MoneyManager extends PluginObject {
 		case VAULT:
 			if (this.vaultEconomy == null)
 				this.vaultEconomy = new VaultEconomy(this.plugin);
-			this.vaultEconomy.giveMoney(player, amount);
+			this.vaultEconomy.giveMoney(player, this.round ? Math.round(amount) : amount);
 			break;
 		case NONE:
 		default:
@@ -49,13 +50,13 @@ public class MoneyManager extends PluginObject {
 		return this.moneyGiveCommand.replaceAll("<player>", player.getName())
 				.replaceAll("<display>", ItemUtils.COMPONENT_SERIALIZER.serialize(player.displayName()))
 				.replaceAll("<uuid>", player.getUniqueId().toString())
-				.replaceAll("<amount>", Double.toString(amount));
+				.replaceAll("<amount>", this.round ? Long.toString(Math.round(amount)) : Double.toString(amount));
 	}
 
 	public @NotNull ItemStack getItem(double amount) throws IllegalStateException {
 		if (this.item == Material.AIR)
 			throw new IllegalStateException("Money module not initialized");
-		String money = this.formatMoney(amount);
+		String money = this.formatMoney(this.round ? Math.round(amount) : amount);
 		return new ItemBuilder(this.item, ItemUtils.stackAmountFromValue(amount),
 				this.i18n("crate.preview.money-name", "amount", money),
 				this.i18nLines("crate.preview.money-lore", "amount", money)).buildUnmodifiable();
@@ -79,6 +80,7 @@ public class MoneyManager extends PluginObject {
 		this.currencySymbol = config.getCurrencySymbol();
 		this.placementBefore = config.isPlacementBefore();
 		this.physical = config.isPhysical();
+		this.round = config.isRound();
 	}
 
 	public void reset() {

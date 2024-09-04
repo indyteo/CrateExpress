@@ -62,6 +62,7 @@ money:
   currency-symbol: "$"
   placement: before
   physical: false
+  round: false
 export:
   directory: "./exports/"
   exporters:

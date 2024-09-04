@@ -245,6 +245,14 @@ public class CrateConfig extends PluginObject {
 		public void setPhysical(boolean physical) {
 			this.section.set("physical", physical);
 		}
+
+		public boolean isRound() {
+			return this.section.getBoolean("round", false);
+		}
+
+		public void setRound(boolean round) {
+			this.section.set("round", round);
+		}
 	}
 
 	public static class Crates extends Section {
