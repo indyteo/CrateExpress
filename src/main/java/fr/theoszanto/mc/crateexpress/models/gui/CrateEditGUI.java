@@ -33,9 +33,8 @@ public class CrateEditGUI extends ExpressGUI<CrateExpress> {
 	@Override
 	public void onOpen(@NotNull Player player, @Nullable ExpressGUI<CrateExpress> previous) {
 		// Borders
-		ItemBuilder border = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE, 1, "§r");
 		for (int i = 0; i < 9; i++)
-			this.set(slot(5, i), border);
+			this.set(slot(5, i), BORDER);
 
 		// Back button
 		this.set(slot(5, 0), new ItemBuilder(Material.ARROW, 1, this.i18n("menu.back")), "back");

@@ -36,17 +36,16 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 	@Override
 	public void onOpen(@NotNull Player player, @Nullable ExpressGUI<CrateExpress> previous) {
 		// Borders
-		ItemBuilder border = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE, 1, "§r");
 		for (int i = 0; i < 9; i++) {
-			this.set(slot(0, i), border);
-			this.set(slot(4, i), border);
+			this.set(slot(0, i), BORDER);
+			this.set(slot(4, i), BORDER);
 		}
-		this.set(slot(1, 0), border);
-		this.set(slot(2, 0), border);
-		this.set(slot(3, 0), border);
-		this.set(slot(1, 8), border);
-		this.set(slot(2, 8), border);
-		this.set(slot(3, 8), border);
+		this.set(slot(1, 0), BORDER);
+		this.set(slot(2, 0), BORDER);
+		this.set(slot(3, 0), BORDER);
+		this.set(slot(1, 8), BORDER);
+		this.set(slot(2, 8), BORDER);
+		this.set(slot(3, 8), BORDER);
 
 		// Crate options header
 		CrateKey key = this.crate.getKey();
@@ -57,16 +56,16 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				"status", this.i18n("menu.manage.header." + (this.crate.isDisabled() ? "disabled" : "enabled")),
 				"key", key == null ? this.i18n("menu.manage.header.no-key") : ItemUtils.name(key.getItem()),
 				"location", locations == null || locations.isEmpty() ? this.i18n("menu.manage.header.no-location") : locations.size() == 1 ? this.i18n("menu.manage.header.location",
-						"world", locations.get(0).getWorldName(),
-						"x", locations.get(0).getBlockX(),
-						"y", locations.get(0).getBlockY(),
-						"z", locations.get(0).getBlockZ()
+						"world", locations.getFirst().getWorldName(),
+						"x", locations.getFirst().getBlockX(),
+						"y", locations.getFirst().getBlockY(),
+						"z", locations.getFirst().getBlockZ()
 				) : this.i18nLines("menu.manage.header.multiple-locations", "count", locations.size()),
 				"delay", FormatUtils.noTrailingZeroDecimal(this.crate.getDelay()),
 				"preview", this.i18n("menu.manage.header." + (this.crate.isNoPreview() ? "disabled" : "enabled")),
 				"name", this.crate.getName(),
 				"message", message == null ? this.i18n("menu.manage.header.no-message") : message,
-				"sound", sound == null ? this.i18n("menu.manage.header.no-sound") : sound.getKey(),
+				"sound", sound == null ? this.i18n("menu.manage.header.no-sound") : sound.key().value(),
 				"random", this.i18n("menu.manage.header.random." + (this.crate.isRandom() ? "enabled" : "disabled"))
 		));
 		if (this.crate.isRandom())
@@ -84,17 +83,17 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 		this.set(slot(1, 2), new ItemBuilder(this.crate.isDisabled() ? Material.GRAY_DYE : Material.LIME_DYE, 1, this.i18n("menu.manage.status.name", "status", this.i18n("menu.manage.status." + (this.crate.isDisabled() ? "disabled" : "enabled"))), this.i18nLines("menu.manage.status.lore")), "status");
 		this.set(slot(1, 3), new ItemBuilder(Material.TRIPWIRE_HOOK, 1, this.i18n("menu.manage.key.name", "key", this.i18n(key == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.key.lore")), "key");
 		this.set(slot(1, 4), new ItemBuilder(locations == null ? Material.RECOVERY_COMPASS : Material.COMPASS, 1, this.i18n("menu.manage.location.name", "location", this.i18n(locations == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.location.lore", "location", locations == null || locations.isEmpty() ? this.i18n("menu.manage.location.none") : locations.size() == 1 ? this.i18n("menu.manage.location.value",
-				"world", locations.get(0).getWorldName(),
-				"x", locations.get(0).getBlockX(),
-				"y", locations.get(0).getBlockY(),
-				"z", locations.get(0).getBlockZ()
+				"world", locations.getFirst().getWorldName(),
+				"x", locations.getFirst().getBlockX(),
+				"y", locations.getFirst().getBlockY(),
+				"z", locations.getFirst().getBlockZ()
 		) : this.i18n("menu.manage.location.multiple", "count", locations.size()))).addLoreConditionally(locations != null && !locations.isEmpty(), this.i18n("menu.manage.location.teleport")), "location");
 		this.set(slot(1, 5), new ItemBuilder(Material.CLOCK, 1, this.i18n("menu.manage.delay.name", "delay", FormatUtils.noTrailingZeroDecimal(this.crate.getDelay())), this.i18nLines("menu.manage.delay.lore")), "delay");
 		this.set(slot(1, 6), new ItemBuilder(this.crate.isNoPreview() ? Material.ENDER_PEARL : Material.ENDER_EYE, 1, this.i18n("menu.manage.preview.name", "preview", this.i18n("menu.manage.preview." + (this.crate.isNoPreview() ? "disabled" : "enabled"))), this.i18nLines("menu.manage.preview.lore")), "preview");
 
 		this.set(slot(2, 3), new ItemBuilder(Material.NAME_TAG, 1, this.i18n("menu.manage.name.name", "name", this.crate.getName()), this.i18nLines("menu.manage.name.lore")), "name");
 		this.set(slot(2, 4), new ItemBuilder(Material.BIRCH_SIGN, 1, this.i18n("menu.manage.message.name", "message", this.i18n(message == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.message.lore", "message", message == null ? this.i18n("menu.manage.message.none") : message)).addLoreConditionally(message != null, this.i18n("menu.manage.message.show")), "message");
-		this.set(slot(2, 5), new ItemBuilder(Material.BELL, 1, this.i18n("menu.manage.sound.name", "sound", this.i18n(sound == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.sound.lore", "sound", sound == null ? this.i18n("menu.manage.sound.none") : sound.getKey())).addLoreConditionally(sound != null, this.i18n("menu.manage.sound.play")), "sound");
+		this.set(slot(2, 5), new ItemBuilder(Material.BELL, 1, this.i18n("menu.manage.sound.name", "sound", this.i18n(sound == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.sound.lore", "sound", sound == null ? this.i18n("menu.manage.sound.none") : sound.key().value())).addLoreConditionally(sound != null, this.i18n("menu.manage.sound.play")), "sound");
 
 		this.set(slot(3, this.crate.isRandom() ? 2 : 4), new ItemBuilder(this.crate.isRandom() ? Material.RABBIT_FOOT : Material.BARREL, 1, this.i18n("menu.manage.random.name", "random", this.i18n("menu.manage.random." + (this.crate.isRandom() ? "enabled" : "disabled"))), this.i18nLines("menu.manage.random.lore")), "random");
 		if (this.crate.isRandom()) {

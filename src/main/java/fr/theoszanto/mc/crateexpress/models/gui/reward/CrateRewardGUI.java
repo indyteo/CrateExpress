@@ -56,13 +56,12 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends ExpressGUI<C
 	@Override
 	public void onOpen(@NotNull Player player, @Nullable ExpressGUI<CrateExpress> previous) {
 		// Borders
-		ItemBuilder border = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE, 1, "§r");
 		for (int i = 0; i < 9; i++) {
-			this.set(slot(0, i), border);
-			this.set(slot(2, i), border);
+			this.set(slot(0, i), BORDER);
+			this.set(slot(2, i), BORDER);
 		}
-		this.set(slot(1, 0), border);
-		this.set(slot(1, 8), border);
+		this.set(slot(1, 0), BORDER);
+		this.set(slot(1, 8), BORDER);
 
 		// Go back & close buttons
 		this.set(slot(2, 0), new ItemBuilder(Material.ARROW, 1, this.i18n("menu.back")), "back");

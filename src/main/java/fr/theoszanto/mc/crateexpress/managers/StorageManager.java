@@ -35,6 +35,11 @@ public class StorageManager extends PluginObject {
 		this.source.migratePlayerStats(from, to);
 	}
 
+	public void clearPlayerData(@NotNull UUID uuid) throws IllegalStateException {
+		this.source.clearRewards(uuid);
+		this.source.clearPlayerStats(uuid);
+	}
+
 	public void resetStorageSource() {
 		this.source = new NoopCrateStorage(this.plugin);
 		this.rewardStorages.clear();

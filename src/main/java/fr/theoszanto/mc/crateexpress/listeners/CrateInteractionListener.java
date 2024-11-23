@@ -164,7 +164,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 
 				// The key the player used is only assigned to 1 crate
 				if (usedKeyCrates.size() == 1) {
-					Crate crate = usedKeyCrates.get(0);
+					Crate crate = usedKeyCrates.getFirst();
 					// Check if player can use the crate
 					if (!crate.isDisabled() || player.hasPermission(CratePermission.BYPASS_DISABLED)) {
 						// Check if crate can be opened from here
@@ -201,7 +201,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 
 					// Ask player to select a crate if needed then open it
 					if (crates.size() == 1)
-						openCrate.accept(crates.get(0));
+						openCrate.accept(crates.getFirst());
 					else
 						new CrateInteractSelectGUI(this.plugin, crates, true, openCrate).showToPlayer(player);
 				}
@@ -230,7 +230,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 
 			// Ask player to select a crate if needed then preview it
 			if (crates.size() == 1)
-				previewCrate.accept(crates.get(0));
+				previewCrate.accept(crates.getFirst());
 			else
 				new CrateInteractSelectGUI(this.plugin, crates, false, previewCrate).showToPlayer(player);
 		}

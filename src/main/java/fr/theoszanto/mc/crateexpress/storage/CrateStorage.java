@@ -40,7 +40,11 @@ public interface CrateStorage extends Logged {
 
 	void deleteReward(@NotNull Player player, @NotNull String id) throws IllegalStateException;
 
-	void clearRewards(@NotNull Player player) throws IllegalStateException;
+	default void clearRewards(@NotNull Player player) throws IllegalStateException {
+		this.clearRewards(player.getUniqueId());
+	}
+
+	void clearRewards(@NotNull UUID uuid) throws IllegalStateException;
 
 	void migrateRewards(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException;
 
@@ -51,4 +55,6 @@ public interface CrateStorage extends Logged {
 	@NotNull List<@NotNull HistoricalReward> listHistory(@NotNull OfflinePlayer player, @NotNull Date date) throws IllegalStateException;
 
 	void migratePlayerStats(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException;
+
+	void clearPlayerStats(@NotNull UUID uuid) throws IllegalStateException;
 }

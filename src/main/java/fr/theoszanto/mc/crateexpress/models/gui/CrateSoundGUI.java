@@ -144,7 +144,7 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 
 	public record SoundValue(@NotNull Sound value) implements SoundElement {
 		public @NotNull String getKey() {
-			return this.value.getKey().getKey();
+			return this.value.key().value();
 		}
 
 		public @NotNull String getName() {
@@ -180,7 +180,7 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 			SortedSet<SoundElement> content = new TreeSet<>();
 			boolean isRoot = this.isRoot();
 			for (Sound sound : SOUNDS) {
-				String key = sound.getKey().getKey();
+				String key = sound.key().value();
 				if (isRoot || key.startsWith(this.prefix + SEPARATOR)) {
 					int sep = key.indexOf(SEPARATOR, isRoot ? 0 : this.prefix.length() + 2);
 					content.add(sep == -1 ? new SoundValue(sound) : new SoundNamespace(key.substring(0, sep)));

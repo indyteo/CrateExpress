@@ -90,7 +90,7 @@ public class StatsManager extends PluginObject {
 									.map(reward -> new HistoricalReward(pending.date(), pending.crate(), reward))
 									.toList());
 					history.values().forEach(Collections::sort);
-					Map<Crate, Date> lastOpened = history.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().get(0).date()));
+					Map<Crate, Date> lastOpened = history.entrySet().stream().collect(Collectors.toMap(Map.Entry::getKey, entry -> entry.getValue().getFirst().date()));
 					Map<Crate, List<HistoricalReward>> sortedHistory = new TreeMap<>(Comparator.comparing(lastOpened::get).reversed());
 					sortedHistory.putAll(history);
 					this.historyCache.put(cacheKey, sortedHistory);

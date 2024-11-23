@@ -65,7 +65,7 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
-	public void clearRewards(@NotNull Player player) throws IllegalStateException {
+	public void clearRewards(@NotNull UUID uuid) throws IllegalStateException {
 		this.notice();
 	}
 
@@ -93,6 +93,11 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 
 	@Override
 	public void migratePlayerStats(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException {
+		this.notice();
+	}
+
+	@Override
+	public void clearPlayerStats(@NotNull UUID uuid) throws IllegalStateException {
 		this.notice();
 	}
 

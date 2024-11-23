@@ -53,7 +53,7 @@ public class CrateExpressTeleportSubCommand extends CrateExpressSubCommand {
 		if (locations == null || locations.isEmpty())
 			return false;
 		if (locations.size() == 1) {
-			UnloadableWorldLocation location = locations.get(0);
+			UnloadableWorldLocation location = locations.getFirst();
 			if (location.isWorldLoaded()) {
 				player.teleport(location.clone().add(0.5, 0, 0.5));
 				object.i18nMessage(player, "command.teleport.success", "crate", crate.getName());

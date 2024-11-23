@@ -36,13 +36,12 @@ public class CrateLocationsGUI extends ExpressPaginatedGUI<CrateExpress, Unloada
 
 	@Override
 	protected void prepareGUI(@NotNull Player player) {
-		ItemBuilder border = new ItemBuilder(Material.GRAY_STAINED_GLASS_PANE, 1, "§r");
 		for (int i = 0; i < 9; i++) {
-			this.set(slot(0, i), border);
-			this.set(slot(2, i), border);
+			this.set(slot(0, i), BORDER);
+			this.set(slot(2, i), BORDER);
 		}
-		this.set(slot(1, 0), border);
-		this.set(slot(1, 8), border);
+		this.set(slot(1, 0), BORDER);
+		this.set(slot(1, 8), BORDER);
 		this.setButtons(slot(2, 0), slot(2, 8), slot(2, 3), slot(2, 5));
 		this.setEmptyIndicator(slot(1, 4), "menu.locations.empty");
 		this.set(slot(0, 4), new ItemBuilder(Material.ENDER_PEARL, 1, this.i18n("menu.locations.header.name"), this.i18nLines("menu.locations.header.lore", "crate", this.crate.getName())));
