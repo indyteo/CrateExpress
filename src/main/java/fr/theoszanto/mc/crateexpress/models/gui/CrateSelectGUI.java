@@ -51,8 +51,7 @@ public class CrateSelectGUI extends CrateListGUI {
 
 	@Override
 	protected @Nullable ItemStack crateSimpleIcon(@NotNull Player player, @NotNull Crate crate) {
-		CrateKey key = crate.getKey();
-		return key == null ? (this.withKeyOnly ? null : new ItemStack(Material.CHEST)) : key.getItem();
+		return crate.getKey() == null && this.withKeyOnly ? null : super.crateSimpleIcon(player, crate);
 	}
 
 	@Override

@@ -16,12 +16,16 @@ import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.LocationUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
+import net.kyori.adventure.key.InvalidKeyException;
+import net.kyori.adventure.key.Key;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -80,8 +84,9 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			files.forEach(path -> {
 				String id = crateIdFromFileName(cratePath.relativize(path).toString());
 				try {
+					File file = path.toFile();
 					YamlConfiguration data = new YamlConfiguration();
-					data.load(path.toFile());
+					data.load(file);
 					boolean disabled = data.getBoolean("disabled", false);
 					String crateKey = data.getString("key", null);
 					CrateKey key = crateKey == null ? null : new CrateKey(this.plugin, id, ItemUtils.fromString(crateKey));
@@ -90,12 +95,21 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 					boolean noPreview = data.getBoolean("no-preview", false);
 					String name = data.getString("name", id);
 					String message = data.getString("message", null);
+					@Subst("minecraft:block.chest.open")
 					String crateSound = data.getString("sound", null);
-					Sound sound;
-					try {
-						sound = crateSound == null ? null : Sound.valueOf(crateSound.toUpperCase());
-					} catch (IllegalArgumentException e) {
-						sound = null;
+					Sound sound = null;
+					if (crateSound != null) {
+						try {
+							sound = Registry.SOUNDS.get(Key.key(crateSound));
+						} catch (InvalidKeyException ignored) {}
+						if (sound == null) {
+							try {
+								// Old format - Try to update value
+								sound = Sound.valueOf(crateSound.toUpperCase());
+								data.set("sound", Registry.SOUNDS.getKeyOrThrow(sound).getKey());
+								data.save(file);
+							} catch (IllegalArgumentException ignored) {}
+						}
 					}
 					boolean random = data.getBoolean("random", true);
 					boolean allowDuplicates = data.getBoolean("allow-duplicates", true);
@@ -144,7 +158,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			if (crate.getMessage() != null)
 				data.set("message", crate.getMessage());
 			if (crate.getSound() != null)
-				data.set("sound", crate.getSound().name());
+				data.set("sound", Registry.SOUNDS.getKeyOrThrow(crate.getSound()).getKey());
 			data.set("random", crate.isRandom());
 			data.set("allow-duplicates", crate.doesAllowDuplicates());
 			data.set("min", crate.getMin());

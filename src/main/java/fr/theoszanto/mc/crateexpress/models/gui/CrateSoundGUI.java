@@ -6,6 +6,7 @@ import fr.theoszanto.mc.express.gui.ExpressPaginatedGUI;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.MathUtils;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -26,7 +27,6 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 	private final @NotNull Consumer<@NotNull Sound> onSelect;
 
 	private static final int[] contentSlots = MathUtils.numbers(9, 4 * 9);
-	private static final @NotNull Sound @NotNull[] SOUNDS = Sound.values();
 
 	public CrateSoundGUI(@NotNull CrateExpress plugin, @NotNull SoundNamespace namespace, @NotNull ExpressGUI<CrateExpress> returnTo, @NotNull Consumer<@NotNull Sound> onSelect) {
 		super(plugin, new ArrayList<>(namespace.listContent()), 5, "menu.sound.title");
@@ -84,14 +84,14 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 
 	@Override
 	protected boolean onClickOnElement(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull SoundElement element) {
-		if (element instanceof SoundValue value) {
+		if (element instanceof SoundValue(Sound value)) {
 			if (click.isLeftClick()) {
-				this.onSelect.accept(value.value());
+				this.onSelect.accept(value);
 				player.closeInventory();
 			} else if (click.isRightClick())
-				player.playSound(player.getLocation(), value.value(), SoundCategory.MASTER, 1, 1);
+				player.playSound(player.getLocation(), value, SoundCategory.MASTER, 1, 1);
 			else if (click == ClickType.MIDDLE)
-				player.stopSound(value.value(), SoundCategory.MASTER);
+				player.stopSound(value, SoundCategory.MASTER);
 		} else if (element instanceof SoundNamespace namespace)
 			this.openNamespace(player, namespace);
 		return true;
@@ -128,9 +128,9 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 	public interface SoundElement extends Comparable<SoundElement> {
 		@Override
 		default int compareTo(@NotNull SoundElement other) {
-			if (this instanceof SoundNamespace thisNamespace) {
-				if (other instanceof SoundNamespace otherNamespace)
-					return thisNamespace.prefix().compareToIgnoreCase(otherNamespace.prefix());
+			if (this instanceof SoundNamespace(String thisPrefix)) {
+				if (other instanceof SoundNamespace(String otherPrefix))
+					return thisPrefix.compareToIgnoreCase(otherPrefix);
 				return -1;
 			}
 			if (this instanceof SoundValue thisValue) {
@@ -144,7 +144,7 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 
 	public record SoundValue(@NotNull Sound value) implements SoundElement {
 		public @NotNull String getKey() {
-			return this.value.key().value();
+			return Registry.SOUNDS.getKeyOrThrow(this.value).getKey();
 		}
 
 		public @NotNull String getName() {
@@ -179,8 +179,8 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 		public @NotNull SortedSet<@NotNull SoundElement> listContent() {
 			SortedSet<SoundElement> content = new TreeSet<>();
 			boolean isRoot = this.isRoot();
-			for (Sound sound : SOUNDS) {
-				String key = sound.key().value();
+			for (Sound sound : Registry.SOUNDS) {
+				String key = Registry.SOUNDS.getKeyOrThrow(sound).getKey();
 				if (isRoot || key.startsWith(this.prefix + SEPARATOR)) {
 					int sep = key.indexOf(SEPARATOR, isRoot ? 0 : this.prefix.length() + 2);
 					content.add(sep == -1 ? new SoundValue(sound) : new SoundNamespace(key.substring(0, sep)));

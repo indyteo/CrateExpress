@@ -12,6 +12,7 @@ import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
 import org.bukkit.Material;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.entity.Player;
@@ -65,7 +66,7 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				"preview", this.i18n("menu.manage.header." + (this.crate.isNoPreview() ? "disabled" : "enabled")),
 				"name", this.crate.getName(),
 				"message", message == null ? this.i18n("menu.manage.header.no-message") : message,
-				"sound", sound == null ? this.i18n("menu.manage.header.no-sound") : sound.key().value(),
+				"sound", sound == null ? this.i18n("menu.manage.header.no-sound") : Registry.SOUNDS.getKeyOrThrow(sound).getKey(),
 				"random", this.i18n("menu.manage.header.random." + (this.crate.isRandom() ? "enabled" : "disabled"))
 		));
 		if (this.crate.isRandom())
@@ -93,7 +94,7 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 
 		this.set(slot(2, 3), new ItemBuilder(Material.NAME_TAG, 1, this.i18n("menu.manage.name.name", "name", this.crate.getName()), this.i18nLines("menu.manage.name.lore")), "name");
 		this.set(slot(2, 4), new ItemBuilder(Material.BIRCH_SIGN, 1, this.i18n("menu.manage.message.name", "message", this.i18n(message == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.message.lore", "message", message == null ? this.i18n("menu.manage.message.none") : message)).addLoreConditionally(message != null, this.i18n("menu.manage.message.show")), "message");
-		this.set(slot(2, 5), new ItemBuilder(Material.BELL, 1, this.i18n("menu.manage.sound.name", "sound", this.i18n(sound == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.sound.lore", "sound", sound == null ? this.i18n("menu.manage.sound.none") : sound.key().value())).addLoreConditionally(sound != null, this.i18n("menu.manage.sound.play")), "sound");
+		this.set(slot(2, 5), new ItemBuilder(Material.BELL, 1, this.i18n("menu.manage.sound.name", "sound", this.i18n(sound == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.sound.lore", "sound", sound == null ? this.i18n("menu.manage.sound.none") : Registry.SOUNDS.getKeyOrThrow(sound).getKey())).addLoreConditionally(sound != null, this.i18n("menu.manage.sound.play")), "sound");
 
 		this.set(slot(3, this.crate.isRandom() ? 2 : 4), new ItemBuilder(this.crate.isRandom() ? Material.RABBIT_FOOT : Material.BARREL, 1, this.i18n("menu.manage.random.name", "random", this.i18n("menu.manage.random." + (this.crate.isRandom() ? "enabled" : "disabled"))), this.i18nLines("menu.manage.random.lore")), "random");
 		if (this.crate.isRandom()) {

@@ -18,11 +18,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BundleMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.SortedSet;
+import java.util.stream.Collectors;
 
 public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement> {
 	private @NotNull CrateNamespace namespace;
@@ -69,25 +72,17 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 			CrateNamespace namespace = (CrateNamespace) crateElement;
 			SortedSet<CrateElement> content = namespace.listContent();
 			ItemStack item = new ItemBuilder(Material.BUNDLE, content.size(), this.i18n("menu.list.namespace", "namespace", namespace.getName()), this.i18nLines("menu.list.enter-namespace")).build();
-			// FIXME Not working anymore in 1.21.1...
-			/*BundleMeta meta = (BundleMeta) item.getItemMeta();
+			BundleMeta meta = (BundleMeta) item.getItemMeta();
 			if (meta != null) {
 				meta.setItems(content.stream().map(child -> {
 					if (child.isCrate())
 						return this.crateSimpleIcon(player, (Crate) child);
 					if (child.isNamespace())
-						return new ItemStack(Material.BUNDLE);
+						return new ItemBuilder(Material.BUNDLE, 1, this.i18n("menu.list.namespace", "namespace", ((CrateNamespace) child).getName())).build();
 					return null;
 				}).filter(Objects::nonNull).collect(Collectors.toList()));
-				meta.addItemFlags(ItemFlag.values());
 				item.setItemMeta(meta);
-				// java.lang.NullPointerException: Cannot read field "handle" because "stack" is null
-				//	at org.bukkit.craftbukkit.inventory.CraftItemStack.asNMSCopy(CraftItemStack.java:98) ~[paper-1.21.1.jar:1.21.1-128-d348cb8]
-				//	at org.bukkit.craftbukkit.inventory.CraftMetaBundle.applyToItem(CraftMetaBundle.java:72) ~[paper-1.21.1.jar:1.21.1-128-d348cb8]
-				//	at org.bukkit.craftbukkit.inventory.CraftItemStack.setItemMeta(CraftItemStack.java:432) ~[paper-1.21.1.jar:1.21.1-128-d348cb8]
-				//	at org.bukkit.craftbukkit.inventory.CraftItemStack.setItemMeta(CraftItemStack.java:404) ~[paper-1.21.1.jar:1.21.1-128-d348cb8]
-				//	at org.bukkit.inventory.ItemStack.setItemMeta(ItemStack.java:650) ~[paper-mojangapi-1.21.1-R0.1-SNAPSHOT.jar:?]
-			}*/
+			}
 			ItemUtils.addLore(item, this.i18n("menu.list.namespace-path", "path", namespace.getPath()));
 			return item;
 		}
@@ -119,7 +114,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 
 	protected @Nullable ItemStack crateSimpleIcon(@NotNull Player player, @NotNull Crate crate) {
 		CrateKey key = crate.getKey();
-		return key == null ? new ItemStack(Material.CHEST) : key.getItem();
+		return key == null ? new ItemBuilder(Material.CHEST, 1, crate.getName()).build() : key.getItem().clone();
 	}
 
 	@Override
