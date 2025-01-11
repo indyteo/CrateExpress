@@ -1,6 +1,8 @@
 package fr.theoszanto.mc.crateexpress.storage;
 
 import fr.theoszanto.mc.crateexpress.models.Crate;
+import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
+import fr.theoszanto.mc.crateexpress.models.CrateNamespaceRegistry;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
 import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
@@ -16,6 +18,22 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CrateStorage extends Logged {
+	@NotNull List<@NotNull CrateNamespace> loadNamespaces() throws IllegalStateException;
+
+	default void saveNamespaces(@NotNull CrateNamespaceRegistry registry) throws IllegalStateException {
+		for (CrateNamespace namespace : registry) {
+			try {
+				this.saveNamespace(namespace);
+			} catch (IllegalStateException e) {
+				this.error("Could not save namespace: " + namespace.getPath(), e);
+			}
+		}
+	}
+
+	void saveNamespace(@NotNull CrateNamespace namespace) throws IllegalStateException;
+
+	void deleteNamespace(@NotNull String path) throws IllegalStateException;
+
 	void loadCrates(@NotNull CrateRegistry registry) throws IllegalStateException;
 
 	default void saveCrates(@NotNull CrateRegistry registry) throws IllegalStateException {

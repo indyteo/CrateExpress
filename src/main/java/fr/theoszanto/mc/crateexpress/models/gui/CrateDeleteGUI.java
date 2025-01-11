@@ -40,7 +40,7 @@ public class CrateDeleteGUI extends ExpressGUI<CrateExpress> {
 				this.returnTo.showToPlayer(player);
 			break;
 		case "confirm":
-			this.plugin.crates().deleteCrate(this.crate.getId());
+			this.plugin.crates().deleteCrate(this.crate);
 			this.i18nMessage(player, "menu.delete.success", "crate", this.crate.getName());
 			player.closeInventory();
 			break;

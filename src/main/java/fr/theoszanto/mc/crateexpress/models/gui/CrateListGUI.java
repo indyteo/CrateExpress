@@ -13,12 +13,15 @@ import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
+import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BundleMeta;
+import org.bukkit.inventory.meta.PotionMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -32,7 +35,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	private static final int[] contentSlots = MathUtils.numbers(9, 4 * 9);
 
 	public CrateListGUI(@NotNull CrateExpress plugin) {
-		this(plugin, CrateNamespace.root(plugin));
+		this(plugin, plugin.crates().namespaces().root());
 	}
 
 	public CrateListGUI(@NotNull CrateExpress plugin, @NotNull CrateNamespace namespace) {
@@ -40,7 +43,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	}
 
 	CrateListGUI(@NotNull CrateExpress plugin, @NotNull String key) {
-		this(plugin, key, CrateNamespace.root(plugin));
+		this(plugin, key, plugin.crates().namespaces().root());
 	}
 
 	CrateListGUI(@NotNull CrateExpress plugin, @NotNull String key, @NotNull CrateNamespace namespace) {
@@ -48,13 +51,28 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 		this.namespace = namespace;
 	}
 
+	protected boolean isAllowedToManageNamespace(@NotNull Player player) {
+		return player.hasPermission(CratePermission.Command.EDIT);
+	}
+
 	@Override
 	protected void prepareGUI(@NotNull Player player) {
+		for (int i = 0; i < 9; i++) {
+			this.set(slot(0, i), BORDER);
+			this.set(slot(4, i), BORDER);
+		}
 		this.setButtons(slot(4, 0), slot(4, 8), slot(4, 3), slot(4, 5));
 		this.setEmptyIndicator(slot(2, 4), "menu.list.empty");
 		this.set(slot(0, 4), new ItemBuilder(Material.OAK_SIGN, 1, this.i18n("menu.list.header.name", "namespace", this.namespace.isRoot() ? this.i18n("menu.list.header.root-namespace") : this.namespace.getName()), this.i18nLines("menu.list.header.lore")));
-		if (!this.namespace.isRoot())
-			this.set(slot(0, 0), new ItemBuilder(Material.SPECTRAL_ARROW, 1, this.i18n("menu.list.parent-namespace"), this.i18nLines("menu.list.enter-namespace")), "parent");
+		if (!this.namespace.isRoot()) {
+			DyeColor color = this.namespace.getColor();
+			ItemStack arrow = new ItemBuilder(color == null ? Material.SPECTRAL_ARROW : Material.TIPPED_ARROW, 1, this.i18n("menu.list.parent-namespace"), this.i18nLines("menu.list.enter-namespace")).addFlag(ItemFlag.HIDE_ADDITIONAL_TOOLTIP).build();
+			if (color != null)
+				arrow.editMeta(PotionMeta.class, meta -> meta.setColor(color.getColor()));
+			this.set(slot(0, 0), arrow, "parent");
+			if (this.isAllowedToManageNamespace(player))
+				this.set(slot(0, 8), new ItemBuilder(Material.ENDER_CHEST, 1, this.i18n("menu.list.manage-namespace.name"), this.i18nLines("menu.list.manage-namespace.lore")), "manage");
+		}
 	}
 
 	@Override
@@ -69,14 +87,14 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 			return this.crateIcon(player, crate);
 		if (crateElement instanceof CrateNamespace namespace) {
 			SortedSet<CrateElement> content = namespace.listContent();
-			ItemStack item = new ItemBuilder(Material.BUNDLE, content.size(), this.i18n("menu.list.namespace", "namespace", namespace.getName()), this.i18nLines("menu.list.enter-namespace")).build();
+			ItemStack item = new ItemBuilder(ItemUtils.colored(Material.BUNDLE, namespace.getColor()), content.size(), this.i18n("menu.list.namespace", "namespace", namespace.getName()), this.i18nLines("menu.list.enter-namespace")).build();
 			BundleMeta meta = (BundleMeta) item.getItemMeta();
 			if (meta != null) {
 				meta.setItems(content.stream().map(child -> {
 					if (child instanceof Crate childCrate)
 						return this.crateSimpleIcon(player, childCrate);
 					if (child instanceof CrateNamespace childNamespace)
-						return new ItemBuilder(Material.BUNDLE, 1, this.i18n("menu.list.namespace", "namespace", childNamespace.getName())).build();
+						return new ItemBuilder(ItemUtils.colored(Material.BUNDLE, childNamespace.getColor()), 1, this.i18n("menu.list.namespace", "namespace", childNamespace.getName())).build();
 					return null;
 				}).filter(Objects::nonNull).toList());
 				item.setItemMeta(meta);
@@ -146,8 +164,17 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 
 	@Override
 	protected boolean onOtherClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
-		if (data != null && data.getName().equalsIgnoreCase("parent") && !this.namespace.isRoot())
-			this.openNamespace(player, this.namespace.getParent());
+		if (data != null && !this.namespace.isRoot()) {
+			switch (data.getName()) {
+			case "parent":
+				this.openNamespace(player, this.namespace.getParent());
+				break;
+			case "manage":
+				if (this.isAllowedToManageNamespace(player))
+					new CrateNamespaceManageGUI(this.plugin, this.namespace).showToPlayer(player);
+				break;
+			}
+		}
 		return true;
 	}
 

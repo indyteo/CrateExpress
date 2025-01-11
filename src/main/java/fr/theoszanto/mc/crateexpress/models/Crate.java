@@ -100,7 +100,7 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	}
 
 	public @NotNull CrateNamespace getNamespace() {
-		return CrateNamespace.ofCrate(this);
+		return this.crates().namespaces().ofCrate(this);
 	}
 
 	public boolean isEmpty() {

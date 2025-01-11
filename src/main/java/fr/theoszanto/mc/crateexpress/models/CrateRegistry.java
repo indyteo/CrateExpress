@@ -18,6 +18,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
+	private final @NotNull CrateNamespaceRegistry namespaces;
 	private int maximumPlayerRewards = -1;
 	private int claimNoticeInterval = -1;
 	private boolean claimNoticeOnLogin = false;
@@ -25,10 +26,12 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 
 	public CrateRegistry(@NotNull CrateExpress plugin) {
 		super(plugin, "crate");
+		this.namespaces = new CrateNamespaceRegistry(plugin);
 		this.resolver = new NoopCrateResolver(plugin);
 	}
 
 	public void load(@NotNull CrateConfig.Crates config) {
+		this.namespaces.load();
 		this.plugin.storage().getSource().loadCrates(this);
 		for (Crate crate : this)
 			this.event(new CrateLoadEvent(crate));
@@ -53,10 +56,15 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	@Override
 	public void reset() {
 		super.reset();
+		this.namespaces.reset();
 		this.maximumPlayerRewards = -1;
 		this.claimNoticeInterval = -1;
 		this.claimNoticeOnLogin = false;
 		this.resolver = new NoopCrateResolver(this.plugin);
+	}
+
+	public @NotNull CrateNamespaceRegistry namespaces() {
+		return this.namespaces;
 	}
 
 	public boolean noLimitToPlayerRewards() {
@@ -97,11 +105,13 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	public void addCrate(@NotNull Crate crate) {
 		this.plugin.storage().getSource().saveCrate(crate);
 		this.register(crate.getId(), crate);
+		crate.getNamespace().elementAdded(crate);
 	}
 
-	public void deleteCrate(@NotNull String id) {
-		this.plugin.storage().getSource().deleteCrate(id);
-		this.delete(id);
+	public void deleteCrate(@NotNull Crate crate) {
+		crate.getNamespace().elementRemoved(crate);
+		this.plugin.storage().getSource().deleteCrate(crate.getId());
+		this.delete(crate.getId());
 	}
 
 	public @NotNull List<@NotNull Crate> byLocation(@Nullable Location location) {

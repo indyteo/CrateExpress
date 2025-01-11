@@ -159,6 +159,10 @@ menu:
     parent-namespace: "§7Espace de caisses parent"
     enter-namespace: "§6»§e Clic pour y accéder"
     namespace-path: "§8##{path}/"
+    manage-namespace:
+      name: "§bGérer l'espace de caisses"
+      lore: |-
+        §7Contrôlez les paramètres de l'espace de caisses
   edit:
     title: "Édition : #{crate}"
     add:
@@ -192,6 +196,21 @@ menu:
       name: "§cAnnuler la suppression"
       lore: ""
     success: "§7Vous avez supprimé la caisse §e#{crate}§7 avec succès"
+  delete-namespace:
+    title: "Suppression : #{namespace}"
+    warning:
+      name: "§aÊtes-vous sûr ?"
+      lore: |-
+        §7Cette action est irréversible !
+        §4Toutes les caisses appartenant à cet espace
+        §4de caisses seront définitivement supprimées !
+    confirm:
+      name: "§bConfirmer la suppression"
+      lore: ""
+    cancel:
+      name: "§cAnnuler la suppression"
+      lore: ""
+    success: "§7Vous avez supprimé l'espace de caisses §e#{namespace}§7 avec succès"
   manage:
     title: "Gestion : #{crate}"
     header:
@@ -337,6 +356,26 @@ menu:
       lore: |-
         §7Permet de supprimer la caisse totalement
         §6»§e Clic pour supprimer la caisse
+  manage-namespace:
+    title: "Gestion : #{namespace}"
+    header:
+      name: "§aGestion de l'espace de caisses"
+      lore: |-
+        §7Couleur : §e#{color}
+    color:
+      name: "§bCouleur : §3#{color}"
+      lore: |-
+        §7Ce paramètre défini la couleur de l'espace de caisses
+        §7Cette couleur est purement visuelle
+        §6»§e Clic pour choisir
+      none: "§cAucune"
+    delete:
+      name: "§bSupprimer l'espace de caisses"
+      lore: |-
+        §7Permet de supprimer l'espace de caisses totalement
+        §4Attention : En supprimant un espace de caisses,
+        §4vous supprimez également les caisses qu'il contient !
+        §6»§e Clic pour supprimer l'espace de caisses
   select:
     title: "Sélection d'une caisse"
     empty: "§cAucune caisse n'a été créée. §4/crate create"
@@ -363,6 +402,13 @@ menu:
     parent-namespace: "§7Revenir au parent"
     enter-namespace: "§6»§e Clic pour y accéder"
     namespace-prefix: "§8minecraft:#{prefix}."
+  color:
+    title: "Sélection d'une couleur"
+    header: "§aChoisir une couleur"
+    option: "§bCouleur : §3#{color}"
+    none: "§cAucune"
+    current: "§aSélectionnée"
+    select: "§6»§e Clic pour sélectionner cette couleur"
   interact-select:
     open:
       title: "Choix de la caisse"

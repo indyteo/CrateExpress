@@ -2,6 +2,7 @@ package fr.theoszanto.mc.crateexpress.storage;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
+import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
 import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
@@ -20,6 +21,22 @@ import java.util.UUID;
 public class NoopCrateStorage extends PluginObject implements CrateStorage {
 	public NoopCrateStorage(@NotNull CrateExpress plugin) {
 		super(plugin);
+	}
+
+	@Override
+	public @NotNull List<@NotNull CrateNamespace> loadNamespaces() throws IllegalStateException {
+		this.notice();
+		return Collections.emptyList();
+	}
+
+	@Override
+	public void saveNamespace(@NotNull CrateNamespace namespace) throws IllegalStateException {
+		this.notice();
+	}
+
+	@Override
+	public void deleteNamespace(@NotNull String path) throws IllegalStateException {
+		this.notice();
 	}
 
 	@Override

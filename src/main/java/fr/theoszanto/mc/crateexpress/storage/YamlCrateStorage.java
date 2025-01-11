@@ -3,6 +3,7 @@ package fr.theoszanto.mc.crateexpress.storage;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
+import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
 import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
@@ -18,6 +19,7 @@ import fr.theoszanto.mc.express.utils.MathUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
 import net.kyori.adventure.key.InvalidKeyException;
 import net.kyori.adventure.key.Key;
+import org.bukkit.DyeColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
@@ -75,6 +77,66 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		if (!(file.exists() ? file.isDirectory() : file.mkdirs()))
 			throw new IllegalArgumentException("YamlStorage " + name + " directory is invalid: " + file);
 		return file;
+	}
+
+	@Override
+	public @NotNull List<@NotNull CrateNamespace> loadNamespaces() throws IllegalStateException {
+		List<CrateNamespace> namespaces = new ArrayList<>();
+		Path cratePath = this.cratesDir.toPath();
+		try (Stream<Path> files = Files.find(cratePath, 10, this::namespaceFilesFilter)) {
+			files.forEach(path -> {
+				Path relativeParent = cratePath.relativize(path).getParent();
+				String pathStr = relativeParent == null ? "" : relativeParent.toString();
+				try {
+					YamlConfiguration data = new YamlConfiguration();
+					data.load(path.toFile());
+					String colorStr = data.getString("color", null);
+					DyeColor color;
+					if (colorStr == null)
+						color = null;
+					else {
+						try {
+							color = DyeColor.valueOf(colorStr);
+						} catch (IllegalArgumentException e) {
+							throw new InvalidConfigurationException("Could not parse namespace color: " + colorStr, e);
+						}
+					}
+					namespaces.add(new CrateNamespace(this.plugin, pathStr, color));
+				} catch (IOException | InvalidConfigurationException | IllegalArgumentException e) {
+					this.error("Could not load namespace: " + pathStr, e);
+				}
+			});
+		} catch (IOException e) {
+			throw new IllegalStateException("Could not list files from YamlStorage crates directory: " + this.cratesDir);
+		}
+		return namespaces;
+	}
+
+	@Override
+	public void saveNamespace(@NotNull CrateNamespace namespace) throws IllegalStateException {
+		String path = namespace.getPath();
+		try {
+			File file = new File(new File(this.cratesDir, path), ".namespace.yml");
+			YamlConfiguration data = new YamlConfiguration();
+			if (namespace.getColor() != null)
+				data.set("color", namespace.getColor().name());
+			data.save(file);
+		} catch (IOException e) {
+			throw new IllegalStateException("Could not save namespace: " + path, e);
+		}
+	}
+
+	@Override
+	public void deleteNamespace(@NotNull String path) throws IllegalStateException {
+		File file = new File(this.cratesDir, path);
+		if (!file.exists())
+			return;
+		try {
+			delete(file);
+		} catch (IOException e) {
+			throw new IllegalStateException("Could not delete crate data file: " + file, e);
+		}
+		this.purgeEmptyParentDirs(file);
 	}
 
 	@Override
@@ -179,13 +241,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		File file = new File(this.cratesDir, fileNameFromCrateId(id));
 		if (file.exists() && !file.delete())
 			throw new IllegalStateException("Could not delete crate data file: " + file);
-		File parent = file.getParentFile();
-		while (!this.cratesDir.equals(parent)) {
-			String[] list = parent.list();
-			if ((list == null || list.length == 0) && !parent.delete())
-				throw new IllegalStateException("Could not cleanup crate data parent dir: " + parent);
-			parent = parent.getParentFile();
-		}
+		this.purgeEmptyParentDirs(file);
 	}
 
 	@Override
@@ -477,11 +533,17 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 		return crateId + ".yml";
 	}
 
+	private boolean namespaceFilesFilter(@NotNull Path path, @NotNull BasicFileAttributes attributes) {
+		if (!attributes.isRegularFile())
+			return false;
+		return path.toFile().getName().matches("^\\.namespace\\.ya?ml$");
+	}
+
 	private boolean crateFilesFilter(@NotNull Path path, @NotNull BasicFileAttributes attributes) {
 		if (!attributes.isRegularFile())
 			return false;
 		String relativePath = this.cratesDir.toPath().relativize(path).toString();
-		if (!relativePath.matches("^.*\\.ya?ml$"))
+		if (!relativePath.matches("^.*\\.ya?ml$") || path.toFile().getName().matches("^\\.namespace\\.ya?ml$"))
 			return false;
 		for (String ignore : this.ignoreFiles) {
 			if (ignore.equalsIgnoreCase(relativePath))
@@ -490,6 +552,29 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 				return false;
 		}
 		return true;
+	}
+
+	private void purgeEmptyParentDirs(@NotNull File file) {
+		File parent = file.getParentFile();
+		while (!this.cratesDir.equals(parent)) {
+			String[] list = parent.list();
+			if ((list == null || list.length == 0) && !parent.delete())
+				throw new IllegalStateException("Could not cleanup crate data parent dir: " + parent);
+			parent = parent.getParentFile();
+		}
+	}
+
+	private static void delete(@NotNull File file) throws IOException {
+		if (file.isDirectory()) {
+			File[] files = file.listFiles();
+			if (files == null)
+				throw new IOException("Could not list files in directory: " + file);
+			else
+				for (File f : files)
+					delete(f);
+		}
+		if (!file.delete())
+			throw new IOException("Could not delete file: " + file);
 	}
 
 	@NotNull

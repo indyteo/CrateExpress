@@ -29,6 +29,11 @@ public class CrateSelectGUI extends CrateListGUI {
 	}
 
 	@Override
+	protected boolean isAllowedToManageNamespace(@NotNull Player player) {
+		return false;
+	}
+
+	@Override
 	protected void prepareGUI(@NotNull Player player) {
 		super.prepareGUI(player);
 		this.setEmptyIndicator(slot(1, 4), "menu.select.empty");

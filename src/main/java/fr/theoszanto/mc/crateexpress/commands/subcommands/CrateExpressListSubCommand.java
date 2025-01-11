@@ -30,13 +30,12 @@ public class CrateExpressListSubCommand extends CrateExpressSubCommand {
 			gui = new CrateListGUI(this.plugin);
 		else if (args.length == 1) {
 			String path = args[0];
-			CrateNamespace namespace = new CrateNamespace(this.plugin, path);
-			if (namespace.exists())
-				gui = new CrateListGUI(this.plugin, namespace);
-			else {
+			CrateNamespace namespace = this.crates().namespaces().get(path);
+			if (namespace == null) {
 				this.i18nMessage(sender, "command.unknown-namespace", "path", path);
 				return true;
 			}
+			gui = new CrateListGUI(this.plugin, namespace);
 		} else
 			return false;
 		gui.showToPlayer((Player) sender);
