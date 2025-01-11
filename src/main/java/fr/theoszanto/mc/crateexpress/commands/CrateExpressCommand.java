@@ -12,7 +12,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CrateExpressCommand extends ExpressCommand<CrateExpress> {
 	private final @NotNull List<? extends CrateExpressSubCommand> subCommands;
@@ -61,7 +60,7 @@ public class CrateExpressCommand extends ExpressCommand<CrateExpress> {
 		if (result == null)
 			return Collections.emptyList();
 		String lastArg = args[args.length - 1].toLowerCase();
-		return result.stream().filter(name -> name.toLowerCase().startsWith(lastArg)).collect(Collectors.toList());
+		return result.stream().filter(name -> name.toLowerCase().startsWith(lastArg)).toList();
 	}
 
 	public @Nullable CrateExpressSubCommand subCommandByName(@NotNull String name) {

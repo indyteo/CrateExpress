@@ -151,7 +151,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			if (key != null)
 				data.set("key", ItemUtils.toString(key.getItem()));
 			if (crate.getLocations() != null)
-				data.set("locations", crate.getLocations().stream().map(LocationUtils::toString).collect(Collectors.toList()));
+				data.set("locations", crate.getLocations().stream().map(LocationUtils::toString).toList());
 			data.set("delay", crate.getDelay());
 			data.set("no-preview", crate.isNoPreview());
 			data.set("name", crate.getName());

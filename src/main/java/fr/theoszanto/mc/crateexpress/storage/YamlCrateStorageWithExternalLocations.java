@@ -59,7 +59,7 @@ public class YamlCrateStorageWithExternalLocations extends YamlCrateStorage {
 				YamlConfiguration data = new YamlConfiguration();
 				data.set("locations", crate.getLocations().stream()
 						.map(LocationUtils::toString)
-						.collect(Collectors.toList()));
+						.toList());
 				data.save(file);
 			}
 		} catch (IOException e) {

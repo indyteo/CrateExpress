@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class CrateConfig extends PluginObject {
 	private @NotNull Configuration config = new YamlConfiguration();
@@ -53,11 +52,11 @@ public class CrateConfig extends PluginObject {
 	}
 
 	public @NotNull List<@NotNull File> getAdditionalMessageFiles() {
-		return this.config.getStringList("additional-message-files").stream().map(File::new).collect(Collectors.toList());
+		return this.config.getStringList("additional-message-files").stream().map(File::new).toList();
 	}
 
 	public void setAdditionalMessageFiles(@NotNull List<@NotNull File> additionalMessageFiles) {
-		this.config.set("additional-message-files", additionalMessageFiles.stream().map(File::getPath).collect(Collectors.toList()));
+		this.config.set("additional-message-files", additionalMessageFiles.stream().map(File::getPath).toList());
 	}
 
 	public @NotNull Storage getStorageConfig() {

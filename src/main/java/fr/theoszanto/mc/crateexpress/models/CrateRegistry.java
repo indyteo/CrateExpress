@@ -16,7 +16,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	private int maximumPlayerRewards = -1;
@@ -108,12 +107,12 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	public @NotNull List<@NotNull Crate> byLocation(@Nullable Location location) {
 		return location == null ? Collections.emptyList() : this.list().stream()
 				.filter(crate -> crate.isAtLocation(location))
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	public @NotNull List<@NotNull Crate> byItem(@Nullable ItemStack item) {
 		return item == null ? Collections.emptyList() : this.list().stream()
 				.filter(crate -> crate.hasKey(item))
-				.collect(Collectors.toList());
+				.toList();
 	}
 }

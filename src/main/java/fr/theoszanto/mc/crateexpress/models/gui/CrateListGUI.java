@@ -25,7 +25,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Objects;
 import java.util.SortedSet;
-import java.util.stream.Collectors;
 
 public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement> {
 	private @NotNull CrateNamespace namespace;
@@ -64,23 +63,22 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	}
 
 	@Override
-	@SuppressWarnings("UnstableApiUsage")
+	@SuppressWarnings("UnstableApiUsage") // BundleMeta
 	protected @Nullable ItemStack icon(@NotNull Player player, @NotNull CrateElement crateElement) {
-		if (crateElement.isCrate())
-			return this.crateIcon(player, (Crate) crateElement);
-		if (crateElement.isNamespace()) {
-			CrateNamespace namespace = (CrateNamespace) crateElement;
+		if (crateElement instanceof Crate crate)
+			return this.crateIcon(player, crate);
+		if (crateElement instanceof CrateNamespace namespace) {
 			SortedSet<CrateElement> content = namespace.listContent();
 			ItemStack item = new ItemBuilder(Material.BUNDLE, content.size(), this.i18n("menu.list.namespace", "namespace", namespace.getName()), this.i18nLines("menu.list.enter-namespace")).build();
 			BundleMeta meta = (BundleMeta) item.getItemMeta();
 			if (meta != null) {
 				meta.setItems(content.stream().map(child -> {
-					if (child.isCrate())
-						return this.crateSimpleIcon(player, (Crate) child);
-					if (child.isNamespace())
-						return new ItemBuilder(Material.BUNDLE, 1, this.i18n("menu.list.namespace", "namespace", ((CrateNamespace) child).getName())).build();
+					if (child instanceof Crate childCrate)
+						return this.crateSimpleIcon(player, childCrate);
+					if (child instanceof CrateNamespace childNamespace)
+						return new ItemBuilder(Material.BUNDLE, 1, this.i18n("menu.list.namespace", "namespace", childNamespace.getName())).build();
 					return null;
-				}).filter(Objects::nonNull).collect(Collectors.toList()));
+				}).filter(Objects::nonNull).toList());
 				item.setItemMeta(meta);
 			}
 			ItemUtils.addLore(item, this.i18n("menu.list.namespace-path", "path", namespace.getPath()));
@@ -118,11 +116,11 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	}
 
 	@Override
-	protected boolean onClickOnElement(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull CrateElement crateElement) {
-		if (crateElement.isCrate())
-			return this.onClickOnCrate(player, click, action, (Crate) crateElement);
-		if (crateElement.isNamespace())
-			this.openNamespace(player, (CrateNamespace) crateElement);
+	protected boolean onClickOnElement(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull CrateElement element) {
+		if (element instanceof Crate crate)
+			return this.onClickOnCrate(player, click, action, crate);
+		if (element instanceof CrateNamespace namespace)
+			this.openNamespace(player, namespace);
 		return true;
 	}
 

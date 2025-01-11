@@ -178,7 +178,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 					// Filter accessible crates
 					Stream<Crate> usedKeyCratesStream = usedKeyCrates.stream();
 					if (!player.hasPermission(CratePermission.BYPASS_DISABLED))
-						usedKeyCratesStream = usedKeyCratesStream.filter(((Predicate<Crate>) Crate::isDisabled).negate());
+						usedKeyCratesStream = usedKeyCratesStream.filter(Predicate.not(Crate::isDisabled));
 
 					List<Crate> accessibleCrates = usedKeyCratesStream.toList();
 					if (accessibleCrates.isEmpty()) {
@@ -193,7 +193,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 					else
 						usedKeyCratesStream = usedKeyCratesStream.filter(crate -> crate.isOpenableAtLocation(location));
 
-					List<Crate> crates = usedKeyCratesStream.collect(Collectors.toList());
+					List<Crate> crates = usedKeyCratesStream.toList();
 					if (crates.isEmpty()) {
 						this.i18nMessage(player, "action.key.cannot-use-here", "key", ItemUtils.name(item));
 						return;
@@ -216,7 +216,7 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 			Stream<Crate> cratesStream = Stream.concat(clickedCrates.stream(), usedKeyCrates.stream()).distinct();
 			if (!player.hasPermission(CratePermission.BYPASS_NO_PREVIEW))
 				cratesStream = cratesStream.filter(((Predicate<Crate>) Crate::isNoPreview).negate());
-			List<Crate> crates = cratesStream.collect(Collectors.toList());
+			List<Crate> crates = cratesStream.toList();
 			if (crates.isEmpty()) {
 				this.i18nMessage(player, "action.crate.no-preview-here");
 				return;

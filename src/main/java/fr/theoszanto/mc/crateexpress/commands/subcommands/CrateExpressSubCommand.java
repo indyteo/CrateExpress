@@ -14,7 +14,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public abstract class CrateExpressSubCommand extends PluginObject {
 	private final @NotNull String name;
@@ -52,7 +51,7 @@ public abstract class CrateExpressSubCommand extends PluginObject {
 	protected final @NotNull List<@NotNull String> onlinePlayers() {
 		return Bukkit.getOnlinePlayers().stream()
 				.map(HumanEntity::getName)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	protected final @NotNull List<@NotNull String> existingCrates() {
@@ -64,7 +63,7 @@ public abstract class CrateExpressSubCommand extends PluginObject {
 				.map(Crate::getNamespace)
 				.distinct()
 				.map(CrateNamespace::getPath)
-				.collect(Collectors.toList());
+				.toList();
 	}
 
 	protected final @NotNull List<@NotNull String> numbers(int min, int max) {

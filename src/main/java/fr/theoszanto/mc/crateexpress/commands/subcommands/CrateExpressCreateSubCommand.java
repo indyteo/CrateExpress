@@ -11,7 +11,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CrateExpressCreateSubCommand extends CrateExpressSubCommand {
 	public CrateExpressCreateSubCommand(@NotNull CrateExpress plugin) {
@@ -42,6 +41,6 @@ public class CrateExpressCreateSubCommand extends CrateExpressSubCommand {
 
 	@Override
 	public @Nullable List<@NotNull String> tabComplete(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
-		return args.length == 1 ? this.existingNamespaces().stream().map(namespace -> namespace + "/").collect(Collectors.toList()) : null;
+		return args.length == 1 ? this.existingNamespaces().stream().map(namespace -> namespace + "/").toList() : null;
 	}
 }
