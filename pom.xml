@@ -6,7 +6,7 @@
 
 	<groupId>fr.theoszanto.mc</groupId>
 	<artifactId>CrateExpress</artifactId>
-	<version>1.2-SNAPSHOT</version>
+	<version>1.3-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>CrateExpress</name>
 	<description>Make crates easily using in-game interface to manage rewards</description>

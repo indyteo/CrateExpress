@@ -43,9 +43,9 @@ public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 	}
 
 	private int getMaxAmount() {
-		if (this.key != null) {
+		if (this.key != null || this.reward != null) {
 			try {
-				CrateKey key = this.plugin.crates().get(this.key).getKey();
+				CrateKey key = this.plugin.crates().get(this.key == null ? this.reward.getKey() : this.key).getKey();
 				if (key != null) {
 					int max = key.getItem().getMaxStackSize();
 					if (max != -1)

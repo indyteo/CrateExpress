@@ -14,10 +14,12 @@ public class CrateItemRewardYML extends CrateRewardYML<CrateItemReward> {
 	@Override
 	public void serialize(@NotNull CrateItemReward reward, @NotNull ConfigurationSection data) {
 		data.set("item", ItemUtils.toString(reward.getItem()));
+		if (reward.getAmount() > 0)
+			data.set("amount", reward.getAmount());
 	}
 
 	@Override
 	public @NotNull CrateItemReward deserialize(@NotNull ConfigurationSection data, @NotNull String id, double weight) throws IllegalStateException {
-		return new CrateItemReward(this.plugin, id, weight, CrateRewardYML.requireItem(data, "item"));
+		return new CrateItemReward(this.plugin, id, weight, CrateRewardYML.requireItem(data, "item"), data.getInt("amount", -1));
 	}
 }

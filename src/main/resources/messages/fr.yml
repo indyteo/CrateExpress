@@ -294,7 +294,7 @@ menu:
         §7indépendant de son identifiant dans les commandes
         §6»§e Clic pour définir dans le chat
       request: "§7Veuillez écrire le nouveau nom de la caisse dans le chat :"
-      timeout: "§cLe délais d'attente a été dépassé..."
+      timeout: "§cLe délai d'attente a été dépassé..."
     message:
       name: "§bMessage d'ouverture de la caisse : §3#{message}"
       lore: |-
@@ -525,6 +525,22 @@ menu:
           §7récompense
           §6»§e Déposez l'objet correspondant ici pour le définir
         none: "§cAucun"
+      amount:
+        name: "§bQuantité : §b#{amount}"
+        lore: |-
+          §7Ce paramètre permet de modifier le nombre
+          §7d'objets reçu par le joueur
+          §7Par défaut, cela correspond au nombre d'objets
+          §7déposé à la configuration de la récompense
+          §7Permet de dépasser la taille maximum du stack
+          §6»§e Clic molette pour définir
+        decrease: "§6»§e Clic droit pour diminuer (shift : -10)"
+        increase: "§6»§e Clic gauche pour augmenter (shift : +10)"
+        reset: "§6»§e Drop pour réinitialiser"
+        none: "Par défaut"
+        request: "§7Veuillez écrire le nombre d'objets à donner dans le chat :"
+        invalid: "§cLa quantité saisie n'est pas valide (entre §40§c et §4#{max}§c)"
+        timeout: "§cLe délai d'attente a été dépassé..."
     key:
       header:
         name: "§eGestion de la récompense de type clé"
@@ -561,7 +577,7 @@ menu:
           §6»§e Clic pour saisir le montant dans le chat
       request: "§7Veuillez écrire le montant de la récompense dans le chat :"
       invalid: "§cLe montant saisi n'est pas valide"
-      timeout: "§cLe délais d'attente a été dépassé..."
+      timeout: "§cLe délai d'attente a été dépassé..."
     command:
       header:
         name: "§eGestion de la récompense de type commande"
