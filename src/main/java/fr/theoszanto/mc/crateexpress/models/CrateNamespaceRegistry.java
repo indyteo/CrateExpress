@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class CrateNamespaceRegistry extends PluginObject implements Iterable<@NotNull CrateNamespace> {
 	private final @NotNull Map<@NotNull String, @NotNull CrateNamespace> namespaces = new HashMap<>();
@@ -26,7 +27,14 @@ public class CrateNamespaceRegistry extends PluginObject implements Iterable<@No
 	}
 
 	/* package-private */ @NotNull CrateNamespace getOrAutoCreate(@NotNull String path) {
-		return this.namespaces.computeIfAbsent(path, p -> new CrateNamespace(this.plugin, p));
+		AtomicBoolean created = new AtomicBoolean(false);
+		CrateNamespace namespace = this.namespaces.computeIfAbsent(path, p -> {
+			created.set(true);
+			return new CrateNamespace(this.plugin, p);
+		});
+		if (created.get() && !namespace.isRoot())
+			namespace.getParent().elementAdded(namespace);
+		return namespace;
 	}
 
 	public @NotNull CrateNamespace create(@NotNull String path) {

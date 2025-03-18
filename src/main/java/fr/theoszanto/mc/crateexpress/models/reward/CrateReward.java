@@ -36,6 +36,7 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 
 	public boolean giveRewardTo(@NotNull Player player, boolean saveRewardIfUnableToGive) {
 		CrateRewardGiveEvent event = new CrateRewardGiveEvent(player, this, this.cannotGiveTo(player));
+		event.callEvent();
 		CrateReward reward = event.getReward();
 		if (event.isSavingReward()) {
 			if (saveRewardIfUnableToGive) {

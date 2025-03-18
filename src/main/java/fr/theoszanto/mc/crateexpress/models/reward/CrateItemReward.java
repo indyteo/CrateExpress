@@ -30,8 +30,8 @@ public class CrateItemReward extends CrateReward {
 			return icon;
 		}
 		ItemStack icon = this.item.asOne();
-		icon.editMeta(meta -> meta.customName(Component.text()
-				.append(Component.text(this.amount + "x ", NamedTextColor.GRAY).decoration(TextDecoration.ITALIC, false))
+		icon.editMeta(meta -> meta.customName(Component.text().decoration(TextDecoration.ITALIC, false)
+				.append(Component.text(this.amount + "x ", NamedTextColor.GRAY))
 				.append(icon.effectiveName())
 				.build()));
 		return icon;
