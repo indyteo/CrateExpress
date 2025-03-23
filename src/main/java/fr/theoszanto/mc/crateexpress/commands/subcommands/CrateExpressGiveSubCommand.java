@@ -2,6 +2,7 @@ package fr.theoszanto.mc.crateexpress.commands.subcommands;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.commands.CrateExpressCommand;
+import fr.theoszanto.mc.crateexpress.events.CrateGiveAllEvent;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
@@ -11,9 +12,9 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.List;
 
 public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
@@ -32,8 +33,8 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 			return false;
 		int i = 0;
 		String target = args[i++];
-		Collection<? extends Player> targets;
-		boolean all = false;
+		Collection<Player> targets = new ArrayList<>();
+		boolean all;
 		if (target.equals("to")) {
 			if (args.length < 3)
 				return false;
@@ -43,12 +44,13 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 				this.i18nMessage(sender, "command.unknown-player", "player", playerName);
 				return true;
 			}
-			targets = Collections.singletonList(player);
+			all = false;
+			targets.add(player);
 		} else if (target.equals("all")) {
 			if (args.length < 2)
 				return false;
 			all = true;
-			targets = Bukkit.getOnlinePlayers();
+			targets.addAll(Bukkit.getOnlinePlayers());
 		} else
 			return false;
 		String crateId = args[i++];
@@ -75,6 +77,11 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 				this.i18nMessage(sender, "command.invalid-int", "value", amountValue);
 				return true;
 			}
+		}
+		if (all) {
+			CrateGiveAllEvent event = new CrateGiveAllEvent(sender, key, amount, targets);
+			if (!event.callEvent())
+				return true;
 		}
 		for (Player player : targets)
 			key.giveTo(player, amount, sender, all);
