@@ -33,11 +33,11 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends ExpressGUI<C
 		this.weight = 1;
 	}
 
-	public double getWeight() {
+	protected double getWeight() {
 		return this.reward == null ? this.weight : this.reward.getWeight();
 	}
 
-	public void setWeight(double weight) {
+	protected void setWeight(double weight) {
 		if (this.reward == null)
 			this.weight = weight;
 		else

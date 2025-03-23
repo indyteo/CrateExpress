@@ -12,14 +12,23 @@ public class CrateMoneyRewardYML extends CrateRewardYML<CrateMoneyReward> {
 
 	@Override
 	public void serialize(@NotNull CrateMoneyReward reward, @NotNull ConfigurationSection data) {
-		data.set("amount", reward.getAmount());
+		data.set("min", reward.getMin());
+		data.set("max", reward.getMax());
 	}
 
 	@Override
 	public @NotNull CrateMoneyReward deserialize(@NotNull ConfigurationSection data, @NotNull String id, double weight) throws IllegalStateException {
+		// Legacy money reward format
 		double amount = data.getDouble("amount", Double.NaN);
-		if (Double.isNaN(amount))
-			throw new IllegalStateException("Missing amount value for crate money reward");
-		return new CrateMoneyReward(this.plugin, id, weight, amount);
+		if (!Double.isNaN(amount))
+			return new CrateMoneyReward(this.plugin, id, weight, amount);
+
+		double min = data.getDouble("min", Double.NaN);
+		if (Double.isNaN(min))
+			throw new IllegalStateException("Missing min amount value for crate money reward");
+		double max = data.getDouble("max", Double.NaN);
+		if (Double.isNaN(max))
+			throw new IllegalStateException("Missing max amount value for crate money reward");
+		return new CrateMoneyReward(this.plugin, id, weight, min, max);
 	}
 }

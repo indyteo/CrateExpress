@@ -38,7 +38,7 @@ public class CrateItemReward extends CrateReward {
 	}
 
 	@Override
-	protected boolean cannotGiveTo(@NotNull Player player) {
+	public boolean cannotGiveTo(@NotNull Player player) {
 		int space = 0;
 		for (ItemStack content : player.getInventory().getStorageContents()) {
 			if (content == null)

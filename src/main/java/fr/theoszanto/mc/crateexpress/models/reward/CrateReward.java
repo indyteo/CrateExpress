@@ -30,7 +30,7 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 		this.physicalReward = physicalReward;
 	}
 
-	protected boolean cannotGiveTo(@NotNull Player player) {
+	public boolean cannotGiveTo(@NotNull Player player) {
 		return this.physicalReward && player.getInventory().firstEmpty() == -1;
 	}
 

@@ -5,6 +5,8 @@ crate:
     unknown-key: "§cClé inconnue : §4#{key}"
     money-name: "§bArgent : §3#{amount}"
     money-lore: ""
+    money-random-name: "§bArgent : §3Entre #{min} et #{max}"
+    money-random-lore: ""
   reward:
     give: "§7Vous avez reçu : §e#{reward}"
     save: "§cVotre inventaire est plein. Récompense stockée : §4#{reward}§8 (/crate claim)"
@@ -526,14 +528,14 @@ menu:
           §6»§e Déposez l'objet correspondant ici pour le définir
         none: "§cAucun"
       amount:
-        name: "§bQuantité : §b#{amount}"
+        name: "§bQuantité : §3#{amount}"
         lore: |-
           §7Ce paramètre permet de modifier le nombre
           §7d'objets reçu par le joueur
           §7Par défaut, cela correspond au nombre d'objets
           §7déposé à la configuration de la récompense
           §7Permet de dépasser la taille maximum du stack
-          §6»§e Clic molette pour définir
+          §6»§e Clic molette pour définir dans le chat
         decrease: "§6»§e Clic droit pour diminuer (shift : -10)"
         increase: "§6»§e Clic gauche pour augmenter (shift : +10)"
         reset: "§6»§e Drop pour réinitialiser"
@@ -557,7 +559,7 @@ menu:
           §6»§e Clic pour sélectionner la caisse
         none: "§cAucune"
       amount:
-        name: "§bQuantité de clé : §b#{amount}"
+        name: "§bQuantité de clé : §3#{amount}"
         lore: |-
           §7Ce paramètre défini le nombre de clés données au joueur
         decrease: "§6»§e Clic droit pour diminuer"
@@ -567,15 +569,38 @@ menu:
         name: "§eGestion de la récompense de type argent"
         lore: |-
           §7Contrôlez les paramètres de la récompense
-          §7Vous pouvez modifier le poids mais pas le montant
-      amount:
-        name: "§bMontant donné : §b#{amount}"
+          §7Vous pouvez modifier le poids et le montant mais
+          §7pas le type (aléatoire ou fixe)
+      random:
+        name: "§bMontant aléatoire : §3#{random}"
         lore: |-
-          §7Ce paramètre défini la somme d'argent donnée au joueur
+          §7Ce paramètre défini si la quantité d'argent est
+          §7aléatoire ou non, c'est-à-dire si les joueurs
+          §7reçoivent un montant fixe ou aléatoire (min / max)
           §7Ce paramètre n'est modifiable qu'à la création de la
           §7récompense
+        toggle: "§6»§e Clic pour inverser l'état"
+      amount:
+        name: "§bMontant fixe donné : §3#{amount}"
+        lore: |-
+          §7Ce paramètre défini la somme d'argent donnée au joueur
           §6»§e Clic pour saisir le montant dans le chat
-      request: "§7Veuillez écrire le montant de la récompense dans le chat :"
+        type: "fixe"
+      min:
+        name: "§bMontant minimum donné : §3#{min}"
+        lore: |-
+          §7Ce paramètre défini la somme d'argent minimale donnée
+          §7au joueur
+          §6»§e Clic pour saisir le montant dans le chat
+        type: "minimum"
+      max:
+        name: "§bMontant maximum donné : §3#{max}"
+        lore: |-
+          §7Ce paramètre défini la somme d'argent maximale donnée
+          §7au joueur
+          §6»§e Clic pour saisir le montant dans le chat
+        type: "maximum"
+      request: "§7Veuillez écrire le montant #{type} de la récompense dans le chat :"
       invalid: "§cLe montant saisi n'est pas valide"
       timeout: "§cLe délai d'attente a été dépassé..."
     command:

@@ -53,13 +53,18 @@ public class MoneyManager extends PluginObject {
 				.replaceAll("<amount>", this.round ? Long.toString(Math.round(amount)) : Double.toString(amount));
 	}
 
-	public @NotNull ItemStack getItem(double amount) throws IllegalStateException {
+	public @NotNull ItemStack getIcon(double min, double max) throws IllegalStateException {
 		if (this.item == Material.AIR)
 			throw new IllegalStateException("Money module not initialized");
-		String money = this.formatMoney(this.round ? Math.round(amount) : amount);
-		return new ItemBuilder(this.item, ItemUtils.stackAmountFromValue(amount),
-				this.i18n("crate.preview.money-name", "amount", money),
-				this.i18nLines("crate.preview.money-lore", "amount", money)).buildUnmodifiable();
+		String moneyMin = this.formatMoney(this.round ? Math.round(min) : min);
+		if (min == max)
+			return new ItemBuilder(this.item, ItemUtils.stackAmountFromValue(min),
+					this.i18n("crate.preview.money-name", "amount", moneyMin),
+					this.i18nLines("crate.preview.money-lore", "amount", moneyMin)).buildUnmodifiable();
+		String moneyMax = this.formatMoney(this.round ? Math.round(max) : max);
+		return new ItemBuilder(this.item, ItemUtils.stackAmountFromValue((min + max) / 2),
+				this.i18n("crate.preview.money-random-name", "min", moneyMin, "max", moneyMax),
+				this.i18nLines("crate.preview.money-random-lore", "min", moneyMin, "max", moneyMax)).buildUnmodifiable();
 	}
 
 	public @NotNull String formatMoney(double amount) {

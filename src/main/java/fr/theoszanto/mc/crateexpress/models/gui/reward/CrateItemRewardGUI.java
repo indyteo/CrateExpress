@@ -28,11 +28,11 @@ public class CrateItemRewardGUI extends CrateRewardGUI<CrateItemReward> {
 		super(plugin, crate, reward, slot);
 	}
 
-	public int getAmount() {
+	private int getAmount() {
 		return Math.max(0, this.reward == null ? this.amount : this.reward.getAmount());
 	}
 
-	public void setAmount(int amount) {
+	private void setAmount(int amount) {
 		if (this.reward == null)
 			this.amount = amount;
 		else

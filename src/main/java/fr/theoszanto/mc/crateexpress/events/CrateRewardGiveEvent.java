@@ -31,8 +31,7 @@ public class CrateRewardGiveEvent extends Event implements Cancellable {
 
 	public void setReward(@NotNull CrateReward reward) {
 		this.reward = reward;
-		if (!reward.isPhysicalReward())
-			this.savingReward = false;
+		this.savingReward = reward.cannotGiveTo(this.player);
 	}
 
 	public boolean isSavingReward() {
