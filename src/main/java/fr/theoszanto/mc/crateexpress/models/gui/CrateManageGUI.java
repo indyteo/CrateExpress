@@ -10,8 +10,10 @@ import fr.theoszanto.mc.crateexpress.utils.FormatUtils;
 import fr.theoszanto.mc.express.gui.ExpressGUI;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
+import fr.theoszanto.mc.express.utils.MathUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
@@ -53,6 +55,7 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 		String message = this.crate.getMessage();
 		List<UnloadableWorldLocation> locations = this.crate.getLocations();
 		Sound sound = this.crate.getSound();
+		Particle particle = this.crate.getParticle();
 		ItemBuilder header = new ItemBuilder(Material.CHEST, 1, this.i18n("menu.manage.header.name"), this.i18nLines("menu.manage.header.lore",
 				"status", this.i18n("menu.manage.header." + (this.crate.isDisabled() ? "disabled" : "enabled")),
 				"key", key == null ? this.i18n("menu.manage.header.no-key") : ItemUtils.name(key.getItem()),
@@ -67,11 +70,12 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				"name", this.crate.getName(),
 				"message", message == null ? this.i18n("menu.manage.header.no-message") : message,
 				"sound", sound == null ? this.i18n("menu.manage.header.no-sound") : Registry.SOUNDS.getKeyOrThrow(sound).getKey(),
+				"particle", particle == null ? this.i18n("menu.manage.header.no-particle") : this.i18n("menu.manage.header.particle", "particle", particle.getKey().getKey(), "count", this.crate.getParticleCount()),
 				"random", this.i18n("menu.manage.header.random." + (this.crate.isRandom() ? "enabled" : "disabled"))
 		));
 		if (this.crate.isRandom())
 			header.addLore(this.i18nLines("menu.manage.header.random.settings",
-					"duplicates", this.i18n(this.crate.doesAllowDuplicates() ? "misc.yes" : "misc.no"),
+					"duplicates", this.i18nBoolean(this.crate.doesAllowDuplicates()),
 					"min", this.crate.getMin(),
 					"max", this.crate.getMax()));
 		this.set(slot(0, 4), header);
@@ -82,8 +86,8 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 
 		// Control buttons
 		this.set(slot(1, 2), new ItemBuilder(this.crate.isDisabled() ? Material.GRAY_DYE : Material.LIME_DYE, 1, this.i18n("menu.manage.status.name", "status", this.i18n("menu.manage.status." + (this.crate.isDisabled() ? "disabled" : "enabled"))), this.i18nLines("menu.manage.status.lore")), "status");
-		this.set(slot(1, 3), new ItemBuilder(Material.TRIPWIRE_HOOK, 1, this.i18n("menu.manage.key.name", "key", this.i18n(key == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.key.lore")), "key");
-		this.set(slot(1, 4), new ItemBuilder(locations == null ? Material.RECOVERY_COMPASS : Material.COMPASS, 1, this.i18n("menu.manage.location.name", "location", this.i18n(locations == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.location.lore", "location", locations == null || locations.isEmpty() ? this.i18n("menu.manage.location.none") : locations.size() == 1 ? this.i18n("menu.manage.location.value",
+		this.set(slot(1, 3), new ItemBuilder(Material.TRIAL_KEY, 1, this.i18n("menu.manage.key.name", "key", this.i18nBoolean(key != null)), this.i18nLines("menu.manage.key.lore")), "key");
+		this.set(slot(1, 4), new ItemBuilder(locations == null ? Material.RECOVERY_COMPASS : Material.COMPASS, 1, this.i18n("menu.manage.location.name", "location", this.i18nBoolean(locations != null)), this.i18nLines("menu.manage.location.lore", "location", locations == null || locations.isEmpty() ? this.i18n("menu.manage.location.none") : locations.size() == 1 ? this.i18n("menu.manage.location.value",
 				"world", locations.getFirst().getWorldName(),
 				"x", locations.getFirst().getBlockX(),
 				"y", locations.getFirst().getBlockY(),
@@ -92,13 +96,17 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 		this.set(slot(1, 5), new ItemBuilder(Material.CLOCK, 1, this.i18n("menu.manage.delay.name", "delay", FormatUtils.noTrailingZeroDecimal(this.crate.getDelay())), this.i18nLines("menu.manage.delay.lore")), "delay");
 		this.set(slot(1, 6), new ItemBuilder(this.crate.isNoPreview() ? Material.ENDER_PEARL : Material.ENDER_EYE, 1, this.i18n("menu.manage.preview.name", "preview", this.i18n("menu.manage.preview." + (this.crate.isNoPreview() ? "disabled" : "enabled"))), this.i18nLines("menu.manage.preview.lore")), "preview");
 
-		this.set(slot(2, 3), new ItemBuilder(Material.NAME_TAG, 1, this.i18n("menu.manage.name.name", "name", this.crate.getName()), this.i18nLines("menu.manage.name.lore")), "name");
-		this.set(slot(2, 4), new ItemBuilder(Material.BIRCH_SIGN, 1, this.i18n("menu.manage.message.name", "message", this.i18n(message == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.message.lore", "message", message == null ? this.i18n("menu.manage.message.none") : message)).addLoreConditionally(message != null, this.i18n("menu.manage.message.show")), "message");
-		this.set(slot(2, 5), new ItemBuilder(Material.BELL, 1, this.i18n("menu.manage.sound.name", "sound", this.i18n(sound == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.manage.sound.lore", "sound", sound == null ? this.i18n("menu.manage.sound.none") : Registry.SOUNDS.getKeyOrThrow(sound).getKey())).addLoreConditionally(sound != null, this.i18n("menu.manage.sound.play")), "sound");
+		this.set(slot(2, 2), new ItemBuilder(Material.NAME_TAG, 1, this.i18n("menu.manage.name.name", "name", this.crate.getName()), this.i18nLines("menu.manage.name.lore")), "name");
+		this.set(slot(2, 3), new ItemBuilder(Material.BIRCH_SIGN, 1, this.i18n("menu.manage.message.name", "message", this.i18nBoolean(message != null)), this.i18nLines("menu.manage.message.lore", "message", message == null ? this.i18n("menu.manage.message.none") : message)).addLoreConditionally(message != null, this.i18n("menu.manage.message.show")), "message");
+		this.set(slot(2, 4), new ItemBuilder(Material.BELL, 1, this.i18n("menu.manage.sound.name", "sound", this.i18nBoolean(sound != null)), this.i18nLines("menu.manage.sound.lore", "sound", sound == null ? this.i18n("menu.manage.sound.none") : Registry.SOUNDS.getKeyOrThrow(sound).getKey())).addLoreConditionally(sound != null, this.i18n("menu.manage.sound.play")), "sound");
+		this.set(slot(2, 5), new ItemBuilder(Material.BLAZE_POWDER, 1, this.i18n("menu.manage.particle.name", "particle", this.i18nBoolean(particle != null)), this.i18nLines("menu.manage.particle.lore", "particle", particle == null ? this.i18n("menu.manage.particle.none") : particle.getKey().getKey())).addLoreConditionally(particle != null, this.i18n("menu.manage.particle.show")), "particle");
+		this.set(slot(2, 6), new ItemBuilder(Material.PRISMARINE_CRYSTALS, MathUtils.minMax(1, this.crate.getParticleCount(), 99), this.i18n("menu.manage.particle-count.name", "count", this.crate.getParticleCount()), this.i18nLines("menu.manage.particle-count.lore"))
+				.addLoreConditionally(this.crate.getParticleCount() > 0, this.i18n("menu.manage.particle-count.decrease"))
+				.addLoreConditionally(this.crate.getParticleCount() < 100, this.i18n("menu.manage.particle-count.increase")), "particle-count");
 
 		this.set(slot(3, this.crate.isRandom() ? 2 : 4), new ItemBuilder(this.crate.isRandom() ? Material.RABBIT_FOOT : Material.BARREL, 1, this.i18n("menu.manage.random.name", "random", this.i18n("menu.manage.random." + (this.crate.isRandom() ? "enabled" : "disabled"))), this.i18nLines("menu.manage.random.lore")), "random");
 		if (this.crate.isRandom()) {
-			this.set(slot(3, 3), new ItemBuilder(this.crate.doesAllowDuplicates() ? Material.NETHERITE_SCRAP : Material.NETHERITE_INGOT, 1, this.i18n("menu.manage.duplicates.name", "duplicates", this.i18n(this.crate.doesAllowDuplicates() ? "misc.yes" : "misc.no")), this.i18nLines("menu.manage.duplicates.lore")), "duplicates");
+			this.set(slot(3, 3), new ItemBuilder(this.crate.doesAllowDuplicates() ? Material.NETHERITE_SCRAP : Material.NETHERITE_INGOT, 1, this.i18n("menu.manage.duplicates.name", "duplicates", this.i18nBoolean(this.crate.doesAllowDuplicates())), this.i18nLines("menu.manage.duplicates.lore")), "duplicates");
 			this.set(slot(3, 5), new ItemBuilder(Material.MINECART, this.crate.getMin(), this.i18n("menu.manage.min.name", "min", this.crate.getMin()), this.i18nLines("menu.manage.min.lore"))
 					.addLoreConditionally(this.crate.getMin() > 1, this.i18n("menu.manage.min.decrease"))
 					.addLoreConditionally(this.crate.getMin() < this.crate.getMax(), this.i18n("menu.manage.min.increase")), "min");
@@ -216,6 +224,31 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 				this.refresh(player);
 			} else if (click == ClickType.MIDDLE && sound != null)
 				player.playSound(player.getLocation(), sound, SoundCategory.MASTER, 1, 1);
+			break;
+		case "particle":
+			Particle particle = this.crate.getParticle();
+			if (click.isLeftClick()) {
+				new CrateParticleGUI(this.plugin, this, this.crate::setParticle).showToPlayer(player);
+			} else if (click.isRightClick() && particle != null) {
+				this.crate.setParticle(null);
+				this.refresh(player);
+			} else if (click == ClickType.MIDDLE && particle != null)
+				player.spawnParticle(particle, player.getLocation().add(0, 0.5, 0), Math.max(1, this.crate.getParticleCount()), 0.1, 0.1, 0.1, 0.5);
+			break;
+		case "particle-count":
+			int count = this.crate.getParticleCount();
+			int n = click.isShiftClick() ? 10 : 1;
+			if (click.isLeftClick()) {
+				if (count < 100) {
+					this.crate.setParticleCount(Math.min(count + n, 100));
+					this.refresh(player);
+				}
+			} else if (click.isRightClick()) {
+				if (count > 0) {
+					this.crate.setParticleCount(Math.max(0, count - n));
+					this.refresh(player);
+				}
+			}
 			break;
 		case "random":
 			this.crate.setRandom(!this.crate.isRandom());

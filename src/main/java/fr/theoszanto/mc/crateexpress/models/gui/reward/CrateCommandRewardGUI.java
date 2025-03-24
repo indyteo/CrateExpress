@@ -60,9 +60,9 @@ public class CrateCommandRewardGUI extends CrateRewardGUI<CrateCommandReward> {
 	protected void setupButtons(@NotNull Player player) {
 		this.set(slot(0, 4), new ItemBuilder(Material.COMMAND_BLOCK, 1, this.i18n("menu.reward.command.header.name"), this.i18nLines("menu.reward.command.header.lore")));
 		this.set(slot(1, 1), new ItemBuilder(Material.PAINTING, 1, this.i18n("menu.reward.command.icon.name", "icon", ItemUtils.name(this.icon)), this.i18nLines("menu.reward.command.icon.lore")), "icon");
-		this.set(slot(1, 3), new ItemBuilder(Material.COMMAND_BLOCK, 1, this.i18n("menu.reward.command.command.name", "command", this.i18n(this.reward == null && this.command == null ? "misc.no" : "misc.yes")), this.i18nLines("menu.reward.command.command.lore")).addLoreConditionally(this.reward == null, this.i18n("menu.reward.command.command.set")), this.reward == null ? "command" : "");
+		this.set(slot(1, 3), new ItemBuilder(Material.COMMAND_BLOCK, 1, this.i18n("menu.reward.command.command.name", "command", this.i18nBoolean(this.reward != null || this.command != null)), this.i18nLines("menu.reward.command.command.lore")).addLoreConditionally(this.reward == null, this.i18n("menu.reward.command.command.set")), this.reward == null ? "command" : "");
 		this.setWeightButton(slot(1, 5));
-		this.set(slot(1, 7), new ItemBuilder(Material.CHEST, 1, this.i18n("menu.reward.command.physical.name", "physical", this.i18n(this.isPhysical() ? "misc.yes" : "misc.no")), this.i18nLines("menu.reward.command.physical.lore")), "physical");
+		this.set(slot(1, 7), new ItemBuilder(Material.CHEST, 1, this.i18n("menu.reward.command.physical.name", "physical", this.i18nBoolean(this.isPhysical())), this.i18nLines("menu.reward.command.physical.lore")), "physical");
 	}
 
 	@Override

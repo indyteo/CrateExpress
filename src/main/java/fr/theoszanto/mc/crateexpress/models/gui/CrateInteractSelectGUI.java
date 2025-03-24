@@ -41,7 +41,7 @@ public class CrateInteractSelectGUI extends ExpressPaginatedGUI<CrateExpress, Cr
 		this.set(slot(1, 8), BORDER);
 		this.setButtons(slot(2, 0), slot(2, 8), slot(2, 3), slot(2, 5));
 		this.setEmptyIndicator(slot(1, 4), this.key("empty"));
-		this.set(slot(0, 4), new ItemBuilder(this.isOpenInteraction ? Material.TRIPWIRE_HOOK : Material.ENDER_EYE, 1, this.i18n(this.key("header.name")), this.i18nLines(this.key("header.lore"))));
+		this.set(slot(0, 4), new ItemBuilder(this.isOpenInteraction ? Material.TRIAL_KEY : Material.ENDER_EYE, 1, this.i18n(this.key("header.name")), this.i18nLines(this.key("header.lore"))));
 	}
 
 	@Override

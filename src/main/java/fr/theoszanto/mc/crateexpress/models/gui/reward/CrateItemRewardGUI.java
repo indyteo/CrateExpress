@@ -6,6 +6,7 @@ import fr.theoszanto.mc.crateexpress.models.reward.CrateItemReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
+import fr.theoszanto.mc.express.utils.MathUtils;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
@@ -58,7 +59,7 @@ public class CrateItemRewardGUI extends CrateRewardGUI<CrateItemReward> {
 		else
 			this.set(slot(1, 2), this.reward.getItem());
 		int amount = this.getAmount();
-		this.set(slot(1, 4), new ItemBuilder(Material.NETHER_STAR, Math.min(Math.max(1, amount), 64), this.i18n("menu.reward.item.amount.name", "amount", amount > 0 ? amount : this.i18n("menu.reward.item.amount.none")), this.i18nLines("menu.reward.item.amount.lore"))
+		this.set(slot(1, 4), new ItemBuilder(Material.NETHER_STAR, MathUtils.minMax(1, amount, 99), this.i18n("menu.reward.item.amount.name", "amount", amount > 0 ? amount : this.i18n("menu.reward.item.amount.none")), this.i18nLines("menu.reward.item.amount.lore"))
 				.addLoreConditionally(amount > 1, this.i18n("menu.reward.item.amount.decrease"))
 				.addLoreConditionally(amount < this.getMaxAmount(), this.i18n("menu.reward.item.amount.increase"))
 				.addLoreConditionally(amount > 0, this.i18n("menu.reward.item.amount.reset")), "amount");

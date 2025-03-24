@@ -93,7 +93,7 @@ public class CrateMoneyRewardGUI extends CrateRewardGUI<CrateMoneyReward> {
 	@Override
 	protected void setupButtons(@NotNull Player player) {
 		this.set(slot(0, 4), new ItemBuilder(Material.EMERALD, 1, this.i18n("menu.reward.money.header.name"), this.i18nLines("menu.reward.money.header.lore")));
-		this.set(slot(1, 2), new ItemBuilder(Material.EMERALD, 1, this.i18n("menu.reward.money.random.name", "random", this.i18n(this.isRandom() ? "misc.yes" : "misc.no")), this.i18nLines("menu.reward.money.random.lore")).addLoreConditionally(this.reward == null, this.i18n("menu.reward.money.random.toggle")), this.reward == null ? "random" : "");
+		this.set(slot(1, 2), new ItemBuilder(Material.EMERALD, 1, this.i18n("menu.reward.money.random.name", "random", this.i18nBoolean(this.isRandom())), this.i18nLines("menu.reward.money.random.lore")).addLoreConditionally(this.reward == null, this.i18n("menu.reward.money.random.toggle")), this.reward == null ? "random" : "");
 		if (this.isRandom()) {
 			double min = this.getMin();
 			double max = this.getMax();

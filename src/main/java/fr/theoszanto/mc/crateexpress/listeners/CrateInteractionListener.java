@@ -150,9 +150,11 @@ public class CrateInteractionListener extends ExpressListener<CrateExpress> {
 										for (Player p : Bukkit.getOnlinePlayers())
 											p.sendMessage(message);
 								}
-								// Play sound if necessary
-								if (e.doesPlaySound())
+								// Trigger effects if necessary
+								if (e.doesTriggerEffects()) {
 									crate.playSoundAtLocation(crate.isOpenableAnywhere() || location == null ? player.getLocation() : location);
+									crate.showParticleAtLocation(player.getLocation());
+								}
 								// Record crate usage by this player
 								this.lastUsages.put(pair, now);
 							}

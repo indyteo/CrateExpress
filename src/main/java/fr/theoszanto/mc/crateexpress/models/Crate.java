@@ -10,6 +10,7 @@ import fr.theoszanto.mc.express.utils.LocationUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.Sound;
 import org.bukkit.SoundCategory;
 import org.bukkit.World;
@@ -40,6 +41,8 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	private @NotNull String name;
 	private @Nullable String message;
 	private @Nullable Sound sound;
+	private @Nullable Particle particle;
+	private int particleCount;
 	private boolean random;
 	private boolean allowDuplicates;
 	private int min;
@@ -50,7 +53,24 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	@UnmodifiableView
 	private final @NotNull Collection<@NotNull CrateReward> rewardsValuesUnmodifiable = Collections.unmodifiableCollection(this.rewards.values());
 
-	public Crate(@NotNull CrateExpress plugin, @NotNull String id, boolean disabled, @Nullable CrateKey key, @Nullable List<@NotNull UnloadableWorldLocation> locations, double delay, boolean noPreview, @NotNull String name, @Nullable String message, @Nullable Sound sound, boolean random, boolean allowDuplicates, int min, int max) {
+	public Crate(
+			@NotNull CrateExpress plugin,
+			@NotNull String id,
+			boolean disabled,
+			@Nullable CrateKey key,
+			@Nullable List<@NotNull UnloadableWorldLocation> locations,
+			double delay,
+			boolean noPreview,
+			@NotNull String name,
+			@Nullable String message,
+			@Nullable Sound sound,
+			@Nullable Particle particle,
+			int particleCount,
+			boolean random,
+			boolean allowDuplicates,
+			int min,
+			int max
+	) {
 		super(plugin);
 		this.id = id;
 		this.disabled = disabled;
@@ -61,6 +81,8 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 		this.name = name;
 		this.message = message;
 		this.sound = sound;
+		this.particle = particle;
+		this.particleCount = particleCount;
 		this.random = random;
 		this.allowDuplicates = allowDuplicates;
 		this.min = min;
@@ -238,6 +260,30 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 			World world = location.getWorld();
 			if (world != null)
 				world.playSound(location, this.sound, SoundCategory.BLOCKS, 1, 1);
+		}
+	}
+
+	public @Nullable Particle getParticle() {
+		return this.particle;
+	}
+
+	public void setParticle(@Nullable Particle particle) {
+		this.particle = particle;
+	}
+
+	public int getParticleCount() {
+		return this.particleCount;
+	}
+
+	public void setParticleCount(int particleCount) {
+		this.particleCount = particleCount;
+	}
+
+	public void showParticleAtLocation(@NotNull Location location) {
+		if (this.particle != null && this.particleCount > 0) {
+			World world = location.getWorld();
+			if (world != null)
+				world.spawnParticle(this.particle, location.getX(), location.getY() + 0.5, location.getZ(), this.particleCount, 0.1, 0.1, 0.1, 0.5);
 		}
 	}
 

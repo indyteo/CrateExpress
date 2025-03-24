@@ -31,7 +31,24 @@ public class CrateExpressCreateSubCommand extends CrateExpressSubCommand {
 			this.crates().get(crateId);
 			this.i18nMessage(sender, "command.create.already-exists", "crate", crateId);
 		} catch (IllegalArgumentException e) {
-			Crate crate = new Crate(this.plugin, crateId, false, null, null, 0, false, crateId, null, null, true, true, 1, 1);
+			Crate crate = new Crate(
+					this.plugin,
+					crateId,
+					false,
+					null,
+					null,
+					0,
+					false,
+					crateId,
+					null,
+					null,
+					null,
+					0,
+					true,
+					true,
+					1,
+					1
+			);
 			this.crates().addCrate(crate);
 			this.i18nMessage(sender, "command.create.success", "crate", crateId);
 			new CrateEditGUI(this.plugin, crate).showToPlayer((Player) sender);

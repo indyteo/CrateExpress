@@ -21,6 +21,7 @@ import net.kyori.adventure.key.InvalidKeyException;
 import net.kyori.adventure.key.Key;
 import org.bukkit.DyeColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
 import org.bukkit.configuration.ConfigurationSection;
@@ -172,12 +173,41 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 								data.save(file);
 							} catch (IllegalArgumentException ignored) {}
 						}
+						if (sound == null)
+							this.warn("Unable to parse crate sound: " + crateSound + " (#" + id + ")");
 					}
+					String crateParticle = data.getString("particle", null);
+					Particle particle = null;
+					if (crateParticle != null) {
+						try {
+							particle = Particle.valueOf(crateParticle);
+						} catch (IllegalArgumentException ignored) {}
+						if (particle == null)
+							this.warn("Unable to parse crate particle: " + crateParticle + " (#" + id + ")");
+					}
+					int particleCount = data.getInt("particle-count", 0);
 					boolean random = data.getBoolean("random", true);
 					boolean allowDuplicates = data.getBoolean("allow-duplicates", true);
 					int min = data.getInt("min", 1);
 					int max = data.getInt("max", 1);
-					Crate crate = new Crate(this.plugin, id, disabled, key, locations, delay, noPreview, name, message, sound, random, allowDuplicates, min, max);
+					Crate crate = new Crate(
+							this.plugin,
+							id,
+							disabled,
+							key,
+							locations,
+							delay,
+							noPreview,
+							name,
+							message,
+							sound,
+							particle,
+							particleCount,
+							random,
+							allowDuplicates,
+							min,
+							max
+					);
 					ConfigurationSection items = data.getConfigurationSection("items");
 					if (items != null) {
 						for (String item : items.getKeys(false)) {
@@ -221,6 +251,9 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 				data.set("message", crate.getMessage());
 			if (crate.getSound() != null)
 				data.set("sound", Registry.SOUNDS.getKeyOrThrow(crate.getSound()).getKey());
+			if (crate.getParticle() != null)
+				data.set("particle", crate.getParticle().getKey().getKey());
+			data.set("particle-count", crate.getParticleCount());
 			data.set("random", crate.isRandom());
 			data.set("allow-duplicates", crate.doesAllowDuplicates());
 			data.set("min", crate.getMin());

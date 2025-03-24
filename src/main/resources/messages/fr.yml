@@ -226,6 +226,7 @@ menu:
         §7Nom : §e#{name}
         §7Message : §e#{message}
         §7Son : §e#{sound}
+        §7Particle : §e#{particle}
         §7Mode : §e#{random}
       no-key: "§cAucune"
       no-location: "§cAucune"
@@ -233,6 +234,8 @@ menu:
       multiple-locations: "§e#{count}§7 positions définies"
       no-message: "§cAucun"
       no-sound: "§cAucun"
+      no-particle: "§cAucune"
+      particle: "#{particle}§7 (§e#{count}§7)"
       enabled: "§aActivée"
       disabled: "§cDésactivée"
       random:
@@ -324,6 +327,26 @@ menu:
         §6»§e Clic droit pour supprimer
       play: "§6»§e Clic molette pour entendre le son"
       none: "§cAucun son défini"
+    particle:
+      name: "§bParticule d'ouverture : §3#{particle}"
+      lore: |-
+        §7Particule actuelle : §e#{particle}
+        §7Ce paramètre défini la particule affichée
+        §7à l'ouverture de la caisse
+        §6»§e Clic gauche pour choisir
+        §6»§e Clic droit pour supprimer
+      show: "§6»§e Clic molette pour afficher la particule"
+      none: "§cAucune particule définie"
+    particle-count:
+      name: "§bNombre de particules : §3#{count}"
+      lore: |-
+        §7Ce paramètre permet de modifier le nombre
+        §7de particules affichées sur le joueur
+        §7N'a aucun effet si la particule n'est
+        §7pas définie, et aucune particule ne
+        §7sera affichée si cette valeur est 0
+      decrease: "§6»§e Clic droit pour diminuer (shift : -10)"
+      increase: "§6»§e Clic gauche pour augmenter (shift : +10)"
     random:
       name: "§bMode : §3#{random}"
       lore: |-
@@ -404,6 +427,24 @@ menu:
     parent-namespace: "§7Revenir au parent"
     enter-namespace: "§6»§e Clic pour y accéder"
     namespace-prefix: "§8minecraft:#{prefix}."
+  particle:
+    title: "Sélection d'une particule"
+    header:
+      name: "§aListe des particules"
+      lore: ""
+    stop:
+      name: "§cArrêter tous les sons"
+      lore: "§6»§e Clic pour arrêter tous les sons"
+    empty: "§cAucune particule n'a été trouvée"
+    value: "§bParticule : §3#{key}"
+    lore: |-
+      §6»§e Clic gauche pour sélectionner
+      §6»§e Clic droit pour visualiser
+    value-unsupported: "§cParticule : §4#{key}§c (indisponible)"
+    lore-unsupported: |-
+      §7Cette particule requiert des options spécifiques
+      §7pour fonctionner, et n'est pas prise en charge
+    value-key: "§8minecraft:#{key}"
   color:
     title: "Sélection d'une couleur"
     header: "§aChoisir une couleur"

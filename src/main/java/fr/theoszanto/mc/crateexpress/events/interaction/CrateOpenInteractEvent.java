@@ -12,7 +12,7 @@ public class CrateOpenInteractEvent extends CrateInteractEvent {
 	private int amount;
 	private boolean consumeKey = true;
 	private boolean broadcastMessage = true;
-	private boolean playSound = true;
+	private boolean triggerEffects = true;
 
 	private static final @NotNull HandlerList handlers = new HandlerList();
 
@@ -58,12 +58,12 @@ public class CrateOpenInteractEvent extends CrateInteractEvent {
 		this.broadcastMessage = broadcast;
 	}
 
-	public boolean doesPlaySound() {
-		return this.playSound;
+	public boolean doesTriggerEffects() {
+		return this.triggerEffects;
 	}
 
-	public void setPlaySound(boolean play) {
-		this.playSound = play;
+	public void setTriggerEffects(boolean effects) {
+		this.triggerEffects = effects;
 	}
 
 	@Override

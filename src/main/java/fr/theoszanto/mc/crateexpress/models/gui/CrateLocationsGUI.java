@@ -63,7 +63,7 @@ public class CrateLocationsGUI extends ExpressPaginatedGUI<CrateExpress, Unloada
 						"x", location.getBlockX(),
 						"y", location.getBlockY(),
 						"z", location.getBlockZ(),
-						"loaded", this.i18n(location.isWorldLoaded() ? "misc.yes" : "misc.no"))
+						"loaded", this.i18nBoolean(location.isWorldLoaded()))
 		).build();
 	}
 

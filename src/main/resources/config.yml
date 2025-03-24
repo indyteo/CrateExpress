@@ -22,7 +22,7 @@ rewards:
     gui-icon: ITEM_FRAME
   key:
     gui-class: fr.theoszanto.mc.crateexpress.models.gui.reward.CrateKeyRewardGUI
-    gui-icon: TRIPWIRE_HOOK
+    gui-icon: TRIAL_KEY
   money:
     gui-class: fr.theoszanto.mc.crateexpress.models.gui.reward.CrateMoneyRewardGUI
     gui-icon: EMERALD

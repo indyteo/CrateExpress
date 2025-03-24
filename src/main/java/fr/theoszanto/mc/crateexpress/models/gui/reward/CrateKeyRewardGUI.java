@@ -58,9 +58,9 @@ public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 
 	@Override
 	protected void setupButtons(@NotNull Player player) {
-		this.set(slot(0, 4), new ItemBuilder(Material.TRIPWIRE_HOOK, 1, this.i18n("menu.reward.key.header.name"), this.i18nLines("menu.reward.key.header.lore")));
+		this.set(slot(0, 4), new ItemBuilder(Material.TRIAL_KEY, 1, this.i18n("menu.reward.key.header.name"), this.i18nLines("menu.reward.key.header.lore")));
 		if (this.reward == null)
-			this.set(slot(1, 2), new ItemBuilder(Material.TRIPWIRE_HOOK, 1, this.i18n("menu.reward.key.key.name", "key", this.key == null ? this.i18n("menu.reward.key.key.none") : this.key), this.i18nLines("menu.reward.key.key.lore")), "key");
+			this.set(slot(1, 2), new ItemBuilder(Material.TRIAL_KEY, 1, this.i18n("menu.reward.key.key.name", "key", this.key == null ? this.i18n("menu.reward.key.key.none") : this.key), this.i18nLines("menu.reward.key.key.lore")), "key");
 		else
 			this.set(slot(1, 2), this.reward.getIcon());
 		this.set(slot(1, 4), new ItemBuilder(Material.NETHER_STAR, this.getAmount(), this.i18n("menu.reward.key.amount.name", "amount", this.getAmount()), this.i18nLines("menu.reward.key.amount.lore"))
