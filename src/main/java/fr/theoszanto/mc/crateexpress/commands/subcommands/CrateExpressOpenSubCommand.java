@@ -24,7 +24,7 @@ public class CrateExpressOpenSubCommand extends CrateExpressSubCommand {
 
 	@Override
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
-		if (args.length != 2)
+		if (args.length < 2 || args.length > 3)
 			return false;
 		String playerName = args[0];
 		Player player = Bukkit.getPlayer(playerName);
@@ -40,7 +40,12 @@ public class CrateExpressOpenSubCommand extends CrateExpressSubCommand {
 			this.i18nMessage(sender, "command.unknown-crate", "crate", crateId);
 			return true;
 		}
+		boolean triggerEffects = args.length > 2 && args[2].equalsIgnoreCase("true");
 		crate.open(player, true);
+		if (triggerEffects) {
+			crate.playSoundAtLocation(player.getLocation());
+			crate.showParticleAtLocation(player.getLocation());
+		}
 		this.i18nMessage(sender, "command.open", "crate", crate.getName(), "player", player.getName());
 		return true;
 	}
@@ -51,6 +56,8 @@ public class CrateExpressOpenSubCommand extends CrateExpressSubCommand {
 			return this.onlinePlayers();
 		if (args.length == 2)
 			return this.existingCrates();
+		if (args.length == 3)
+			return List.of("true", "false");
 		return null;
 	}
 }

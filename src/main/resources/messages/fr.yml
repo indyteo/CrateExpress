@@ -752,7 +752,7 @@ command:
     help: "§e/#{alias} #{subcommand} [<commande>]§8 » §7Affiche ce message d'aide ou l'aide sur une commande"
     info: "§e/#{alias} #{subcommand}§8 » §7Affiche les informations sur le plugin"
     list: "§e/#{alias} #{subcommand}§8 » §7Affiche la liste des caisses existantes"
-    open: "§e/#{alias} #{subcommand} <joueur> <caisse>§8 » §7Fait ouvrir une caisse à un joueur, sans utiliser de clé"
+    open: "§e/#{alias} #{subcommand} <joueur> <caisse> [true|false]§8 » §7Fait ouvrir une caisse à un joueur, sans utiliser de clé"
     preview: "§e/#{alias} #{subcommand} <caisse>§8 » §7Prévisualise le contenu d'une caisse"
     stats: "§e/#{alias} #{subcommand} <caisse>§8 » §7Afficher les statistiques d'une caisse"
     reload: "§e/#{alias} #{subcommand}§8 » §7Recharge le plugin (configuration et récompenses)"
