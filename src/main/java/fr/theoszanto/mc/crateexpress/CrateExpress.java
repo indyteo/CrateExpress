@@ -1,5 +1,6 @@
 package fr.theoszanto.mc.crateexpress;
 
+import fr.theoszanto.mc.crateexpress.events.CrateExpressLoadEvent;
 import fr.theoszanto.mc.crateexpress.managers.ExportManager;
 import fr.theoszanto.mc.crateexpress.managers.MoneyManager;
 import fr.theoszanto.mc.crateexpress.managers.RewardsManager;
@@ -22,6 +23,7 @@ public final class CrateExpress extends ExpressPlugin<CrateExpress> {
 	private final @NotNull RewardsManager rewards = new RewardsManager(this);
 	private final @NotNull StatsManager stats = new StatsManager(this);
 	private final @NotNull ExportManager export = new ExportManager(this);
+	private boolean loadedOnce = false;
 
 	public CrateExpress() {
 		super("fr.theoszanto.mc.crateexpress");
@@ -61,6 +63,9 @@ public final class CrateExpress extends ExpressPlugin<CrateExpress> {
 
 		// Initializing export module
 		this.export.loadExporters(this.config.getExportConfig());
+
+		this.spigot().event(new CrateExpressLoadEvent(this.loadedOnce));
+		this.loadedOnce = true;
 	}
 
 	@Override

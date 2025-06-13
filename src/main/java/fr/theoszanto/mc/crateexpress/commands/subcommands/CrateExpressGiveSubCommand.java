@@ -6,6 +6,7 @@ import fr.theoszanto.mc.crateexpress.events.CrateGiveAllEvent;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
+import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -85,7 +86,11 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 		}
 		for (Player player : targets)
 			key.giveTo(player, amount, sender, all);
-		this.i18nMessage(sender, "command.give.success");
+		this.i18nMessage(sender, "command.give.success",
+				"amount", amount,
+				"key", ItemUtils.name(key.getItem()),
+				"players", targets.size(),
+				"total", amount * targets.size());
 		return true;
 	}
 

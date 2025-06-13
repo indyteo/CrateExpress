@@ -19,7 +19,7 @@ crate:
       CrateCommandReward: "Commande"
       CrateOtherReward: "Autre caisse"
       CrateUnknownReward: "§cInconnu"
-  claim-notice: "§7Vous avez §e#{count}§7 récompense(s) en attente. Faites §e/crate claim§7 pour les récupérer !"
+  claim-notice: "§7Vous avez §e#{count}§7 récompense#{count:s} en attente. Faites §e/crate claim§7 pour les récupérer !"
 action:
   crate:
     open: "§7Vous venez d'ouvrir une caisse §e#{crate}"
@@ -714,13 +714,13 @@ command:
   invalid-int: "§cValeur entière invalide : §4#{value}"
   info: |-
     §bPlugin : §e#{plugin}
-    §bAuteur(s) : §e#{authors}
+    §bAuteur#{authors-count:s} : §e#{authors}
     §bSite web : §e#{website}
   version: "§bVersion : §e#{version}"
   open: "§7Vous avez forcé l'ouverture d'une caisse §e#{crate}§7 à §e#{player}"
   give:
     no-key: "§cLa caisse §4#{crate}§c n'a pas de clé associée"
-    success: "§7Vous avez donné des clés avec succès"
+    success: "§7Vous avez donné §e#{amount}§7 clé#{amount:s} §e#{key}§7 à §e#{players}§7 joueur#{players:s} avec succès§8 (#{total} clé#{total:s} au total)"
   reload: "§aPlugin rechargé avec succès"
   create:
     already-exists: "§cUne caisse avec le nom §4#{crate}§c existe déjà"

@@ -29,6 +29,7 @@ public class CrateExpressInfoSubCommand extends CrateExpressSubCommand {
 		for (String line : this.i18nLines("command.info",
 				"plugin", desc.getName(),
 				"authors", String.join(", ", desc.getAuthors()),
+				"authors-count", desc.getAuthors().size(),
 				"website", desc.getWebsite()))
 			sender.sendMessage(this.prefix() + line);
 		return true;

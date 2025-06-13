@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.annotations.Unmodifiable;
@@ -34,17 +35,21 @@ public class CrateKey extends PluginObject {
 	}
 
 	public void giveTo(@NotNull Player player, int amount, @NotNull CommandSender commandSource, boolean all) {
-		this.giveTo(player, amount, all ? CrateGiveEvent.Cause.GIVE_ALL_COMMAND : CrateGiveEvent.Cause.GIVE_TO_COMMAND, commandSource, null);
+		this.giveTo(player, amount, all ? CrateGiveEvent.Cause.GIVE_ALL_COMMAND : CrateGiveEvent.Cause.GIVE_TO_COMMAND, commandSource, null, null);
 	}
 
 	public void giveTo(@NotNull Player player, int amount, @NotNull CrateGiveEvent.AdminGUIGiveButton adminSource) {
-		this.giveTo(player, amount, CrateGiveEvent.Cause.ADMIN_GIVE, null, adminSource);
+		this.giveTo(player, amount, CrateGiveEvent.Cause.ADMIN_GIVE, null, adminSource, null);
 	}
 
-	private void giveTo(@NotNull Player player, int amount, @NotNull CrateGiveEvent.Cause cause, @Nullable CommandSender commandSource, @Nullable CrateGiveEvent.AdminGUIGiveButton adminSource) {
+	public void giveTo(@NotNull Player player, int amount, @NotNull JavaPlugin pluginSource) {
+		this.giveTo(player, amount, CrateGiveEvent.Cause.PLUGIN_GIVE, null, null, pluginSource);
+	}
+
+	private void giveTo(@NotNull Player player, int amount, @NotNull CrateGiveEvent.Cause cause, @Nullable CommandSender commandSource, @Nullable CrateGiveEvent.AdminGUIGiveButton adminSource, @Nullable JavaPlugin pluginSource) {
 		Inventory inventory = player.getInventory();
 		boolean saving = inventory.firstEmpty() == -1;
-		CrateGiveEvent event = new CrateGiveEvent(player, saving, cause, this, amount, commandSource, adminSource);
+		CrateGiveEvent event = new CrateGiveEvent(player, saving, cause, this, amount, commandSource, adminSource, pluginSource);
 		if (this.event(event)) {
 			CrateKey key = event.getKey();
 			if (saving) {

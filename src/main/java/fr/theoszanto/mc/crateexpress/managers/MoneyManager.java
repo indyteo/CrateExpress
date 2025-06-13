@@ -1,23 +1,21 @@
 package fr.theoszanto.mc.crateexpress.managers;
 
 import fr.theoszanto.mc.crateexpress.CrateExpress;
+import fr.theoszanto.mc.crateexpress.managers.money.MoneyProvider;
+import fr.theoszanto.mc.crateexpress.managers.money.NoopMoneyProvider;
 import fr.theoszanto.mc.crateexpress.models.CrateConfig;
+import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.utils.FormatUtils;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
-import fr.theoszanto.mc.crateexpress.utils.VaultEconomy;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 public class MoneyManager extends PluginObject {
-	private @NotNull GiveType giveType = GiveType.NONE;
-	private @Nullable String moneyGiveCommand = null;
-	private @Nullable VaultEconomy vaultEconomy = null;
+	private @NotNull MoneyProvider provider = new NoopMoneyProvider();
 	private @NotNull Material item = Material.AIR;
 	private @NotNull String currencySymbol = "";
 	private boolean placementBefore = true;
@@ -28,29 +26,8 @@ public class MoneyManager extends PluginObject {
 		super(plugin);
 	}
 
-	public void giveMoney(@NotNull Player player, double amount) throws IllegalStateException {
-		switch (this.giveType) {
-		case COMMAND:
-			Bukkit.dispatchCommand(Bukkit.getConsoleSender(), this.getMoneyGiveCommand(player, amount));
-			break;
-		case VAULT:
-			if (this.vaultEconomy == null)
-				this.vaultEconomy = new VaultEconomy(this.plugin);
-			this.vaultEconomy.giveMoney(player, this.round ? Math.round(amount) : amount);
-			break;
-		case NONE:
-		default:
-			throw new IllegalStateException("Money module not configured");
-		}
-	}
-
-	public @NotNull String getMoneyGiveCommand(@NotNull Player player, double amount) throws IllegalStateException {
-		if (this.moneyGiveCommand == null)
-			throw new IllegalStateException("Money module not initialized");
-		return this.moneyGiveCommand.replaceAll("<player>", player.getName())
-				.replaceAll("<display>", ItemUtils.COMPONENT_SERIALIZER.serialize(player.displayName()))
-				.replaceAll("<uuid>", player.getUniqueId().toString())
-				.replaceAll("<amount>", this.round ? Long.toString(Math.round(amount)) : Double.toString(amount));
+	public void giveMoney(@NotNull Player player, double amount, @NotNull CrateReward origin) throws IllegalStateException {
+		this.provider.giveMoney(player, this.round ? Math.round(amount) : amount, origin);
 	}
 
 	public @NotNull ItemStack getIcon(double min, double max) throws IllegalStateException {
@@ -79,8 +56,7 @@ public class MoneyManager extends PluginObject {
 	public void load(@NotNull CrateConfig.Money config) throws IllegalStateException {
 		if (config.isEmpty())
 			return;
-		this.giveType = config.getGiveType();
-		this.moneyGiveCommand = config.getGiveCommand();
+		this.provider = config.getProvider().instanciate();
 		this.item = config.getItem();
 		this.currencySymbol = config.getCurrencySymbol();
 		this.placementBefore = config.isPlacementBefore();
@@ -89,16 +65,10 @@ public class MoneyManager extends PluginObject {
 	}
 
 	public void reset() {
-		this.giveType = GiveType.NONE;
-		this.moneyGiveCommand = null;
-		this.vaultEconomy = null;
+		this.provider = new NoopMoneyProvider();
 		this.item = Material.AIR;
 		this.currencySymbol = "";
 		this.placementBefore = true;
 		this.physical = false;
-	}
-
-	public enum GiveType {
-		NONE, COMMAND, VAULT
 	}
 }

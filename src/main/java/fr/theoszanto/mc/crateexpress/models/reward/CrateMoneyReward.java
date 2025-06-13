@@ -22,7 +22,7 @@ public class CrateMoneyReward extends CrateReward implements CrateRandomReward {
 	@Override
 	protected void reward(@NotNull Player player) throws RewardGiveException {
 		try {
-			this.money().giveMoney(player, this.getAmount());
+			this.money().giveMoney(player, this.getAmount(), this);
 		} catch (IllegalStateException e) {
 			throw new RewardGiveException(e.getMessage());
 		}
