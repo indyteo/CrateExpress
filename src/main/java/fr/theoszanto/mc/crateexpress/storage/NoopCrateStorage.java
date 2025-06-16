@@ -65,7 +65,7 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
-	public void saveReward(@NotNull Player player, @NotNull CrateReward reward) throws IllegalStateException {
+	public void saveReward(@NotNull OfflinePlayer player, @NotNull CrateReward reward) throws IllegalStateException {
 		this.notice();
 	}
 

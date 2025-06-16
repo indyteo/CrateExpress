@@ -6,9 +6,9 @@ import fr.theoszanto.mc.crateexpress.models.reward.CrateKeyReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import fr.theoszanto.mc.express.utils.ItemUtils;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.NotNull;
@@ -34,30 +34,31 @@ public class CrateKey extends PluginObject {
 		return this.item;
 	}
 
-	public void giveTo(@NotNull Player player, int amount, @NotNull CommandSender commandSource, boolean all) {
+	public void giveTo(@NotNull OfflinePlayer player, int amount, @NotNull CommandSender commandSource, boolean all) {
 		this.giveTo(player, amount, all ? CrateGiveEvent.Cause.GIVE_ALL_COMMAND : CrateGiveEvent.Cause.GIVE_TO_COMMAND, commandSource, null, null);
 	}
 
-	public void giveTo(@NotNull Player player, int amount, @NotNull CrateGiveEvent.AdminGUIGiveButton adminSource) {
+	public void giveTo(@NotNull OfflinePlayer player, int amount, @NotNull CrateGiveEvent.AdminGUIGiveButton adminSource) {
 		this.giveTo(player, amount, CrateGiveEvent.Cause.ADMIN_GIVE, null, adminSource, null);
 	}
 
-	public void giveTo(@NotNull Player player, int amount, @NotNull JavaPlugin pluginSource) {
+	public void giveTo(@NotNull OfflinePlayer player, int amount, @NotNull JavaPlugin pluginSource) {
 		this.giveTo(player, amount, CrateGiveEvent.Cause.PLUGIN_GIVE, null, null, pluginSource);
 	}
 
-	private void giveTo(@NotNull Player player, int amount, @NotNull CrateGiveEvent.Cause cause, @Nullable CommandSender commandSource, @Nullable CrateGiveEvent.AdminGUIGiveButton adminSource, @Nullable JavaPlugin pluginSource) {
-		Inventory inventory = player.getInventory();
-		boolean saving = inventory.firstEmpty() == -1;
+	private void giveTo(@NotNull OfflinePlayer player, int amount, @NotNull CrateGiveEvent.Cause cause, @Nullable CommandSender commandSource, @Nullable CrateGiveEvent.AdminGUIGiveButton adminSource, @Nullable JavaPlugin pluginSource) {
+		boolean saving = !(player instanceof Player onlinePlayer) || onlinePlayer.getInventory().firstEmpty() == -1;
 		CrateGiveEvent event = new CrateGiveEvent(player, saving, cause, this, amount, commandSource, adminSource, pluginSource);
 		if (this.event(event)) {
 			CrateKey key = event.getKey();
 			if (saving) {
 				this.async(() -> this.storage().getSource().saveReward(player, new CrateKeyReward(this.plugin, CrateReward.generateRandomId(), 0, key.getCrateId(), event.getAmount())));
-				this.i18nMessage(player, "action.key.stored", "key", ItemUtils.name(key.getItem()));
+				if (player instanceof Player onlinePlayer)
+					this.i18nMessage(onlinePlayer, "action.key.stored", "key", ItemUtils.name(key.getItem()));
 			} else {
-				player.getInventory().addItem(ItemUtils.withAmount(key.getItem(), event.getAmount()));
-				this.i18nMessage(player, "action.key.receive", "key", ItemUtils.name(key.getItem()));
+				Player onlinePlayer = (Player) player;
+				onlinePlayer.getInventory().addItem(ItemUtils.withAmount(key.getItem(), event.getAmount()));
+				this.i18nMessage(onlinePlayer, "action.key.receive", "key", ItemUtils.name(key.getItem()));
 			}
 		}
 	}

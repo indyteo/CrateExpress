@@ -8,6 +8,7 @@ import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.utils.CratePermission;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
@@ -29,29 +30,32 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 	}
 
 	@Override
+	@SuppressWarnings("ConstantValue")
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
 		if (args.length == 0)
 			return false;
 		int i = 0;
 		String target = args[i++];
-		Collection<Player> targets = new ArrayList<>();
+		Collection<? extends OfflinePlayer> targets;
+		Collection<Player> allPlayers;
 		boolean all;
 		if (target.equals("to")) {
 			if (args.length < 3)
 				return false;
 			String playerName = args[i++];
-			Player player = Bukkit.getPlayer(playerName);
-			if (player == null) {
+			OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
+			if (player == null || !player.hasPlayedBefore()) {
 				this.i18nMessage(sender, "command.unknown-player", "player", playerName);
 				return true;
 			}
 			all = false;
-			targets.add(player);
+			targets = List.of(player);
+			allPlayers = null;
 		} else if (target.equals("all")) {
 			if (args.length < 2)
 				return false;
 			all = true;
-			targets.addAll(Bukkit.getOnlinePlayers());
+			targets = allPlayers = new ArrayList<>(Bukkit.getOnlinePlayers());
 		} else
 			return false;
 		String crateId = args[i++];
@@ -80,11 +84,11 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 			}
 		}
 		if (all) {
-			CrateGiveAllEvent event = new CrateGiveAllEvent(sender, key, amount, targets);
+			CrateGiveAllEvent event = new CrateGiveAllEvent(sender, key, amount, allPlayers);
 			if (!event.callEvent())
 				return true;
 		}
-		for (Player player : targets)
+		for (OfflinePlayer player : targets)
 			key.giveTo(player, amount, sender, all);
 		this.i18nMessage(sender, "command.give.success",
 				"amount", amount,

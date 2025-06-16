@@ -1,8 +1,8 @@
 package fr.theoszanto.mc.crateexpress.events;
 
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -11,7 +11,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 public class CrateGiveEvent extends Event implements Cancellable {
-	private final @NotNull Player player;
+	private final @NotNull OfflinePlayer player;
 	private final boolean savingKey;
 	private final @NotNull Cause cause;
 	private @NotNull CrateKey key;
@@ -23,7 +23,7 @@ public class CrateGiveEvent extends Event implements Cancellable {
 
 	private static final @NotNull HandlerList handlers = new HandlerList();
 
-	public CrateGiveEvent(@NotNull Player player,
+	public CrateGiveEvent(@NotNull OfflinePlayer player,
 	                      boolean savingKey,
 	                      @NotNull Cause cause,
 	                      @NotNull CrateKey key,
@@ -41,7 +41,7 @@ public class CrateGiveEvent extends Event implements Cancellable {
 		this.pluginSource = pluginSource;
 	}
 
-	public @NotNull Player getPlayer() {
+	public @NotNull OfflinePlayer getPlayer() {
 		return this.player;
 	}
 

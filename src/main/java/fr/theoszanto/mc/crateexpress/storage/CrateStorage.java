@@ -52,7 +52,7 @@ public interface CrateStorage extends Logged {
 
 	void deleteCrate(@NotNull String id) throws IllegalStateException;
 
-	void saveReward(@NotNull Player player, @NotNull CrateReward reward) throws IllegalStateException;
+	void saveReward(@NotNull OfflinePlayer player, @NotNull CrateReward reward) throws IllegalStateException;
 
 	@NotNull List<@NotNull ClaimableReward> listRewards(@NotNull Player player) throws IllegalStateException;
 

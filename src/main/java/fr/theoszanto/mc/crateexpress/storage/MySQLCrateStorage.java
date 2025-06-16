@@ -373,7 +373,7 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 	}
 
 	@Override
-	public void saveReward(@NotNull Player player, @NotNull CrateReward reward) throws IllegalStateException {
+	public void saveReward(@NotNull OfflinePlayer player, @NotNull CrateReward reward) throws IllegalStateException {
 		UUID uuid = player.getUniqueId();
 		try (PreparedStatement insertReward = this.prepareSQL("INSERT INTO `prefix_crate_claimed_rewards` (`player`, `reward`) VALUES (UUID_TO_BIN(?), ?)")) {
 			insertReward.setString(1, uuid.toString());
