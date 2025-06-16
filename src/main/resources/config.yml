@@ -32,6 +32,9 @@ rewards:
   other:
     gui-class: fr.theoszanto.mc.crateexpress.models.gui.reward.CrateOtherRewardGUI
     gui-icon: CHEST
+  exp:
+    gui-class: fr.theoszanto.mc.crateexpress.models.gui.reward.CrateExpRewardGUI
+    gui-icon: EXPERIENCE_BOTTLE
 storage:
   source:
     class: fr.theoszanto.mc.crateexpress.storage.YamlCrateStorage
@@ -52,6 +55,8 @@ storage:
     4:
       class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateOtherRewardYML
     5:
+      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateExpRewardYML
+    6:
       class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateUnknownRewardYML
 money:
   provider:

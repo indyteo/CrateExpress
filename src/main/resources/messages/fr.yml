@@ -7,6 +7,10 @@ crate:
     money-lore: ""
     money-random-name: "§bArgent : §3Entre #{min} et #{max}"
     money-random-lore: ""
+    exp-name: "§bExpérience : §3#{exp} #{levels}"
+    exp-lore: ""
+    exp-levels: "niveau#{exp:x}"
+    exp-points: "point#{exp:s}"
   reward:
     give: "§7Vous avez reçu : §e#{reward}"
     save: "§cVotre inventaire est plein. Récompense stockée : §4#{reward}§8 (/crate claim)"
@@ -693,6 +697,28 @@ menu:
           §7récompense
           §6»§e Clic pour sélectionner la caisse
         none: "§cAucune"
+    exp:
+      header:
+        name: "§eGestion de la récompense de type expérience"
+        lore: |-
+          §7Contrôlez les paramètres de la récompense
+          §7Vous pouvez modifier la quantité et si il
+          §7s'agit de niveaux ou de points d'expérience
+      levels:
+        name: "§bNiveaux : §3#{levels}"
+        lore: |-
+          §7Ce paramètre défini si la quantité d'exp est
+          §7exprimée en niveaux ou en points d'expérience
+          §6»§e Clic pour inverser l'état
+      exp:
+        name: "§bExpérience donnée : §3#{exp}"
+        lore: |-
+          §7Ce paramètre défini la quantité d'expérience
+          §7donnée au joueur (niveaux ou points)
+          §6»§e Clic pour saisir la quantité dans le chat
+      request: "§7Veuillez écrire la quantité d'expérience de la récompense dans le chat :"
+      invalid: "§cLa quantité saisie n'est pas valide"
+      timeout: "§cLe délai d'attente a été dépassé..."
     delete:
       title: "Suppression d'une récompense pour #{crate}"
       warning:
