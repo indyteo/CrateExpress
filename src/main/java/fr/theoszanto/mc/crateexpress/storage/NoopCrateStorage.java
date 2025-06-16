@@ -24,6 +24,11 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
+	public void initialize() throws IllegalStateException {
+		this.notice();
+	}
+
+	@Override
 	public @NotNull List<@NotNull CrateNamespace> loadNamespaces() throws IllegalStateException {
 		this.notice();
 		return Collections.emptyList();

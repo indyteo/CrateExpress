@@ -18,6 +18,8 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CrateStorage extends Logged {
+	default void initialize() throws IllegalStateException {}
+
 	@NotNull List<@NotNull CrateNamespace> loadNamespaces() throws IllegalStateException;
 
 	default void saveNamespaces(@NotNull CrateNamespaceRegistry registry) throws IllegalStateException {

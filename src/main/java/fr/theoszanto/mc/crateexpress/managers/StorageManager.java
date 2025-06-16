@@ -53,5 +53,6 @@ public class StorageManager extends PluginObject {
 			CrateRewardStorage<?> rewardStorage = reward.instanciate();
 			this.rewardStorages.put(rewardStorage.getType(), rewardStorage);
 		}
+		this.source.initialize();
 	}
 }

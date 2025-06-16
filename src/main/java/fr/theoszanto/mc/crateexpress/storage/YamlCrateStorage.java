@@ -342,7 +342,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			data.load(file);
 			boolean exists = data.contains(id);
 			if (exists) {
-				Integer newCount = this.rewardsCountCache.computeIfPresent(uuid, (u, count) -> count > 0 ? count - 1 : 0);
+				Integer newCount = this.rewardsCountCache.computeIfPresent(uuid, MapUtils.DECREASE_NON_NEGATIVE);
 				if (newCount != null && newCount == 0 && file.delete())
 					return;
 			}
