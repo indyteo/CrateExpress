@@ -71,18 +71,16 @@ public class CrateColorGUI extends ExpressGUI<CrateExpress> {
 		if (data == null)
 			return true;
 		switch (data.getName()) {
-		case "back":
-			player.closeInventory();
-			break;
-		case "none":
-			this.onSelect.accept(null);
-			player.closeInventory();
-			break;
-		case "dye":
-			DyeColor color = data.getUserData();
-			this.onSelect.accept(color);
-			player.closeInventory();
-			break;
+			case "back" -> player.closeInventory();
+			case "none" -> {
+				this.onSelect.accept(null);
+				player.closeInventory();
+			}
+			case "dye" -> {
+				DyeColor color = data.getUserData();
+				this.onSelect.accept(color);
+				player.closeInventory();
+			}
 		}
 		return true;
 	}

@@ -8,14 +8,12 @@ import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.CommandBlock;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BlockStateMeta;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -82,37 +80,33 @@ public class CrateCommandRewardGUI extends CrateRewardGUI<CrateCommandReward> {
 	@Override
 	protected boolean onButtonClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull SlotData data) {
 		switch (data.getName()) {
-		case "icon":
-			if (action == InventoryAction.SWAP_WITH_CURSOR) {
-				ItemStack item = player.getItemOnCursor();
-				if (item.getType() != Material.AIR) {
-					this.setIcon(item.clone());
-					this.refresh(player);
+			case "icon" -> {
+				if (action == InventoryAction.SWAP_WITH_CURSOR) {
+					ItemStack item = player.getItemOnCursor();
+					if (item.getType() != Material.AIR) {
+						this.setIcon(item.clone());
+						this.refresh(player);
+					}
 				}
 			}
-			break;
-		case "command":
-			if (this.reward == null && action == InventoryAction.SWAP_WITH_CURSOR) {
-				ItemStack item = player.getItemOnCursor();
-				ItemMeta meta = item.getItemMeta();
-				if (meta instanceof BlockStateMeta) {
-					BlockState state = ((BlockStateMeta) meta).getBlockState();
-					if (state instanceof CommandBlock) {
-						String command = ((CommandBlock) state).getCommand();
+			case "command" -> {
+				if (this.reward == null && action == InventoryAction.SWAP_WITH_CURSOR) {
+					ItemStack item = player.getItemOnCursor();
+					if (item.getItemMeta() instanceof BlockStateMeta meta && meta.getBlockState() instanceof CommandBlock state) {
+						String command = state.getCommand();
 						if (!command.isEmpty()) {
 							this.command = command;
 							this.refresh(player);
 							break;
 						}
 					}
+					player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
 				}
-				player.playSound(player.getLocation(), Sound.ENTITY_VILLAGER_NO, 1, 1);
 			}
-			break;
-		case "physical":
-			this.setPhysical(!this.isPhysical());
-			this.refresh(player);
-			break;
+			case "physical" -> {
+				this.setPhysical(!this.isPhysical());
+				this.refresh(player);
+			}
 		}
 		return true;
 	}

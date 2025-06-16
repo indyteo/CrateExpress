@@ -36,13 +36,11 @@ public class CrateDeleteRewardGUI extends ExpressGUI<CrateExpress> {
 		if (data == null)
 			return true;
 		switch (data.getName()) {
-		case "cancel":
-			this.returnTo.showToPlayer(player);
-			break;
-		case "confirm":
-			this.crate.removeReward(this.slot);
-			new CrateEditGUI(this.plugin, this.crate).showToPlayer(player);
-			break;
+			case "cancel" -> this.returnTo.showToPlayer(player);
+			case "confirm" -> {
+				this.crate.removeReward(this.slot);
+				new CrateEditGUI(this.plugin, this.crate).showToPlayer(player);
+			}
 		}
 		return true;
 	}

@@ -66,19 +66,19 @@ public class CrateOtherRewardGUI extends CrateRewardGUI<CrateOtherReward> {
 	@Override
 	protected boolean onButtonClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull SlotData data) {
 		switch (data.getName()) {
-		case "icon":
-			if (action == InventoryAction.SWAP_WITH_CURSOR) {
-				ItemStack item = player.getItemOnCursor();
-				if (item.getType() != Material.AIR) {
-					this.setIcon(item.clone());
-					this.refresh(player);
+			case "icon" -> {
+				if (action == InventoryAction.SWAP_WITH_CURSOR) {
+					ItemStack item = player.getItemOnCursor();
+					if (item.getType() != Material.AIR) {
+						this.setIcon(item.clone());
+						this.refresh(player);
+					}
 				}
 			}
-			break;
-		case "crate":
-			if (this.reward == null)
-				new CrateSelectGUI(this.plugin, false, this, crate -> this.crate = crate).showToPlayer(player);
-			break;
+			case "crate" -> {
+				if (this.reward == null)
+					new CrateSelectGUI(this.plugin, false, this, crate -> this.crate = crate).showToPlayer(player);
+			}
 		}
 		return true;
 	}

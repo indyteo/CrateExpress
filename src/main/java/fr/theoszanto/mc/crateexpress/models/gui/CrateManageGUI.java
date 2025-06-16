@@ -124,169 +124,165 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 		if (data == null)
 			return true;
 		switch (data.getName()) {
-		case "back":
-			new CrateEditGUI(this.plugin, this.crate).showToPlayer(player);
-			break;
-		case "status":
-			this.crate.setDisabled(!this.crate.isDisabled());
-			this.refresh(player);
-			break;
-		case "key":
-			if (click.isLeftClick()) {
-				if (action == InventoryAction.SWAP_WITH_CURSOR) {
-					ItemStack item = player.getItemOnCursor();
-					if (item.getType() != Material.AIR) {
-						this.crate.setKey(new CrateKey(this.plugin, this.crate.getId(), ItemUtils.withAmount(item, 1)));
+			case "back" -> new CrateEditGUI(this.plugin, this.crate).showToPlayer(player);
+			case "status" -> {
+				this.crate.setDisabled(!this.crate.isDisabled());
+				this.refresh(player);
+			}
+			case "key" -> {
+				if (click.isLeftClick()) {
+					if (action == InventoryAction.SWAP_WITH_CURSOR) {
+						ItemStack item = player.getItemOnCursor();
+						if (item.getType() != Material.AIR) {
+							this.crate.setKey(new CrateKey(this.plugin, this.crate.getId(), ItemUtils.withAmount(item, 1)));
+							this.refresh(player);
+						}
+					}
+				} else if (click.isRightClick()) {
+					if (this.crate.getKey() != null) {
+						this.crate.setKey(null);
+						this.refresh(player);
+					}
+				} else if (click == ClickType.MIDDLE && player.hasPermission(CratePermission.Command.GIVE)) {
+					CrateKey key = this.crate.getKey();
+					if (key != null)
+						key.giveTo(player, 1, CrateGiveEvent.AdminGUIGiveButton.MANAGE);
+				}
+			}
+			case "location" -> {
+				if (click.isLeftClick()) {
+					if (this.crate.getLocations() == null)
+						this.crate.setLocations(new ArrayList<>());
+					new CrateLocationsGUI(this.plugin, this.crate, this).showToPlayer(player);
+				} else if (click.isRightClick() && this.crate.getLocations() != null) {
+					this.crate.setLocations(null);
+					this.refresh(player);
+				} else if (click == ClickType.MIDDLE && player.hasPermission(CratePermission.Command.TELEPORT)) {
+					List<UnloadableWorldLocation> locations = this.crate.getLocations();
+					if (locations != null && !locations.isEmpty() && CrateExpressTeleportSubCommand.teleportOrOpenSelectMenu(this, crate, player))
+						player.closeInventory();
+				}
+			}
+			case "delay" -> {
+				this.i18nMessage(player, "menu.manage.delay.request");
+				player.closeInventory();
+				this.spigot().requestChatEdition(player, FormatUtils.noTrailingZeroDecimal(this.crate.getDelay()), 1, TimeUnit.MINUTES).whenComplete((delay, timeout) -> {
+					if (timeout == null) {
+						try {
+							this.crate.setDelay(Double.parseDouble(delay));
+						} catch (NumberFormatException e) {
+							this.i18nMessage(player, "menu.manage.delay.invalid");
+						}
+					} else
+						this.i18nMessage(player, "menu.manage.delay.timeout");
+					this.run(() -> this.showToPlayer(player));
+				});
+			}
+			case "preview" -> {
+				this.crate.setNoPreview(!this.crate.isNoPreview());
+				this.refresh(player);
+			}
+			case "name" -> {
+				this.i18nMessage(player, "menu.manage.name.request");
+				player.closeInventory();
+				this.spigot().requestChatEdition(player, this.crate.getName().replace('§', '&'), 1, TimeUnit.MINUTES).whenComplete((name, timeout) -> {
+					if (timeout == null)
+						this.crate.setName(ItemUtils.translateAmpersandColorCodes(name));
+					else
+						this.i18nMessage(player, "menu.manage.name.timeout");
+					this.run(() -> this.showToPlayer(player));
+				});
+			}
+			case "message" -> {
+				if (click.isLeftClick()) {
+					this.i18nMessage(player, "menu.manage.message.request");
+					player.closeInventory();
+					this.spigot().requestChatEdition(player, this.crate.getMessage() == null ? null : this.crate.getMessage().replace('§', '&'), 1, TimeUnit.MINUTES).whenComplete((message, timeout) -> {
+						if (timeout == null)
+							this.crate.setMessage(ItemUtils.translateAmpersandColorCodes(message));
+						else
+							this.i18nMessage(player, "menu.manage.message.timeout");
+						this.run(() -> this.showToPlayer(player));
+					});
+				} else if (click.isRightClick() && this.crate.getMessage() != null) {
+					this.crate.setMessage(null);
+					this.refresh(player);
+				} else if (click == ClickType.MIDDLE) {
+					String formattedMessage = this.crate.getFormattedMessage(player);
+					if (formattedMessage != null)
+						player.sendMessage(formattedMessage);
+				}
+			}
+			case "sound" -> {
+				Sound sound = this.crate.getSound();
+				if (click.isLeftClick()) {
+					new CrateSoundGUI(this.plugin, sound == null ? CrateSoundGUI.SoundNamespace.ROOT : new CrateSoundGUI.SoundValue(sound).getNamespace(), this, this.crate::setSound).showToPlayer(player);
+				} else if (click.isRightClick() && sound != null) {
+					this.crate.setSound(null);
+					this.refresh(player);
+				} else if (click == ClickType.MIDDLE && sound != null)
+					player.playSound(player.getLocation(), sound, SoundCategory.MASTER, 1, 1);
+			}
+			case "particle" -> {
+				Particle particle = this.crate.getParticle();
+				if (click.isLeftClick()) {
+					new CrateParticleGUI(this.plugin, this, this.crate::setParticle).showToPlayer(player);
+				} else if (click.isRightClick() && particle != null) {
+					this.crate.setParticle(null);
+					this.refresh(player);
+				} else if (click == ClickType.MIDDLE && particle != null)
+					player.spawnParticle(particle, player.getLocation().add(0, 0.5, 0), Math.max(1, this.crate.getParticleCount()), 0.1, 0.1, 0.1, 0.5);
+			}
+			case "particle-count" -> {
+				int count = this.crate.getParticleCount();
+				int n = click.isShiftClick() ? 10 : 1;
+				if (click.isLeftClick()) {
+					if (count < 100) {
+						this.crate.setParticleCount(Math.min(count + n, 100));
+						this.refresh(player);
+					}
+				} else if (click.isRightClick()) {
+					if (count > 0) {
+						this.crate.setParticleCount(Math.max(0, count - n));
 						this.refresh(player);
 					}
 				}
-			} else if (click.isRightClick()) {
-				if (this.crate.getKey() != null) {
-					this.crate.setKey(null);
-					this.refresh(player);
-				}
-			} else if (click == ClickType.MIDDLE && player.hasPermission(CratePermission.Command.GIVE)) {
-				CrateKey key = this.crate.getKey();
-				if (key != null)
-					key.giveTo(player, 1, CrateGiveEvent.AdminGUIGiveButton.MANAGE);
 			}
-			break;
-		case "location":
-			if (click.isLeftClick()) {
-				if (this.crate.getLocations() == null)
-					this.crate.setLocations(new ArrayList<>());
-				new CrateLocationsGUI(this.plugin, this.crate, this).showToPlayer(player);
-			} else if (click.isRightClick() && this.crate.getLocations() != null) {
-				this.crate.setLocations(null);
+			case "random" -> {
+				this.crate.setRandom(!this.crate.isRandom());
 				this.refresh(player);
-			} else if (click == ClickType.MIDDLE && player.hasPermission(CratePermission.Command.TELEPORT)) {
-				List<UnloadableWorldLocation> locations = this.crate.getLocations();
-				if (locations != null && !locations.isEmpty() && CrateExpressTeleportSubCommand.teleportOrOpenSelectMenu(this, crate, player))
-					player.closeInventory();
 			}
-			break;
-		case "delay":
-			this.i18nMessage(player, "menu.manage.delay.request");
-			player.closeInventory();
-			this.spigot().requestChatEdition(player, FormatUtils.noTrailingZeroDecimal(this.crate.getDelay()), 1, TimeUnit.MINUTES).whenComplete((delay, timeout) -> {
-				if (timeout == null) {
-					try {
-						this.crate.setDelay(Double.parseDouble(delay));
-					} catch (NumberFormatException e) {
-						this.i18nMessage(player, "menu.manage.delay.invalid");
+			case "duplicates" -> {
+				this.crate.setAllowDuplicates(!this.crate.doesAllowDuplicates());
+				this.refresh(player);
+			}
+			case "min" -> {
+				if (click.isLeftClick()) {
+					if (this.crate.getMin() < this.crate.getMax()) {
+						this.crate.setMin(this.crate.getMin() + 1);
+						this.refresh(player);
 					}
-				} else
-					this.i18nMessage(player, "menu.manage.delay.timeout");
-				this.run(() -> this.showToPlayer(player));
-			});
-			break;
-		case "preview":
-			this.crate.setNoPreview(!this.crate.isNoPreview());
-			this.refresh(player);
-			break;
-		case "name":
-			this.i18nMessage(player, "menu.manage.name.request");
-			player.closeInventory();
-			this.spigot().requestChatEdition(player, this.crate.getName().replace('§', '&'), 1, TimeUnit.MINUTES).whenComplete((name, timeout) -> {
-				if (timeout == null)
-					this.crate.setName(ItemUtils.translateAmpersandColorCodes(name));
-				else
-					this.i18nMessage(player, "menu.manage.name.timeout");
-				this.run(() -> this.showToPlayer(player));
-			});
-			break;
-		case "message":
-			if (click.isLeftClick()) {
-				this.i18nMessage(player, "menu.manage.message.request");
-				player.closeInventory();
-				this.spigot().requestChatEdition(player, this.crate.getMessage() == null ? null : this.crate.getMessage().replace('§', '&'), 1, TimeUnit.MINUTES).whenComplete((message, timeout) -> {
-					if (timeout == null)
-						this.crate.setMessage(ItemUtils.translateAmpersandColorCodes(message));
-					else
-						this.i18nMessage(player, "menu.manage.message.timeout");
-					this.run(() -> this.showToPlayer(player));
-				});
-			} else if (click.isRightClick() && this.crate.getMessage() != null) {
-				this.crate.setMessage(null);
-				this.refresh(player);
-			} else if (click == ClickType.MIDDLE) {
-				String formattedMessage = this.crate.getFormattedMessage(player);
-				if (formattedMessage != null)
-					player.sendMessage(formattedMessage);
-			}
-			break;
-		case "sound":
-			Sound sound = this.crate.getSound();
-			if (click.isLeftClick()) {
-				new CrateSoundGUI(this.plugin, sound == null ? CrateSoundGUI.SoundNamespace.ROOT : new CrateSoundGUI.SoundValue(sound).getNamespace(), this, this.crate::setSound).showToPlayer(player);
-			} else if (click.isRightClick() && sound != null) {
-				this.crate.setSound(null);
-				this.refresh(player);
-			} else if (click == ClickType.MIDDLE && sound != null)
-				player.playSound(player.getLocation(), sound, SoundCategory.MASTER, 1, 1);
-			break;
-		case "particle":
-			Particle particle = this.crate.getParticle();
-			if (click.isLeftClick()) {
-				new CrateParticleGUI(this.plugin, this, this.crate::setParticle).showToPlayer(player);
-			} else if (click.isRightClick() && particle != null) {
-				this.crate.setParticle(null);
-				this.refresh(player);
-			} else if (click == ClickType.MIDDLE && particle != null)
-				player.spawnParticle(particle, player.getLocation().add(0, 0.5, 0), Math.max(1, this.crate.getParticleCount()), 0.1, 0.1, 0.1, 0.5);
-			break;
-		case "particle-count":
-			int count = this.crate.getParticleCount();
-			int n = click.isShiftClick() ? 10 : 1;
-			if (click.isLeftClick()) {
-				if (count < 100) {
-					this.crate.setParticleCount(Math.min(count + n, 100));
-					this.refresh(player);
-				}
-			} else if (click.isRightClick()) {
-				if (count > 0) {
-					this.crate.setParticleCount(Math.max(0, count - n));
-					this.refresh(player);
+				} else if (click.isRightClick()) {
+					if (this.crate.getMin() > 1) {
+						this.crate.setMin(this.crate.getMin() - 1);
+						this.refresh(player);
+					}
 				}
 			}
-			break;
-		case "random":
-			this.crate.setRandom(!this.crate.isRandom());
-			this.refresh(player);
-			break;
-		case "duplicates":
-			this.crate.setAllowDuplicates(!this.crate.doesAllowDuplicates());
-			this.refresh(player);
-			break;
-		case "min":
-			if (click.isLeftClick()) {
-				if (this.crate.getMin() < this.crate.getMax()) {
-					this.crate.setMin(this.crate.getMin() + 1);
-					this.refresh(player);
-				}
-			} else if (click.isRightClick()) {
-				if (this.crate.getMin() > 1) {
-					this.crate.setMin(this.crate.getMin() - 1);
-					this.refresh(player);
+			case "max" -> {
+				if (click.isLeftClick()) {
+					if (this.crate.getMax() < 10) {
+						this.crate.setMax(this.crate.getMax() + 1);
+						this.refresh(player);
+					}
+				} else if (click.isRightClick()) {
+					if (this.crate.getMax() > this.crate.getMin()) {
+						this.crate.setMax(this.crate.getMax() - 1);
+						this.refresh(player);
+					}
 				}
 			}
-			break;
-		case "max":
-			if (click.isLeftClick()) {
-				if (this.crate.getMax() < 10) {
-					this.crate.setMax(this.crate.getMax() + 1);
-					this.refresh(player);
-				}
-			} else if (click.isRightClick()) {
-				if (this.crate.getMax() > this.crate.getMin()) {
-					this.crate.setMax(this.crate.getMax() - 1);
-					this.refresh(player);
-				}
-			}
-			break;
-		case "delete":
-			new CrateDeleteGUI(this.plugin, this.crate, this).showToPlayer(player);
-			break;
+			case "delete" -> new CrateDeleteGUI(this.plugin, this.crate, this).showToPlayer(player);
 		}
 		return true;
 	}

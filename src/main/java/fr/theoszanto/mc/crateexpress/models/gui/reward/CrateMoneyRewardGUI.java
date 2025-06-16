@@ -123,21 +123,15 @@ public class CrateMoneyRewardGUI extends CrateRewardGUI<CrateMoneyReward> {
 	@Override
 	protected boolean onButtonClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull SlotData data) {
 		switch (data.getName()) {
-		case "random":
-			if (this.reward == null) {
-				this.random = !this.random;
-				this.refresh(player);
+			case "random" -> {
+				if (this.reward == null) {
+					this.random = !this.random;
+					this.refresh(player);
+				}
 			}
-			break;
-		case "amount":
-			this.askForAmount(player, "amount", this::setAmount);
-			break;
-		case "min":
-			this.askForAmount(player, "min", this::setMin);
-			break;
-		case "max":
-			this.askForAmount(player, "max", this::setMax);
-			break;
+			case "amount" -> this.askForAmount(player, "amount", this::setAmount);
+			case "min" -> this.askForAmount(player, "min", this::setMin);
+			case "max" -> this.askForAmount(player, "max", this::setMax);
 		}
 		return true;
 	}

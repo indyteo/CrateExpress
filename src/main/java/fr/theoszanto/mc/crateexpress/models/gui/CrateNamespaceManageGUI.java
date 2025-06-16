@@ -55,15 +55,9 @@ public class CrateNamespaceManageGUI extends ExpressGUI<CrateExpress> {
 		if (data == null)
 			return true;
 		switch (data.getName()) {
-		case "back":
-			new CrateListGUI(this.plugin, this.namespace).showToPlayer(player);
-			break;
-		case "color":
-			new CrateColorGUI(this.plugin, this.namespace.getColor(), this, this.namespace::setColor).showToPlayer(player);
-			break;
-		case "delete":
-			new CrateNamespaceDeleteGUI(this.plugin, this.namespace, this).showToPlayer(player);
-			break;
+			case "back" -> new CrateListGUI(this.plugin, this.namespace).showToPlayer(player);
+			case "color" -> new CrateColorGUI(this.plugin, this.namespace.getColor(), this, this.namespace::setColor).showToPlayer(player);
+			case "delete" -> new CrateNamespaceDeleteGUI(this.plugin, this.namespace, this).showToPlayer(player);
 		}
 		return true;
 	}

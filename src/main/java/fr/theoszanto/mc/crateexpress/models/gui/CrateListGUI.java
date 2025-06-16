@@ -81,7 +81,6 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	}
 
 	@Override
-	@SuppressWarnings("UnstableApiUsage") // BundleMeta
 	protected @Nullable ItemStack icon(@NotNull Player player, @NotNull CrateElement crateElement) {
 		if (crateElement instanceof Crate crate)
 			return this.crateIcon(player, crate);
@@ -166,13 +165,11 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	protected boolean onOtherClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
 		if (data != null && !this.namespace.isRoot()) {
 			switch (data.getName()) {
-			case "parent":
-				this.openNamespace(player, this.namespace.getParent());
-				break;
-			case "manage":
-				if (this.isAllowedToManageNamespace(player))
-					new CrateNamespaceManageGUI(this.plugin, this.namespace).showToPlayer(player);
-				break;
+				case "parent" -> this.openNamespace(player, this.namespace.getParent());
+				case "manage" -> {
+					if (this.isAllowedToManageNamespace(player))
+						new CrateNamespaceManageGUI(this.plugin, this.namespace).showToPlayer(player);
+				}
 			}
 		}
 		return true;

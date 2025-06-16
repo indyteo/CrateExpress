@@ -33,17 +33,17 @@ public class CrateNamespaceDeleteGUI extends ExpressGUI<CrateExpress> {
 		if (data == null)
 			return true;
 		switch (data.getName()) {
-		case "cancel":
-			if (this.returnTo == null)
+			case "cancel" -> {
+				if (this.returnTo == null)
+					player.closeInventory();
+				else
+					this.returnTo.showToPlayer(player);
+			}
+			case "confirm" -> {
+				this.plugin.crates().namespaces().delete(this.namespace);
+				this.i18nMessage(player, "menu.delete-namespace.success", "namespace", this.namespace.getName());
 				player.closeInventory();
-			else
-				this.returnTo.showToPlayer(player);
-			break;
-		case "confirm":
-			this.plugin.crates().namespaces().delete(this.namespace);
-			this.i18nMessage(player, "menu.delete-namespace.success", "namespace", this.namespace.getName());
-			player.closeInventory();
-			break;
+			}
 		}
 		return true;
 	}

@@ -84,23 +84,23 @@ public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 	@Override
 	protected boolean onButtonClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull SlotData data) {
 		switch (data.getName()) {
-		case "key":
-			if (this.reward == null)
-				new CrateSelectGUI(this.plugin, true, this, this::selectCrate).showToPlayer(player);
-			break;
-		case "amount":
-			if (click.isLeftClick()) {
-				if (this.getAmount() < this.getMaxAmount()) {
-					this.setAmount(this.getAmount() + 1);
-					this.refresh(player);
-				}
-			} else if (click.isRightClick()) {
-				if (this.getAmount() > 1) {
-					this.setAmount(this.getAmount() - 1);
-					this.refresh(player);
+			case "key" -> {
+				if (this.reward == null)
+					new CrateSelectGUI(this.plugin, true, this, this::selectCrate).showToPlayer(player);
+			}
+			case "amount" -> {
+				if (click.isLeftClick()) {
+					if (this.getAmount() < this.getMaxAmount()) {
+						this.setAmount(this.getAmount() + 1);
+						this.refresh(player);
+					}
+				} else if (click.isRightClick()) {
+					if (this.getAmount() > 1) {
+						this.setAmount(this.getAmount() - 1);
+						this.refresh(player);
+					}
 				}
 			}
-			break;
 		}
 		return true;
 	}

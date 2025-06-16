@@ -65,19 +65,16 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 		String parent = this.namespace.getName();
 		Material icon = null;
 		switch (parent) {
-		case "block":
-		case "item":
-			icon = Material.getMaterial(name);
-			break;
-		case "entity":
-			icon = Material.getMaterial(name + "_SPAWN_EGG");
-			if (icon == null)
-				icon = Material.getMaterial(name);
-			break;
-		case "music_disc":
-			String disc = "MUSIC_DISC_" + name;
-			icon = Material.getMaterial(disc);
-			break;
+			case "block", "item" -> icon = Material.getMaterial(name);
+			case "entity" -> {
+				icon = Material.getMaterial(name + "_SPAWN_EGG");
+				if (icon == null)
+					icon = Material.getMaterial(name);
+			}
+			case "music_disc" -> {
+				String disc = "MUSIC_DISC_" + name;
+				icon = Material.getMaterial(disc);
+			}
 		}
 		return icon == null || (!icon.isItem() && !icon.isRecord()) ? def : icon;
 	}
@@ -102,13 +99,11 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 		if (data == null)
 			return true;
 		switch (data.getName()) {
-		case "parent":
-			if (!this.namespace.isRoot())
-				this.openNamespace(player, this.namespace.getParent());
-			break;
-		case "stop":
-			player.stopAllSounds();
-			break;
+			case "parent" -> {
+				if (!this.namespace.isRoot())
+					this.openNamespace(player, this.namespace.getParent());
+			}
+			case "stop" -> player.stopAllSounds();
 		}
 		return true;
 	}

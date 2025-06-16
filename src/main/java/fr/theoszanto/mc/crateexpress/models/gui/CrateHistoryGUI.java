@@ -248,19 +248,19 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 		if (data == null)
 			return true;
 		switch (data.getName()) {
-		case "day":
-			this.date = data.getUserData();
-			this.fetchData(player);
-			break;
-		case "vScroll":
-			this.vScroll = data.getUserData();
-			this.refresh(player);
-			break;
-		case "hScroll":
-			Pair<Integer, Integer> pair = data.getUserData();
-			this.hScrolls[pair.first()] = pair.second();
-			this.refresh(player);
-			break;
+			case "day" -> {
+				this.date = data.getUserData();
+				this.fetchData(player);
+			}
+			case "vScroll" -> {
+				this.vScroll = data.getUserData();
+				this.refresh(player);
+			}
+			case "hScroll" -> {
+				Pair<Integer, Integer> pair = data.getUserData();
+				this.hScrolls[pair.first()] = pair.second();
+				this.refresh(player);
+			}
 		}
 		return true;
 	}

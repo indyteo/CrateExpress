@@ -131,15 +131,9 @@ public class CrateEditGUI extends ExpressGUI<CrateExpress> {
 			return true;
 		}
 		switch (data.getName()) {
-		case "back":
-			new CrateListGUI(this.plugin, this.crate.getNamespace()).showToPlayer(player);
-			break;
-		case "add":
-			new CrateAddRewardGUI(this.plugin, this.crate).showToPlayer(player);
-			break;
-		case "manage":
-			new CrateManageGUI(this.plugin, this.crate).showToPlayer(player);
-			break;
+			case "back" -> new CrateListGUI(this.plugin, this.crate.getNamespace()).showToPlayer(player);
+			case "add" -> new CrateAddRewardGUI(this.plugin, this.crate).showToPlayer(player);
+			case "manage" -> new CrateManageGUI(this.plugin, this.crate).showToPlayer(player);
 		}
 		return true;
 	}

@@ -65,17 +65,17 @@ public class CratePreviewGUI extends ExpressGUI<CrateExpress> {
 		if (data == null)
 			return true;
 		switch (data.getName()) {
-		case "key":
-			if (player.hasPermission(CratePermission.Command.GIVE)) {
-				CrateKey key = this.crate.getKey();
-				if (key != null)
-					key.giveTo(player, 1, CrateGiveEvent.AdminGUIGiveButton.PREVIEW);
+			case "key" -> {
+				if (player.hasPermission(CratePermission.Command.GIVE)) {
+					CrateKey key = this.crate.getKey();
+					if (key != null)
+						key.giveTo(player, 1, CrateGiveEvent.AdminGUIGiveButton.PREVIEW);
+				}
 			}
-			break;
-		case "edit":
-			if (player.hasPermission(CratePermission.Command.EDIT))
-				new CrateEditGUI(this.plugin, this.crate).showToPlayer(player);
-			break;
+			case "edit" -> {
+				if (player.hasPermission(CratePermission.Command.EDIT))
+					new CrateEditGUI(this.plugin, this.crate).showToPlayer(player);
+			}
 		}
 		return true;
 	}
