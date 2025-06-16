@@ -103,14 +103,14 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	}
 
 	public void addCrate(@NotNull Crate crate) {
-		this.plugin.storage().getSource().saveCrate(crate);
+		this.async(() -> this.plugin.storage().getSource().saveCrate(crate));
 		this.register(crate.getId(), crate);
 		crate.getNamespace().elementAdded(crate);
 	}
 
 	public void deleteCrate(@NotNull Crate crate) {
 		crate.getNamespace().elementRemoved(crate);
-		this.plugin.storage().getSource().deleteCrate(crate.getId());
+		this.async(() -> this.plugin.storage().getSource().deleteCrate(crate.getId()));
 		this.delete(crate.getId());
 	}
 

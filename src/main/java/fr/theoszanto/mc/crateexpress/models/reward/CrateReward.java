@@ -66,7 +66,7 @@ public abstract class CrateReward extends PluginObject implements Weighted {
 	}
 
 	protected void save(@NotNull Player player) {
-		this.storage().getSource().saveReward(player, this);
+		this.async(() -> this.storage().getSource().saveReward(player, this));
 	}
 
 	public @NotNull ItemStack getIconWithChance(double crateWeight) {

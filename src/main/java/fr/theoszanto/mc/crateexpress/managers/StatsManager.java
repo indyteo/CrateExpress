@@ -79,7 +79,7 @@ public class StatsManager extends PluginObject {
 		else {
 			CompletableFuture<Map<Crate, List<HistoricalReward>>> future = new CompletableFuture<>();
 			AtomicBoolean runComplete = new AtomicBoolean(false);
-			BukkitTask task = Bukkit.getScheduler().runTaskAsynchronously(this.plugin, () -> {
+			BukkitTask task = this.async(() -> {
 				try {
 					Map<Crate, List<HistoricalReward>> history = new HashMap<>();
 					for (HistoricalReward reward : this.storage().getSource().listHistory(player, date))

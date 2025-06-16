@@ -64,6 +64,6 @@ public class CrateNamespaceManageGUI extends ExpressGUI<CrateExpress> {
 
 	@Override
 	public void onClose(@NotNull Player player) {
-		this.plugin.storage().getSource().saveNamespace(this.namespace);
+		this.async(() -> this.plugin.storage().getSource().saveNamespace(this.namespace));
 	}
 }

@@ -126,6 +126,6 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends ExpressGUI<C
 
 	@Override
 	public void onClose(@NotNull Player player) {
-		this.plugin.storage().getSource().saveCrate(this.crate);
+		this.async(() -> this.plugin.storage().getSource().saveCrate(this.crate));
 	}
 }
