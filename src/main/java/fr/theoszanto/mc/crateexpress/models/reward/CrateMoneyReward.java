@@ -39,6 +39,7 @@ public class CrateMoneyReward extends CrateReward implements CrateRandomReward {
 
 	public void setMin(double min) {
 		this.min = min;
+		this.setIcon(this.money().getIcon(min, this.max));
 	}
 
 	public double getMax() {
@@ -47,6 +48,7 @@ public class CrateMoneyReward extends CrateReward implements CrateRandomReward {
 
 	public void setMax(double max) {
 		this.max = max;
+		this.setIcon(this.money().getIcon(this.min, max));
 	}
 
 	public boolean isRandom() {

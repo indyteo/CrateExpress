@@ -22,6 +22,7 @@ crate:
       CrateMoneyReward: "Argent"
       CrateCommandReward: "Commande"
       CrateOtherReward: "Autre caisse"
+      CrateExpReward: "Expérience"
       CrateUnknownReward: "§cInconnu"
   claim-notice: "§7Vous avez §e#{count}§7 récompense#{count:s} en attente. Faites §e/crate claim§7 pour les récupérer !"
 action:
@@ -557,6 +558,11 @@ menu:
         name: "§bAutre caisse"
         lore: |-
           §7Le joueur recevra des récompenses d'une autre caisse
+          §6»§e Clic pour ajouter ce type de récompense
+      exp:
+        name: "§bExpérience"
+        lore: |-
+          §7Le joueur recevra de l'expérience vanilla
           §6»§e Clic pour ajouter ce type de récompense
     item:
       header:

@@ -33,6 +33,7 @@ public class CrateExpReward extends CrateReward {
 
 	public void setExp(int exp) {
 		this.exp = exp;
+		this.setIcon(icon(this, exp, this.levels));
 	}
 
 	public boolean isLevels() {
@@ -41,6 +42,7 @@ public class CrateExpReward extends CrateReward {
 
 	public void setLevels(boolean levels) {
 		this.levels = levels;
+		this.setIcon(icon(this, this.exp, levels));
 	}
 
 	private static @NotNull ItemStack icon(@NotNull PluginObject obj, int exp, boolean levels) {
