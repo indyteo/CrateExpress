@@ -28,6 +28,11 @@ public class CrateMoneyReward extends CrateReward implements CrateRandomReward {
 		}
 	}
 
+	@Override
+	public @NotNull String describe() {
+		return this.isRandom() ? super.describe() : this.money().formatMoney(this.min);
+	}
+
 	public double getMin() {
 		return this.min;
 	}

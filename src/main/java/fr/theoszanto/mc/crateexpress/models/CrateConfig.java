@@ -10,10 +10,10 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -56,6 +56,18 @@ public class CrateConfig extends PluginObject {
 
 	public void setAdditionalMessageFiles(@NotNull List<@NotNull File> additionalMessageFiles) {
 		this.config.set("additional-message-files", additionalMessageFiles.stream().map(File::getPath).toList());
+	}
+
+	public void addAdditionalMessageFiles(@NotNull File @NotNull... additionalMessageFiles) {
+		this.addAdditionalMessageFiles(Arrays.asList(additionalMessageFiles));
+	}
+
+	public void addAdditionalMessageFiles(@NotNull List<@NotNull File> additionalMessageFiles) {
+		List<File> existingMessageFiles = this.getAdditionalMessageFiles();
+		List<File> messageFiles = new ArrayList<>(existingMessageFiles.size() + additionalMessageFiles.size());
+		messageFiles.addAll(existingMessageFiles);
+		messageFiles.addAll(additionalMessageFiles);
+		this.setAdditionalMessageFiles(messageFiles);
 	}
 
 	public @NotNull Storage getStorageConfig() {
@@ -182,17 +194,6 @@ public class CrateConfig extends PluginObject {
 
 		public void setProvider(@NotNull SerializedPluginObject provider) {
 			this.setSerializedPluginObject("provider", provider);
-		}
-
-		public @NotNull String getGiveCommand() {
-			String giveCommand = this.section.getString("give-command", null);
-			if (giveCommand == null)
-				throw new IllegalStateException("Missing money give command in config");
-			return giveCommand;
-		}
-
-		public void setGiveCommand(@NotNull String giveCommand) {
-			this.section.set("give-command", giveCommand);
 		}
 
 		public @NotNull Material getItem() {
@@ -367,23 +368,23 @@ public class CrateConfig extends PluginObject {
 
 	public static class SerializedPluginObject extends PluginObject {
 		private final @NotNull String className;
-		private final @Nullable List<?> options;
+		private final @NotNull List<?> options;
 
 		public SerializedPluginObject(@NotNull CrateExpress plugin, @NotNull String className) {
-			this(plugin, className, null);
+			this(plugin, className, List.of());
 		}
 
-		public SerializedPluginObject(@NotNull CrateExpress plugin, @NotNull String className, @Nullable List<?> options) {
+		public SerializedPluginObject(@NotNull CrateExpress plugin, @NotNull String className, @NotNull List<?> options) {
 			super(plugin);
 			this.className = className;
 			this.options = options;
 		}
 
 		public SerializedPluginObject(@NotNull CrateExpress plugin, @NotNull Class<? extends PluginObject> clazz) {
-			this(plugin, clazz, null);
+			this(plugin, clazz, List.of());
 		}
 
-		public SerializedPluginObject(@NotNull CrateExpress plugin, @NotNull Class<? extends PluginObject> clazz, @Nullable List<?> options) {
+		public SerializedPluginObject(@NotNull CrateExpress plugin, @NotNull Class<? extends PluginObject> clazz, @NotNull List<?> options) {
 			this(plugin, clazz.getName(), options);
 		}
 
@@ -391,7 +392,7 @@ public class CrateConfig extends PluginObject {
 			return this.className;
 		}
 
-		public @Nullable List<?> getOptions() {
+		public @NotNull List<?> getOptions() {
 			return this.options;
 		}
 

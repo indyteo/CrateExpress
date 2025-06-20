@@ -21,14 +21,10 @@ public class CrateExpReward extends CrateReward {
 
 	@Override
 	protected void reward(@NotNull Player player) throws RewardGiveException {
-		try {
-			if (this.levels)
-				player.giveExpLevels(this.exp);
-			else
-				player.giveExp(this.exp, false);
-		} catch (IllegalStateException e) {
-			throw new RewardGiveException(e.getMessage());
-		}
+		if (this.levels)
+			player.giveExpLevels(this.exp);
+		else
+			player.giveExp(this.exp, false);
 	}
 
 	public int getExp() {
