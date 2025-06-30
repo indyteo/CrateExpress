@@ -53,6 +53,10 @@ public class MoneyManager extends PluginObject {
 		return this.physical;
 	}
 
+	public boolean isRound() {
+		return this.round;
+	}
+
 	public void load(@NotNull CrateConfig.Money config) throws IllegalStateException {
 		if (config.isEmpty())
 			return;
