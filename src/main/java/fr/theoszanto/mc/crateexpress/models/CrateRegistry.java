@@ -80,9 +80,11 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	}
 
 	public void noticePlayerIfCanClaim(@NotNull Player player) {
-		int rewards = this.plugin.storage().getSource().countRewards(player);
-		if (rewards > 0)
-			this.i18nMessage(player, "crate.claim-notice", "count", rewards);
+		this.plugin.store(storage -> {
+			int rewards = storage.countRewards(player);
+			if (rewards > 0)
+				this.i18nMessage(player, "crate.claim-notice", "count", rewards);
+		});
 	}
 
 	public @Nullable Crate resolve(@NotNull String name) {
@@ -103,14 +105,14 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	}
 
 	public void addCrate(@NotNull Crate crate) {
-		this.async(() -> this.plugin.storage().getSource().saveCrate(crate));
+		this.plugin.store(storage -> storage.saveCrate(crate));
 		this.register(crate.getId(), crate);
 		crate.getNamespace().elementAdded(crate);
 	}
 
 	public void deleteCrate(@NotNull Crate crate) {
 		crate.getNamespace().elementRemoved(crate);
-		this.async(() -> this.plugin.storage().getSource().deleteCrate(crate.getId()));
+		this.plugin.store(storage -> storage.deleteCrate(crate.getId()));
 		this.delete(crate.getId());
 	}
 

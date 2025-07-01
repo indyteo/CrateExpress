@@ -18,6 +18,10 @@ import java.util.List;
 import java.util.UUID;
 
 public interface CrateStorage extends Logged {
+	default boolean isAsync() {
+		return false;
+	}
+
 	default void initialize() throws IllegalStateException {}
 
 	@NotNull List<@NotNull CrateNamespace> loadNamespaces() throws IllegalStateException;

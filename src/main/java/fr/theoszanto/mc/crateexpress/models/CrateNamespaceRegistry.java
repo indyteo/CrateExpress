@@ -42,7 +42,7 @@ public class CrateNamespaceRegistry extends PluginObject implements Iterable<@No
 			throw new IllegalArgumentException("The namespace " + path + " already exists");
 		CrateNamespace namespace = new CrateNamespace(this.plugin, path, null);
 		this.namespaces.put(path, namespace);
-		this.async(() -> this.storage().getSource().saveNamespace(namespace));
+		this.store(storage -> storage.saveNamespace(namespace));
 		if (!namespace.isRoot())
 			namespace.getParent().elementAdded(namespace);
 		return namespace;
@@ -67,7 +67,7 @@ public class CrateNamespaceRegistry extends PluginObject implements Iterable<@No
 
 	public void delete(@NotNull CrateNamespace namespace) {
 		this.softDelete(namespace);
-		this.async(() -> this.storage().getSource().deleteNamespace(namespace.getPath()));
+		this.store(storage -> storage.deleteNamespace(namespace.getPath()));
 	}
 
 	/* package-private */ void softDelete(@NotNull CrateNamespace namespace) {

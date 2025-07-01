@@ -27,8 +27,8 @@ public class CrateExpressClaimSubCommand extends CrateExpressSubCommand {
 		if (args.length != 0)
 			return false;
 		Player player = (Player) sender;
-		this.async(() -> {
-			List<ClaimableReward> playerRewards = this.storage().getSource().listRewards(player);
+		this.store(storage -> {
+			List<ClaimableReward> playerRewards = storage.listRewards(player);
 			this.run(() -> new CrateClaimGUI(this.plugin, playerRewards).showToPlayer(player));
 		});
 		return true;

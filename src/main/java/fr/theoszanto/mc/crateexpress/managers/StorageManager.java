@@ -12,6 +12,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Consumer;
 
 public class StorageManager extends PluginObject {
 	private @NotNull CrateStorage source;
@@ -28,6 +29,13 @@ public class StorageManager extends PluginObject {
 
 	public @Nullable CrateRewardStorage<?> getRewardSource(@NotNull String type) {
 		return this.rewardStorages.get(type);
+	}
+
+	public void runOnStorage(@NotNull Consumer<@NotNull CrateStorage> action) {
+		if (this.source.isAsync())
+			this.async(() -> action.accept(this.source));
+		else
+			action.accept(this.source);
 	}
 
 	public void migratePlayerData(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException {

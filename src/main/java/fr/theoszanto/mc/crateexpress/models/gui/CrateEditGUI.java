@@ -155,6 +155,6 @@ public class CrateEditGUI extends ExpressGUI<CrateExpress> {
 
 	@Override
 	public void onClose(@NotNull Player player) {
-		this.async(() -> this.plugin.storage().getSource().saveCrate(this.crate));
+		this.plugin.store(storage -> storage.saveCrate(this.crate));
 	}
 }

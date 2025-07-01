@@ -55,7 +55,7 @@ public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableRe
 		this.processing = true;
 		if (click == ClickType.DROP || click == ClickType.CONTROL_DROP) {
 			this.list.remove(element);
-			this.async(() -> this.plugin.storage().getSource().deleteReward(player, element.id()));
+			this.plugin.store(storage -> storage.deleteReward(player, element.id()));
 			this.recomputePageMax();
 			this.refresh(player);
 		} else {
@@ -79,7 +79,7 @@ public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableRe
 		if (data != null && data.getName().equalsIgnoreCase("all")) {
 			if (click == ClickType.DROP || click == ClickType.CONTROL_DROP) {
 				this.list.clear();
-				this.async(() -> this.plugin.storage().getSource().clearRewards(player));
+				this.plugin.store(storage -> storage.clearRewards(player));
 			} else {
 				PlayerInventory inventory = player.getInventory();
 				int index = 0;
@@ -100,7 +100,7 @@ public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableRe
 		if (reward.reward().giveRewardTo(player, false)) {
 			this.list.remove(reward);
 			// Remove stored pending reward
-			this.async(() -> this.plugin.storage().getSource().deleteReward(player, reward.id()));
+			this.plugin.store(storage -> storage.deleteReward(player, reward.id()));
 			return true;
 		}
 		return false;

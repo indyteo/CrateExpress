@@ -14,6 +14,6 @@ public class PlayerListener extends ExpressListener<CrateExpress> {
 	@EventHandler
 	private void onPlayerJoin(@NotNull PlayerJoinEvent event) {
 		if (this.plugin.crates().isClaimNoticeOnLogin())
-			this.async(() -> this.plugin.crates().noticePlayerIfCanClaim(event.getPlayer()));
+			this.plugin.crates().noticePlayerIfCanClaim(event.getPlayer());
 	}
 }

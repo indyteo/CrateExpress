@@ -7,9 +7,12 @@ import fr.theoszanto.mc.crateexpress.managers.RewardsManager;
 import fr.theoszanto.mc.crateexpress.managers.StatsManager;
 import fr.theoszanto.mc.crateexpress.managers.StorageManager;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
+import fr.theoszanto.mc.crateexpress.storage.CrateStorage;
 import fr.theoszanto.mc.express.ExpressObject;
 import fr.theoszanto.mc.express.utils.Logged;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Consumer;
 
 public abstract class PluginObject extends ExpressObject<CrateExpress> implements Logged {
 	public PluginObject(@NotNull CrateExpress plugin) {
@@ -38,5 +41,9 @@ public abstract class PluginObject extends ExpressObject<CrateExpress> implement
 
 	public final @NotNull ExportManager export() {
 		return this.plugin.export();
+	}
+
+	public final void store(@NotNull Consumer<@NotNull CrateStorage> action) {
+		this.plugin.store(action);
 	}
 }

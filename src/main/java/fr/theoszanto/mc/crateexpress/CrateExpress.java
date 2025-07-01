@@ -8,12 +8,14 @@ import fr.theoszanto.mc.crateexpress.managers.StatsManager;
 import fr.theoszanto.mc.crateexpress.managers.StorageManager;
 import fr.theoszanto.mc.crateexpress.models.CrateConfig;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
+import fr.theoszanto.mc.crateexpress.storage.CrateStorage;
 import fr.theoszanto.mc.express.ExpressPlugin;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.util.List;
+import java.util.function.Consumer;
 
 public final class CrateExpress extends ExpressPlugin<CrateExpress> {
 	private final @NotNull CrateConfig config = new CrateConfig(this);
@@ -100,5 +102,9 @@ public final class CrateExpress extends ExpressPlugin<CrateExpress> {
 
 	public @NotNull ExportManager export() {
 		return this.export;
+	}
+
+	public void store(@NotNull Consumer<@NotNull CrateStorage> action) {
+		this.storage.runOnStorage(action);
 	}
 }

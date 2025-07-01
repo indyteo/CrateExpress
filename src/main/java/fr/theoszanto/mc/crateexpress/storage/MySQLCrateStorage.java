@@ -70,6 +70,11 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 	}
 
 	@Override
+	public boolean isAsync() {
+		return true;
+	}
+
+	@Override
 	public void initialize() throws IllegalStateException {
 		try {
 			try (PreparedStatement createNamespacesTable = this.prepareSQL("""
