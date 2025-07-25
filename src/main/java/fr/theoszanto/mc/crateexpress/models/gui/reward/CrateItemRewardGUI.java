@@ -16,6 +16,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class CrateItemRewardGUI extends CrateRewardGUI<CrateItemReward> {
 	private @Nullable ItemStack item;
@@ -107,10 +108,14 @@ public class CrateItemRewardGUI extends CrateRewardGUI<CrateItemReward> {
 					this.setAmount(0);
 					this.refresh(player);
 				} else if (click == ClickType.MIDDLE) {
-					this.i18nMessage(player, "menu.reward.item.amount.request");
-					player.closeInventory();
-					this.spigot().requestChatMessage(player, 1, TimeUnit.MINUTES).whenComplete((amount, timeout) -> {
-						if (timeout == null) {
+					this.spigot().requestText(
+							player,
+							this.i18n("menu.reward.item.amount.request"),
+							1,
+							TimeUnit.MINUTES,
+							Integer.toString(this.getAmount())
+					).whenComplete((amount, failure) -> {
+						if (failure == null) {
 							try {
 								int value = Integer.parseInt(amount);
 								if (value < 0 || value > this.getMaxAmount())
@@ -119,9 +124,9 @@ public class CrateItemRewardGUI extends CrateRewardGUI<CrateItemReward> {
 							} catch (NumberFormatException e) {
 								this.i18nMessage(player, "menu.reward.item.amount.invalid", "max", this.getMaxAmount());
 							}
-						} else
+						} else if (failure instanceof TimeoutException)
 							this.i18nMessage(player, "menu.reward.item.amount.timeout");
-						this.run(() -> this.showToPlayer(player));
+						this.refresh(player);
 					});
 				}
 			}

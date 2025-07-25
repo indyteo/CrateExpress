@@ -284,8 +284,8 @@ menu:
       lore: |-
         §7Ce paramètre défini la durée d'attente entre deux
         §7ouvertures de cette caisse par un joueur (en secondes)
-        §6»§e Clic pour définir dans le chat
-      request: "§7Veuillez écrire le nouveau délai d'ouverture de la caisse dans le chat :"
+        §6»§e Clic pour définir
+      request: "Veuillez écrire le nouveau délai d'ouverture de la caisse"
       invalid: "§cLe délai saisi n'est pas valide (nombre décimal, \".\" pour la virgule)"
       timeout: "§cLe délai d'attente a été dépassé..."
     preview:
@@ -302,8 +302,8 @@ menu:
       lore: |-
         §7Ce paramètre défini le nom d'affichage de la caisse,
         §7indépendant de son identifiant dans les commandes
-        §6»§e Clic pour définir dans le chat
-      request: "§7Veuillez écrire le nouveau nom de la caisse dans le chat :"
+        §6»§e Clic pour définir
+      request: "Veuillez écrire le nouveau nom de la caisse"
       timeout: "§cLe délai d'attente a été dépassé..."
     message:
       name: "§bMessage d'ouverture de la caisse : §3#{message}"
@@ -316,11 +316,17 @@ menu:
         §7- §e<display>§7 : Nom d'affichage du joueur
         §7- §e<crate>§7 : Nom d'affichage de la caisse
         §7- §e<key>§7 : Nom de l'objet clé, ou §e<crate>
-        §6»§e Clic gauche pour définir dans le chat
+        §6»§e Clic gauche pour définir
         §6»§e Clic droit pour supprimer
       show: "§6»§e Clic molette pour visualiser"
       none: "§cAucun message défini"
-      request: "§7Veuillez écrire le nouveau message d'ouverture de la caisse dans le chat :"
+      request: |-
+        Veuillez écrire le nouveau message d'ouverture de la caisse
+        Variables :
+        <player> : Pseudo du joueur
+        <display> : Nom d'affichage du joueur
+        <crate> : Nom d'affichage de la caisse
+        <key> : Nom de l'objet clé, ou <crate>
       timeout: "§cLe délai d'attente a été dépassé..."
     sound:
       name: "§bSon d'ouverture : §3#{sound}"
@@ -586,12 +592,12 @@ menu:
           §7Par défaut, cela correspond au nombre d'objets
           §7déposé à la configuration de la récompense
           §7Permet de dépasser la taille maximum du stack
-          §6»§e Clic molette pour définir dans le chat
+          §6»§e Clic molette pour définir
         decrease: "§6»§e Clic droit pour diminuer (shift : -10)"
         increase: "§6»§e Clic gauche pour augmenter (shift : +10)"
         reset: "§6»§e Drop pour réinitialiser"
         none: "Par défaut"
-        request: "§7Veuillez écrire le nombre d'objets à donner dans le chat :"
+        request: "Veuillez écrire le nombre d'objets à donner"
         invalid: "§cLa quantité saisie n'est pas valide (entre §40§c et §4#{max}§c)"
         timeout: "§cLe délai d'attente a été dépassé..."
     key:
@@ -635,23 +641,23 @@ menu:
         name: "§bMontant fixe donné : §3#{amount}"
         lore: |-
           §7Ce paramètre défini la somme d'argent donnée au joueur
-          §6»§e Clic pour saisir le montant dans le chat
+          §6»§e Clic pour saisir le montant
         type: "fixe"
       min:
         name: "§bMontant minimum donné : §3#{min}"
         lore: |-
           §7Ce paramètre défini la somme d'argent minimale donnée
           §7au joueur
-          §6»§e Clic pour saisir le montant dans le chat
+          §6»§e Clic pour saisir le montant
         type: "minimum"
       max:
         name: "§bMontant maximum donné : §3#{max}"
         lore: |-
           §7Ce paramètre défini la somme d'argent maximale donnée
           §7au joueur
-          §6»§e Clic pour saisir le montant dans le chat
+          §6»§e Clic pour saisir le montant
         type: "maximum"
-      request: "§7Veuillez écrire le montant #{type} de la récompense dans le chat :"
+      request: "Veuillez écrire le montant #{type} de la récompense"
       invalid: "§cLe montant saisi n'est pas valide"
       timeout: "§cLe délai d'attente a été dépassé..."
     command:
@@ -721,8 +727,8 @@ menu:
         lore: |-
           §7Ce paramètre défini la quantité d'expérience
           §7donnée au joueur (niveaux ou points)
-          §6»§e Clic pour saisir la quantité dans le chat
-      request: "§7Veuillez écrire la quantité d'expérience de la récompense dans le chat :"
+          §6»§e Clic pour saisir la quantité
+      request: "Veuillez écrire la quantité d'expérience de la récompense"
       invalid: "§cLa quantité saisie n'est pas valide"
       timeout: "§cLe délai d'attente a été dépassé..."
     delete:
@@ -796,4 +802,7 @@ misc:
   default-cmd-icon-name: "§7Commande"
   default-other-icon-name: "§7Caisse"
   cancelled-by-reload: "§cVotre action a été interrompue car le plugin a été rechargé"
-  insert-original: "§a§l§n[Cliquez ici pour insérer la valeur originale dans votre chat]"
+dialog:
+  request-text-title: "Saisissez une valeur"
+  confirm: "Valider"
+  cancel: "Annuler"

@@ -13,12 +13,12 @@ import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BundleMeta;
 import org.bukkit.inventory.meta.PotionMeta;
@@ -56,6 +56,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	}
 
 	@Override
+	@SuppressWarnings("UnstableApiUsage") // DataComponentTypes
 	protected void prepareGUI(@NotNull Player player) {
 		for (int i = 0; i < 9; i++) {
 			this.set(slot(0, i), BORDER);
@@ -66,7 +67,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 		this.set(slot(0, 4), new ItemBuilder(Material.OAK_SIGN, 1, this.i18n("menu.list.header.name", "namespace", this.namespace.isRoot() ? this.i18n("menu.list.header.root-namespace") : this.namespace.getName()), this.i18nLines("menu.list.header.lore")));
 		if (!this.namespace.isRoot()) {
 			DyeColor color = this.namespace.getColor();
-			ItemStack arrow = new ItemBuilder(color == null ? Material.SPECTRAL_ARROW : Material.TIPPED_ARROW, 1, this.i18n("menu.list.parent-namespace"), this.i18nLines("menu.list.enter-namespace")).addFlag(ItemFlag.HIDE_ADDITIONAL_TOOLTIP).build();
+			ItemStack arrow = new ItemBuilder(color == null ? Material.SPECTRAL_ARROW : Material.TIPPED_ARROW, 1, this.i18n("menu.list.parent-namespace"), this.i18nLines("menu.list.enter-namespace")).addHiddenDataComponent(DataComponentTypes.POTION_CONTENTS).build();
 			if (color != null)
 				arrow.editMeta(PotionMeta.class, meta -> meta.setColor(color.getColor()));
 			this.set(slot(0, 0), arrow, "parent");

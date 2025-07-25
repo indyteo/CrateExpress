@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 public class CrateConfig extends PluginObject {
 	private @NotNull Configuration config = new YamlConfiguration();
@@ -122,7 +123,7 @@ public class CrateConfig extends PluginObject {
 			String className = serializedPluginObjectConfig.getString("class", null);
 			if (className == null)
 				throw new IllegalStateException("Missing class name in config: " + serializedPluginObjectConfig.getCurrentPath());
-			return new SerializedPluginObject(this.plugin, className, serializedPluginObjectConfig.getList("options"));
+			return new SerializedPluginObject(this.plugin, className, Objects.requireNonNullElse(serializedPluginObjectConfig.getList("options"), List.of()));
 		}
 
 		@Contract(value = "_ -> new", pure = true)

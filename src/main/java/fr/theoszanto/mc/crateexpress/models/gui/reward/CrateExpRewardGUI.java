@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class CrateExpRewardGUI extends CrateRewardGUI<CrateExpReward> {
 	private int exp;
@@ -76,21 +77,23 @@ public class CrateExpRewardGUI extends CrateRewardGUI<CrateExpReward> {
 				this.setLevels(!this.isLevels());
 				this.refresh(player);
 			}
-			case "exp" -> {
-				this.i18nMessage(player, "menu.reward.exp.request");
-				player.closeInventory();
-				this.spigot().requestChatMessage(player, 1, TimeUnit.MINUTES).whenComplete((exp, timeout) -> {
-					if (timeout == null) {
-						try {
-							this.setExp(Integer.parseInt(exp));
-						} catch (NumberFormatException e) {
-							this.i18nMessage(player, "menu.reward.exp.invalid");
-						}
-					} else
-						this.i18nMessage(player, "menu.reward.exp.timeout");
-					this.run(() -> this.showToPlayer(player));
-				});
-			}
+			case "exp" -> this.spigot().requestText(
+					player,
+					this.i18n("menu.reward.exp.request"),
+					1,
+					TimeUnit.MINUTES,
+					Integer.toString(this.getExp())
+			).whenComplete((exp, failure) -> {
+				if (failure == null) {
+					try {
+						this.setExp(Integer.parseInt(exp));
+					} catch (NumberFormatException e) {
+						this.i18nMessage(player, "menu.reward.exp.invalid");
+					}
+				} else if (failure instanceof TimeoutException)
+					this.i18nMessage(player, "menu.reward.exp.timeout");
+				this.refresh(player);
+			});
 		}
 		return true;
 	}

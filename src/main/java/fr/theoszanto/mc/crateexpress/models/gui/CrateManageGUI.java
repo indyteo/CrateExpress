@@ -27,6 +27,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 	private final @NotNull Crate crate;
@@ -163,46 +164,54 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 						player.closeInventory();
 				}
 			}
-			case "delay" -> {
-				this.i18nMessage(player, "menu.manage.delay.request");
-				player.closeInventory();
-				this.spigot().requestChatEdition(player, FormatUtils.noTrailingZeroDecimal(this.crate.getDelay()), 1, TimeUnit.MINUTES).whenComplete((delay, timeout) -> {
-					if (timeout == null) {
-						try {
-							this.crate.setDelay(Double.parseDouble(delay));
-						} catch (NumberFormatException e) {
-							this.i18nMessage(player, "menu.manage.delay.invalid");
-						}
-					} else
-						this.i18nMessage(player, "menu.manage.delay.timeout");
-					this.run(() -> this.showToPlayer(player));
-				});
-			}
+			case "delay" -> this.spigot().requestText(
+					player,
+					this.i18n("menu.manage.delay.request"),
+					1,
+					TimeUnit.MINUTES,
+					FormatUtils.noTrailingZeroDecimal(this.crate.getDelay())
+			).whenComplete((delay, failure) -> {
+				if (failure == null) {
+					try {
+						this.crate.setDelay(Double.parseDouble(delay));
+					} catch (NumberFormatException e) {
+						this.i18nMessage(player, "menu.manage.delay.invalid");
+					}
+				} else if (failure instanceof TimeoutException)
+					this.i18nMessage(player, "menu.manage.delay.timeout");
+				this.refresh(player);
+			});
 			case "preview" -> {
 				this.crate.setNoPreview(!this.crate.isNoPreview());
 				this.refresh(player);
 			}
-			case "name" -> {
-				this.i18nMessage(player, "menu.manage.name.request");
-				player.closeInventory();
-				this.spigot().requestChatEdition(player, this.crate.getName().replace('§', '&'), 1, TimeUnit.MINUTES).whenComplete((name, timeout) -> {
-					if (timeout == null)
-						this.crate.setName(ItemUtils.translateAmpersandColorCodes(name));
-					else
-						this.i18nMessage(player, "menu.manage.name.timeout");
-					this.run(() -> this.showToPlayer(player));
-				});
-			}
+			case "name" -> this.spigot().requestText(
+					player,
+					this.i18n("menu.manage.name.request"),
+					1,
+					TimeUnit.MINUTES,
+					this.crate.getName().replace('§', '&')
+			).whenComplete((name, failure) -> {
+				if (failure == null)
+					this.crate.setName(ItemUtils.translateAmpersandColorCodes(name));
+				else if (failure instanceof TimeoutException)
+					this.i18nMessage(player, "menu.manage.name.timeout");
+				this.refresh(player);
+			});
 			case "message" -> {
 				if (click.isLeftClick()) {
-					this.i18nMessage(player, "menu.manage.message.request");
-					player.closeInventory();
-					this.spigot().requestChatEdition(player, this.crate.getMessage() == null ? null : this.crate.getMessage().replace('§', '&'), 1, TimeUnit.MINUTES).whenComplete((message, timeout) -> {
-						if (timeout == null)
+					this.spigot().requestText(
+							player,
+							this.i18n("menu.manage.message.request"),
+							1,
+							TimeUnit.MINUTES,
+							this.crate.getMessage() == null ? null : this.crate.getMessage().replace('§', '&')
+					).whenComplete((message, failure) -> {
+						if (failure == null)
 							this.crate.setMessage(ItemUtils.translateAmpersandColorCodes(message));
-						else
+						else if (failure instanceof TimeoutException)
 							this.i18nMessage(player, "menu.manage.message.timeout");
-						this.run(() -> this.showToPlayer(player));
+						this.refresh(player);
 					});
 				} else if (click.isRightClick() && this.crate.getMessage() != null) {
 					this.crate.setMessage(null);

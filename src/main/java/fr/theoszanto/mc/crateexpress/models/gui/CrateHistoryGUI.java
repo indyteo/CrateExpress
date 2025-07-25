@@ -10,12 +10,12 @@ import fr.theoszanto.mc.crateexpress.utils.TimeUtils;
 import fr.theoszanto.mc.express.gui.ExpressGUI;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -80,6 +80,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 			this.history = history;
 			this.error = error != null;
 			if (!this.error) {
+				assert this.history != null;
 				boolean hideNoPreview = !viewer.hasPermission(CratePermission.BYPASS_NO_PREVIEW);
 				int size = this.history.size();
 				if (hideNoPreview)
@@ -108,6 +109,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 	}
 
 	@Override
+	@SuppressWarnings("UnstableApiUsage") // DataComponentTypes
 	public void onOpen(@NotNull Player player, @Nullable ExpressGUI<CrateExpress> ignored) {
 		this.opened = true;
 		if (this.shouldFetchData) {
@@ -135,7 +137,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 				"player", this.player.getName(),
 				"date", DATE_FORMAT.format(this.date),
 				"crates", this.history == null ? 0 : this.history.size(),
-				"rewards", this.history == null ? 0 : this.history.values().stream().mapToInt(List::size).sum())).addFlag(ItemFlag.HIDE_ADDITIONAL_TOOLTIP));
+				"rewards", this.history == null ? 0 : this.history.values().stream().mapToInt(List::size).sum())).addHiddenDataComponent(DataComponentTypes.MAP_ID));
 
 		// Next day button
 		if (TimeUtils.compareIgnoringTime(this.date, this.today) < 0) {
@@ -152,7 +154,7 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 
 		if (self)
 			// Help text
-			this.set(slot(5, 8), new ItemBuilder(Material.WRITTEN_BOOK, 1, this.i18n("menu.history.help.name"), this.i18nLines("menu.history.help.lore")).addFlag(ItemFlag.HIDE_ADDITIONAL_TOOLTIP));
+			this.set(slot(5, 8), new ItemBuilder(Material.WRITTEN_BOOK, 1, this.i18n("menu.history.help.name"), this.i18nLines("menu.history.help.lore")).addHiddenDataComponent(DataComponentTypes.WRITTEN_BOOK_CONTENT));
 		else {
 			// Player indicator
 			ItemStack head = new ItemBuilder(Material.PLAYER_HEAD, 1, this.i18n("menu.history.player.name", "player", this.player.getName()), this.i18nLines("menu.history.player.lore")).build();

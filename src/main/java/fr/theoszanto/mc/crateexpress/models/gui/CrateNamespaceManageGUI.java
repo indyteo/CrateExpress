@@ -5,12 +5,12 @@ import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
 import fr.theoszanto.mc.express.gui.ExpressGUI;
 import fr.theoszanto.mc.express.utils.ItemBuilder;
 import fr.theoszanto.mc.express.utils.ItemUtils;
+import io.papermc.paper.datacomponent.DataComponentTypes;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
-import org.bukkit.inventory.ItemFlag;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,6 +23,7 @@ public class CrateNamespaceManageGUI extends ExpressGUI<CrateExpress> {
 	}
 
 	@Override
+	@SuppressWarnings("UnstableApiUsage") // DataComponentTypes
 	public void onOpen(@NotNull Player player, @Nullable ExpressGUI<CrateExpress> previous) {
 		// Borders
 		for (int i = 0; i < 9; i++) {
@@ -44,7 +45,7 @@ public class CrateNamespaceManageGUI extends ExpressGUI<CrateExpress> {
 		this.setCloseButton(slot(4, 8));
 
 		// Control buttons
-		this.set(slot(2, 4), new ItemBuilder(ItemUtils.colored(Material.BUNDLE, color), 1, this.i18n("menu.manage-namespace.color.name", "color", colorStr), this.i18nLines("menu.manage-namespace.color.lore")).addFlag(ItemFlag.HIDE_ADDITIONAL_TOOLTIP), "color");
+		this.set(slot(2, 4), new ItemBuilder(ItemUtils.colored(Material.BUNDLE, color), 1, this.i18n("menu.manage-namespace.color.name", "color", colorStr), this.i18nLines("menu.manage-namespace.color.lore")).addHiddenDataComponent(DataComponentTypes.BUNDLE_CONTENTS), "color");
 
 		// Delete button
 		this.set(slot(4, 4), new ItemBuilder(Material.TNT, 1, this.i18n("menu.manage-namespace.delete.name"), this.i18nLines("menu.manage-namespace.delete.lore")), "delete");

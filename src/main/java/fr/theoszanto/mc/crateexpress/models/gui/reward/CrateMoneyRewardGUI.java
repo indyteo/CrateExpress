@@ -14,6 +14,7 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.function.DoubleConsumer;
 
 public class CrateMoneyRewardGUI extends CrateRewardGUI<CrateMoneyReward> {
@@ -129,26 +130,30 @@ public class CrateMoneyRewardGUI extends CrateRewardGUI<CrateMoneyReward> {
 					this.refresh(player);
 				}
 			}
-			case "amount" -> this.askForAmount(player, "amount", this::setAmount);
-			case "min" -> this.askForAmount(player, "min", this::setMin);
-			case "max" -> this.askForAmount(player, "max", this::setMax);
+			case "amount" -> this.askForAmount(player, "amount", this.getAmount(), this::setAmount);
+			case "min" -> this.askForAmount(player, "min", this.getMin(), this::setMin);
+			case "max" -> this.askForAmount(player, "max", this.getMax(), this::setMax);
 		}
 		return true;
 	}
 
-	private void askForAmount(@NotNull Player player, @NotNull String type, @NotNull DoubleConsumer setter) {
-		this.i18nMessage(player, "menu.reward.money.request", "type", this.i18n("menu.reward.money." + type + ".type"));
-		player.closeInventory();
-		this.spigot().requestChatMessage(player, 1, TimeUnit.MINUTES).whenComplete((amount, timeout) -> {
-			if (timeout == null) {
+	private void askForAmount(@NotNull Player player, @NotNull String type, double current, @NotNull DoubleConsumer setter) {
+		this.spigot().requestText(
+				player,
+				this.i18n("menu.reward.money.request", "type", this.i18n("menu.reward.money." + type + ".type")),
+				1,
+				TimeUnit.MINUTES,
+				Double.toString(current)
+		).whenComplete((amount, failure) -> {
+			if (failure == null) {
 				try {
 					setter.accept(Double.parseDouble(amount));
 				} catch (NumberFormatException e) {
 					this.i18nMessage(player, "menu.reward.money.invalid");
 				}
-			} else
+			} else if (failure instanceof TimeoutException)
 				this.i18nMessage(player, "menu.reward.money.timeout");
-			this.run(() -> this.showToPlayer(player));
+			this.refresh(player);
 		});
 	}
 }
