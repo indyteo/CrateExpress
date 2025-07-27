@@ -14,7 +14,6 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.List;
 
 public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
@@ -117,13 +116,13 @@ public class CrateRegistry extends Registry<CrateExpress, String, Crate> {
 	}
 
 	public @NotNull List<@NotNull Crate> byLocation(@Nullable Location location) {
-		return location == null ? Collections.emptyList() : this.list().stream()
+		return location == null ? List.of() : this.list().stream()
 				.filter(crate -> crate.isAtLocation(location))
 				.toList();
 	}
 
 	public @NotNull List<@NotNull Crate> byItem(@Nullable ItemStack item) {
-		return item == null ? Collections.emptyList() : this.list().stream()
+		return item == null ? List.of() : this.list().stream()
 				.filter(crate -> crate.hasKey(item))
 				.toList();
 	}

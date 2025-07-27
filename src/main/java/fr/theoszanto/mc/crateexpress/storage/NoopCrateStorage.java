@@ -4,16 +4,15 @@ import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
+import fr.theoszanto.mc.crateexpress.models.RawStatsRecord;
 import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.models.reward.HistoricalReward;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -31,7 +30,7 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 	@Override
 	public @NotNull List<@NotNull CrateNamespace> loadNamespaces() throws IllegalStateException {
 		this.notice();
-		return Collections.emptyList();
+		return List.of();
 	}
 
 	@Override
@@ -70,19 +69,19 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
-	public @NotNull List<@NotNull ClaimableReward> listRewards(@NotNull Player player) throws IllegalStateException {
+	public @NotNull List<@NotNull ClaimableReward> listRewards(@NotNull OfflinePlayer player) throws IllegalStateException {
 		this.notice();
-		return Collections.emptyList();
+		return List.of();
 	}
 
 	@Override
-	public int countRewards(@NotNull Player player) throws IllegalStateException {
+	public int countRewards(@NotNull OfflinePlayer player) throws IllegalStateException {
 		this.notice();
 		return 0;
 	}
 
 	@Override
-	public void deleteReward(@NotNull Player player, @NotNull String id) throws IllegalStateException {
+	public void deleteReward(@NotNull OfflinePlayer player, @NotNull String id) throws IllegalStateException {
 		this.notice();
 	}
 
@@ -110,7 +109,7 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 	@Override
 	public @NotNull List<@NotNull HistoricalReward> listHistory(@NotNull OfflinePlayer player, @NotNull Date date) throws IllegalStateException {
 		this.notice();
-		return Collections.emptyList();
+		return List.of();
 	}
 
 	@Override
@@ -120,6 +119,17 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 
 	@Override
 	public void clearPlayerStats(@NotNull UUID uuid) throws IllegalStateException {
+		this.notice();
+	}
+
+	@Override
+	public @NotNull List<@NotNull RawStatsRecord> listRawStats() throws IllegalStateException {
+		this.notice();
+		return List.of();
+	}
+
+	@Override
+	public void saveRawStats(@NotNull List<@NotNull RawStatsRecord> stats) throws IllegalStateException {
 		this.notice();
 	}
 

@@ -17,7 +17,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class CrateConfig extends PluginObject {
 	private @NotNull Configuration config = new YamlConfiguration();
@@ -123,7 +122,7 @@ public class CrateConfig extends PluginObject {
 			String className = serializedPluginObjectConfig.getString("class", null);
 			if (className == null)
 				throw new IllegalStateException("Missing class name in config: " + serializedPluginObjectConfig.getCurrentPath());
-			return new SerializedPluginObject(this.plugin, className, Objects.requireNonNullElse(serializedPluginObjectConfig.getList("options"), List.of()));
+			return new SerializedPluginObject(this.plugin, className, serializedPluginObjectConfig.getList("options", List.of()));
 		}
 
 		@Contract(value = "_ -> new", pure = true)
@@ -175,12 +174,18 @@ public class CrateConfig extends PluginObject {
 			this.setSerializedPluginObject("source", source);
 		}
 
-		public @NotNull List<@NotNull SerializedPluginObject> getRewards() {
-			return this.getSerializedPluginObjects("rewards");
+		public @NotNull Map<@NotNull String, List<@NotNull SerializedPluginObject>> getRewards() {
+			ConfigurationSection rewardsSection = this.section.getConfigurationSection("rewards");
+			Map<String, List<SerializedPluginObject>> rewardsPerType = new HashMap<>();
+			if (rewardsSection != null)
+				for (String type : rewardsSection.getKeys(false))
+					rewardsPerType.put(type, this.getSerializedPluginObjects(rewardsSection, type));
+			return rewardsPerType;
 		}
 
-		public void setRewards(@NotNull List<@NotNull SerializedPluginObject> rewards) {
-			this.setSerializedPluginObjects("rewards", rewards);
+		public void setRewards(@NotNull Map<@NotNull String, List<@NotNull SerializedPluginObject>> rewardsPerType) {
+			ConfigurationSection rewardsSection = this.section.createSection("rewards");
+			rewardsPerType.forEach((type, rewards) -> this.setSerializedPluginObjects(rewardsSection, type, rewards));
 		}
 	}
 

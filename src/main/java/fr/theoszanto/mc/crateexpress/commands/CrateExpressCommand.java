@@ -10,7 +10,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CrateExpressCommand extends ExpressCommand<CrateExpress> {
@@ -44,7 +43,7 @@ public class CrateExpressCommand extends ExpressCommand<CrateExpress> {
 	@Override
 	public @Nullable List<@NotNull String> onTabComplete(@NotNull CommandSender sender, @NotNull Command command, @NotNull String alias, @NotNull String @NotNull[] args) {
 		if (args.length == 0)
-			return Collections.emptyList();
+			return List.of();
 		String subCommandName = args[0];
 		List<String> result = null;
 		if (args.length == 1) {
@@ -58,7 +57,7 @@ public class CrateExpressCommand extends ExpressCommand<CrateExpress> {
 			}
 		}
 		if (result == null)
-			return Collections.emptyList();
+			return List.of();
 		String lastArg = args[args.length - 1].toLowerCase();
 		return result.stream().filter(name -> name.toLowerCase().startsWith(lastArg)).toList();
 	}

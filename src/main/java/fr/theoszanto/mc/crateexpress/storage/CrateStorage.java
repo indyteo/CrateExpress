@@ -4,13 +4,13 @@ import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
 import fr.theoszanto.mc.crateexpress.models.CrateNamespaceRegistry;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
+import fr.theoszanto.mc.crateexpress.models.RawStatsRecord;
 import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.models.reward.HistoricalReward;
 import fr.theoszanto.mc.express.utils.Logged;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Date;
@@ -58,13 +58,13 @@ public interface CrateStorage extends Logged {
 
 	void saveReward(@NotNull OfflinePlayer player, @NotNull CrateReward reward) throws IllegalStateException;
 
-	@NotNull List<@NotNull ClaimableReward> listRewards(@NotNull Player player) throws IllegalStateException;
+	@NotNull List<@NotNull ClaimableReward> listRewards(@NotNull OfflinePlayer player) throws IllegalStateException;
 
-	int countRewards(@NotNull Player player) throws IllegalStateException;
+	int countRewards(@NotNull OfflinePlayer player) throws IllegalStateException;
 
-	void deleteReward(@NotNull Player player, @NotNull String id) throws IllegalStateException;
+	void deleteReward(@NotNull OfflinePlayer player, @NotNull String id) throws IllegalStateException;
 
-	default void clearRewards(@NotNull Player player) throws IllegalStateException {
+	default void clearRewards(@NotNull OfflinePlayer player) throws IllegalStateException {
 		this.clearRewards(player.getUniqueId());
 	}
 
@@ -81,4 +81,8 @@ public interface CrateStorage extends Logged {
 	void migratePlayerStats(@NotNull UUID from, @NotNull UUID to) throws IllegalStateException;
 
 	void clearPlayerStats(@NotNull UUID uuid) throws IllegalStateException;
+
+	@NotNull List<@NotNull RawStatsRecord> listRawStats() throws IllegalStateException;
+
+	void saveRawStats(@NotNull List<@NotNull RawStatsRecord> stats) throws IllegalStateException;
 }

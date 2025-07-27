@@ -5,6 +5,7 @@ import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
+import fr.theoszanto.mc.crateexpress.models.RawStatsRecord;
 import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
@@ -43,6 +44,7 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -296,7 +298,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
-	public @NotNull List<@NotNull ClaimableReward> listRewards(@NotNull Player player) throws IllegalStateException {
+	public @NotNull List<@NotNull ClaimableReward> listRewards(@NotNull OfflinePlayer player) throws IllegalStateException {
 		String uuid = player.getUniqueId().toString();
 		try {
 			File file = new File(this.rewardsDir, uuid + ".yml");
@@ -306,7 +308,11 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			for (String id : data.getKeys(false)) {
 				ConfigurationSection reward = data.getConfigurationSection(id);
 				assert reward != null;
-				rewards.add(new ClaimableReward(id, this.deserializeReward(reward)));
+				try {
+					rewards.add(new ClaimableReward(id, this.deserializeReward(reward)));
+				} catch (Exception e) {
+					this.error("Could not parse reward #" + id + " of player: " + player.getName() + " (" + uuid + ")", e);
+				}
 			}
 			return rewards;
 		} catch (FileNotFoundException e) {
@@ -317,7 +323,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
-	public int countRewards(@NotNull Player player) throws IllegalStateException {
+	public int countRewards(@NotNull OfflinePlayer player) throws IllegalStateException {
 		UUID uuid = player.getUniqueId();
 		return this.rewardsCountCache.computeIfAbsent(uuid, u -> {
 			try {
@@ -334,7 +340,7 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
-	public void deleteReward(@NotNull Player player, @NotNull String id) throws IllegalStateException {
+	public void deleteReward(@NotNull OfflinePlayer player, @NotNull String id) throws IllegalStateException {
 		UUID uuid = player.getUniqueId();
 		try {
 			File file = new File(this.rewardsDir, uuid + ".yml");
@@ -540,18 +546,68 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 			throw new IllegalStateException("Could not clear player stats directory for UUID: " + uuid);
 	}
 
+	@Override
+	public @NotNull List<@NotNull RawStatsRecord> listRawStats() throws IllegalStateException {
+		File[] playersStatsDir = this.statsDir.listFiles((dir, name) -> name.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"));
+		if (playersStatsDir == null)
+			throw new IllegalStateException("Could not list players stats directory");
+		List<RawStatsRecord> rawStats = new ArrayList<>();
+		for (File playerStatsDir : playersStatsDir) {
+			UUID player = UUID.fromString(playerStatsDir.getName());
+			File[] playerRewardsLogFiles = playerStatsDir.listFiles((dir, name) -> name.matches("\\d{4}-\\d{2}-\\d{2}\\.yml"));
+			if (playerRewardsLogFiles == null)
+				continue;
+			for (File playerRewardsLogFile : playerRewardsLogFiles) {
+				try {
+					Date date = DATE_FORMAT.parse(playerRewardsLogFile.getName().substring(0, 10));
+					YamlConfiguration playerDailyRewards = new YamlConfiguration();
+					playerDailyRewards.load(playerRewardsLogFile);
+					RawStatsRecord current = null;
+					for (String key : playerDailyRewards.getKeys(false)) {
+						try {
+							ConfigurationSection playerReward = playerDailyRewards.getConfigurationSection(key);
+							assert playerReward != null;
+							String time = playerReward.getString("time");
+							String crate = playerReward.getString("crate");
+							String reward = playerReward.getString("reward");
+							if (time == null || crate == null || reward == null)
+								throw new IllegalStateException("Missing stats data");
+							Date datetime = TimeUtils.cloneWithTime(date, TIME_FORMAT.parse(time));
+							if (current == null || !current.crate().equals(crate) || !current.date().equals(datetime)) {
+								ArrayList<String> rewards = new ArrayList<>();
+								rewards.add(reward);
+								current = new RawStatsRecord(datetime, player, crate, rewards);
+								rawStats.add(current);
+							} else
+								current.rewards().add(reward);
+						} catch (ParseException | IllegalStateException e) {
+							this.warn("Could not parse raw stats (player: " + player + ", date: " + date + "): " + e.getMessage());
+						}
+					}
+				} catch (IOException | InvalidConfigurationException | ParseException e) {
+					this.warn("Could not parse raw stats (player: " + player + "): " + e.getMessage());
+				}
+			}
+		}
+		rawStats.sort(Comparator.comparing(RawStatsRecord::date));
+		return rawStats;
+	}
+
+	@Override
+	public void saveRawStats(@NotNull List<@NotNull RawStatsRecord> stats) throws IllegalStateException {} // Not implemented
+
 	private @NotNull CrateReward deserializeReward(@NotNull ConfigurationSection reward) throws InvalidConfigurationException {
 		String type = reward.getString("type", "null");
-		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource(type);
+		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource("yaml", type);
 		if (rewardStorage == null)
-			rewardStorage = this.storage().getRewardSource("unknown");
+			rewardStorage = this.storage().getRewardSource("yaml", "unknown");
 		if (!(rewardStorage instanceof CrateRewardYML<?>))
 			throw new InvalidConfigurationException("Could not parse crate item reward type: " + type);
 		return rewardStorage.deserializeReward(reward);
 	}
 
 	private void serializeReward(@NotNull ConfigurationSection data, @NotNull CrateReward reward) {
-		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource(reward.getType());
+		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource("yaml", reward.getType());
 		if (!(rewardStorage instanceof CrateRewardYML<?>))
 			throw new IllegalArgumentException("Could not save crate item reward class: " + reward.getClass().getName());
 		rewardStorage.serializeReward(reward, data);

@@ -9,6 +9,7 @@ import fr.theoszanto.mc.crateexpress.models.Crate;
 import fr.theoszanto.mc.crateexpress.models.CrateKey;
 import fr.theoszanto.mc.crateexpress.models.CrateNamespace;
 import fr.theoszanto.mc.crateexpress.models.CrateRegistry;
+import fr.theoszanto.mc.crateexpress.models.RawStatsRecord;
 import fr.theoszanto.mc.crateexpress.models.StatsRecord;
 import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
@@ -26,7 +27,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.Particle;
 import org.bukkit.Registry;
 import org.bukkit.Sound;
-import org.bukkit.entity.Player;
 import org.intellij.lang.annotations.Language;
 import org.intellij.lang.annotations.Subst;
 import org.jetbrains.annotations.NotNull;
@@ -79,14 +79,14 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 		try {
 			try (PreparedStatement createNamespacesTable = this.prepareSQL("""
 					CREATE TABLE IF NOT EXISTS `prefix_crate_namespaces` (
-						`path` VARCHAR(512) PRIMARY KEY NOT NULL,
+						`path` VARCHAR(255) PRIMARY KEY NOT NULL,
 						`color` VARCHAR(64) DEFAULT NULL
 					)""")) {
 				createNamespacesTable.execute();
 			}
 			try (PreparedStatement createCratesTable = this.prepareSQL("""
 					CREATE TABLE IF NOT EXISTS `prefix_crates` (
-						`id` VARCHAR(512) PRIMARY KEY NOT NULL,
+						`id` VARCHAR(255) PRIMARY KEY NOT NULL,
 						`disabled` BOOLEAN NOT NULL DEFAULT FALSE,
 						`key` BLOB,
 						`locations` TEXT,
@@ -94,8 +94,8 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 						`no_preview` BOOLEAN NOT NULL DEFAULT FALSE,
 						`name` TEXT NOT NULL,
 						`message` TEXT,
-						`sound` VARCHAR(256) DEFAULT NULL,
-						`particle` VARCHAR(256) DEFAULT NULL,
+						`sound` VARCHAR(255) DEFAULT NULL,
+						`particle` VARCHAR(255) DEFAULT NULL,
 						`particle_count` INT UNSIGNED NOT NULL DEFAULT 0,
 						`random` BOOLEAN NOT NULL DEFAULT TRUE,
 						`allow_duplicates` BOOLEAN NOT NULL DEFAULT TRUE,
@@ -120,7 +120,7 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 						`open_id` INT UNSIGNED NOT NULL,
 						`player` BINARY(16),
 						`date` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-						`crate` VARCHAR(512) NOT NULL,
+						`crate` VARCHAR(255) NOT NULL,
 						`reward` VARCHAR(64) NOT NULL,
 						INDEX (`open_id`),
 						INDEX (`player`),
@@ -393,7 +393,7 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 	}
 
 	@Override
-	public @NotNull List<@NotNull ClaimableReward> listRewards(@NotNull Player player) throws IllegalStateException {
+	public @NotNull List<@NotNull ClaimableReward> listRewards(@NotNull OfflinePlayer player) throws IllegalStateException {
 		try (PreparedStatement listRewards = this.prepareSQL("SELECT `id`, `reward` FROM `prefix_crate_claimed_rewards` WHERE `player` = UUID_TO_BIN(?)")) {
 			ResultSet result = listRewards.executeQuery();
 			List<ClaimableReward> rewards = new ArrayList<>();
@@ -411,7 +411,7 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 	}
 
 	@Override
-	public int countRewards(@NotNull Player player) throws IllegalStateException {
+	public int countRewards(@NotNull OfflinePlayer player) throws IllegalStateException {
 		return this.rewardsCountCache.computeIfAbsent(player.getUniqueId(), uuid -> {
 			try (PreparedStatement countRewards = this.prepareSQL("SELECT COUNT(`id`) AS `total` FROM `prefix_crate_claimed_rewards` WHERE `player` = UUID_TO_BIN(?)")) {
 				countRewards.setString(1, uuid.toString());
@@ -425,7 +425,7 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 	}
 
 	@Override
-	public void deleteReward(@NotNull Player player, @NotNull String id) throws IllegalStateException {
+	public void deleteReward(@NotNull OfflinePlayer player, @NotNull String id) throws IllegalStateException {
 		try (PreparedStatement removeReward = this.prepareSQL("DELETE FROM `prefix_crate_claimed_rewards` WHERE `id` = ? AND `player` = UUID_TO_BIN(?)")) {
 			removeReward.setInt(1, Integer.parseInt(id));
 			removeReward.setString(2, player.getUniqueId().toString());
@@ -552,18 +552,54 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 		}
 	}
 
+	@Override
+	public @NotNull List<@NotNull RawStatsRecord> listRawStats() throws IllegalStateException {
+		return List.of(); // Not implemented
+	}
+
+	@Override
+	public void saveRawStats(@NotNull List<@NotNull RawStatsRecord> stats) throws IllegalStateException {
+		try {
+			try (PreparedStatement verifyExistingHistory = this.prepareSQL("SELECT COUNT(`id`) FROM `prefix_crate_history`")) {
+				ResultSet result = verifyExistingHistory.executeQuery();
+				if (result.next() && result.getInt(1) != 0)
+					return; // Only ever save raw stats if none exists
+			}
+			try (PreparedStatement insertHistory = this.prepareSQL("INSERT INTO `prefix_crate_history` (`open_id`, `player`, `date`, `crate`, `reward`) VALUES (?, UUID_TO_BIN(?), ?, ?, ?)")) {
+				int openId = 0;
+				for (RawStatsRecord stat : stats) {
+					openId++;
+					String player = stat.player().toString();
+					Timestamp date = Timestamp.from(stat.date().toInstant());
+					String crate = stat.crate();
+					for (String reward : stat.rewards()) {
+						insertHistory.setInt(1, openId);
+						insertHistory.setString(2, player);
+						insertHistory.setTimestamp(3, date);
+						insertHistory.setString(4, crate);
+						insertHistory.setString(5, reward);
+						insertHistory.addBatch();
+					}
+				}
+				insertHistory.executeBatch();
+			}
+		} catch (SQLException e) {
+			throw new IllegalStateException("Unable to save raw stats", e);
+		}
+	}
+
 	private @NotNull CrateReward deserializeReward(@NotNull JsonObject reward) throws JsonParseException {
 		String type = reward.has("type") ? reward.get("type").getAsString() : "null";
-		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource(type);
+		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource("json", type);
 		if (rewardStorage == null)
-			rewardStorage = this.storage().getRewardSource("unknown");
+			rewardStorage = this.storage().getRewardSource("json", "unknown");
 		if (!(rewardStorage instanceof CrateRewardJSON<?>))
 			throw new JsonParseException("Could not parse crate item reward type: " + type);
 		return rewardStorage.deserializeReward(reward);
 	}
 
 	private void serializeReward(@NotNull JsonObject data, @NotNull CrateReward reward) {
-		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource(reward.getType());
+		CrateRewardStorage<?> rewardStorage = this.storage().getRewardSource("json", reward.getType());
 		if (!(rewardStorage instanceof CrateRewardJSON<?>))
 			throw new IllegalArgumentException("Could not save crate item reward class: " + reward.getClass().getName());
 		rewardStorage.serializeReward(reward, data);

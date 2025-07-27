@@ -44,20 +44,36 @@ storage:
       - "./stats/"
       - []
   rewards:
-    0:
-      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateItemRewardYML
-    1:
-      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateKeyRewardYML
-    2:
-      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateMoneyRewardYML
-    3:
-      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateCommandRewardYML
-    4:
-      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateOtherRewardYML
-    5:
-      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateExpRewardYML
-    6:
-      class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateUnknownRewardYML
+    yaml:
+      0:
+        class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateItemRewardYML
+      1:
+        class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateKeyRewardYML
+      2:
+        class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateMoneyRewardYML
+      3:
+        class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateCommandRewardYML
+      4:
+        class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateOtherRewardYML
+      5:
+        class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateExpRewardYML
+      6:
+        class: fr.theoszanto.mc.crateexpress.storage.yaml.CrateUnknownRewardYML
+    json:
+      0:
+        class: fr.theoszanto.mc.crateexpress.storage.json.CrateItemRewardJSON
+      1:
+        class: fr.theoszanto.mc.crateexpress.storage.json.CrateKeyRewardJSON
+      2:
+        class: fr.theoszanto.mc.crateexpress.storage.json.CrateMoneyRewardJSON
+      3:
+        class: fr.theoszanto.mc.crateexpress.storage.json.CrateCommandRewardJSON
+      4:
+        class: fr.theoszanto.mc.crateexpress.storage.json.CrateOtherRewardJSON
+      5:
+        class: fr.theoszanto.mc.crateexpress.storage.json.CrateExpRewardJSON
+      6:
+        class: fr.theoszanto.mc.crateexpress.storage.json.CrateUnknownRewardJSON
 money:
   provider:
     class: fr.theoszanto.mc.crateexpress.managers.money.CommandMoneyProvider

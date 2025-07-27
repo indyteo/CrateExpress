@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 
 public class StorageManager extends PluginObject {
 	private @NotNull CrateStorage source;
-	private final @NotNull Map<@NotNull String, @NotNull CrateRewardStorage<?>> rewardStorages = new HashMap<>();
+	private final @NotNull Map<@NotNull String, @NotNull Map<@NotNull String, @NotNull CrateRewardStorage<?>>> rewardStorages = new HashMap<>();
 
 	public StorageManager(@NotNull CrateExpress plugin) {
 		super(plugin);
@@ -27,8 +27,8 @@ public class StorageManager extends PluginObject {
 		return this.source;
 	}
 
-	public @Nullable CrateRewardStorage<?> getRewardSource(@NotNull String type) {
-		return this.rewardStorages.get(type);
+	public @Nullable CrateRewardStorage<?> getRewardSource(@NotNull String storageType, @NotNull String rewardType) {
+		return this.rewardStorages.getOrDefault(storageType, Map.of()).get(rewardType);
 	}
 
 	public void runOnStorage(@NotNull Consumer<@NotNull CrateStorage> action) {
@@ -57,10 +57,14 @@ public class StorageManager extends PluginObject {
 		if (config.isEmpty())
 			return;
 		this.source = config.getSource().instanciate();
-		for (CrateConfig.SerializedPluginObject reward : config.getRewards()) {
-			CrateRewardStorage<?> rewardStorage = reward.instanciate();
-			this.rewardStorages.put(rewardStorage.getType(), rewardStorage);
-		}
+		config.getRewards().forEach((type, rewards) -> {
+			Map<String, CrateRewardStorage<?>> rewardStorages = new HashMap<>();
+			for (CrateConfig.SerializedPluginObject reward : rewards) {
+				CrateRewardStorage<?> rewardStorage = reward.instanciate();
+				rewardStorages.put(rewardStorage.getType(), rewardStorage);
+			}
+			this.rewardStorages.put(type, rewardStorages);
+		});
 		this.source.initialize();
 	}
 }

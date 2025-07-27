@@ -6,14 +6,13 @@ import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Collections;
 import java.util.Map;
 
 public class BindingsCrateResolver extends PluginObject implements CrateResolver {
 	private final @NotNull Map<@NotNull String, @NotNull String> bindings;
 
 	public BindingsCrateResolver(@NotNull CrateExpress plugin) {
-		this(plugin, Collections.emptyMap());
+		this(plugin, Map.of());
 	}
 
 	public BindingsCrateResolver(@NotNull CrateExpress plugin, @NotNull Map<@NotNull String, @NotNull String> bindings) {

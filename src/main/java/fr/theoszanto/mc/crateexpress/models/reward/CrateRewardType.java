@@ -8,7 +8,7 @@ import org.bukkit.Material;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
-import java.util.Collections;
+import java.util.List;
 
 public class CrateRewardType extends PluginObject {
 	private final @NotNull String type;
@@ -31,7 +31,7 @@ public class CrateRewardType extends PluginObject {
 	}
 
 	public @NotNull CrateRewardGUI<?> createNewGUI(@NotNull Crate crate) {
-		return (CrateRewardGUI<?>) this.instanciate(this.guiClass, Collections.singletonList(crate));
+		return (CrateRewardGUI<?>) this.instanciate(this.guiClass, List.of(crate));
 	}
 
 	public @NotNull CrateRewardGUI<?> createNewGUI(@NotNull Crate crate, CrateReward reward, int slot) {
