@@ -6,7 +6,6 @@ import fr.theoszanto.mc.crateexpress.models.gui.CratePreviewGUI;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
 import fr.theoszanto.mc.express.utils.ItemUtils;
-import fr.theoszanto.mc.express.utils.LocationUtils;
 import fr.theoszanto.mc.express.utils.MathUtils;
 import fr.theoszanto.mc.express.utils.UnloadableWorldLocation;
 import org.bukkit.Location;
@@ -196,7 +195,7 @@ public class Crate extends PluginObject implements Iterable<CrateReward>, CrateE
 	}
 
 	public boolean isAtLocation(@NotNull Location location) {
-		return this.locations != null && this.locations.stream().anyMatch(loc -> LocationUtils.blockEquals(loc, location));
+		return this.locations != null && this.locations.stream().anyMatch(loc -> loc.blockEquals(location));
 	}
 
 	public boolean isOpenableAtLocation(@NotNull Location location) {
