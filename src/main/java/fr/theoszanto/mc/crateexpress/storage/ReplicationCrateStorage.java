@@ -59,7 +59,7 @@ public class ReplicationCrateStorage extends PluginObject implements CrateStorag
 	@Override
 	public void initialize() throws IllegalStateException {
 		this.from.initialize();
-		this.replicate(this.to::initialize);
+		this.to.initialize();
 		if (this.initializeStatsAndClaimedRewards) {
 			this.log("Initializing Stats and Claimed Rewards. It may take several minutes.");
 			this.saveRawStats(this.listRawStats());
