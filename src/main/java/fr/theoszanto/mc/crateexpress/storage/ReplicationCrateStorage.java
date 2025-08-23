@@ -10,7 +10,6 @@ import fr.theoszanto.mc.crateexpress.models.reward.ClaimableReward;
 import fr.theoszanto.mc.crateexpress.models.reward.CrateReward;
 import fr.theoszanto.mc.crateexpress.models.reward.HistoricalReward;
 import fr.theoszanto.mc.crateexpress.utils.PluginObject;
-import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -63,8 +62,7 @@ public class ReplicationCrateStorage extends PluginObject implements CrateStorag
 		if (this.initializeStatsAndClaimedRewards) {
 			this.log("Initializing Stats and Claimed Rewards. It may take several minutes.");
 			this.saveRawStats(this.listRawStats());
-			for (OfflinePlayer player : Bukkit.getOfflinePlayers())
-				this.listRewards(player);
+			this.players().all().forEach(this::listRewards);
 			this.log("Done!");
 		}
 	}

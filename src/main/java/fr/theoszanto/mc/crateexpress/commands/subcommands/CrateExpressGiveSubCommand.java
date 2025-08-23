@@ -30,7 +30,6 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 	}
 
 	@Override
-	@SuppressWarnings("ConstantValue")
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
 		if (args.length == 0)
 			return false;
@@ -44,7 +43,7 @@ public class CrateExpressGiveSubCommand extends CrateExpressSubCommand {
 				return false;
 			String playerName = args[i++];
 			OfflinePlayer player = Bukkit.getOfflinePlayer(playerName);
-			if (player == null || !player.hasPlayedBefore()) {
+			if (!this.players().exists(player)) {
 				this.i18nMessage(sender, "command.unknown-player", "player", playerName);
 				return true;
 			}

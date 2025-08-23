@@ -90,3 +90,6 @@ export:
   exporters:
     0:
       class: fr.theoszanto.mc.crateexpress.exporters.CSVCrateExporter
+players:
+  provider:
+    class: fr.theoszanto.mc.crateexpress.managers.players.DefaultPlayersProvider

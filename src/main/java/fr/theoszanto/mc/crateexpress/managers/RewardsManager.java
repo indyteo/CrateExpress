@@ -24,7 +24,7 @@ public class RewardsManager extends PluginObject {
 			return;
 		config.getRewardsGUI().forEach((type, gui) -> {
 			try {
-				this.rewardsType.put(type, new CrateRewardType(this.plugin, type, Material.valueOf(gui.getGuiIcon().toUpperCase()), gui.getGuiClass()));
+				this.rewardsType.put(type, new CrateRewardType(this.plugin, type, Material.valueOf(gui.guiIcon().toUpperCase()), gui.guiClass()));
 			} catch (IllegalArgumentException e) {
 				throw new IllegalStateException("Invalid reward type: " + type);
 			}

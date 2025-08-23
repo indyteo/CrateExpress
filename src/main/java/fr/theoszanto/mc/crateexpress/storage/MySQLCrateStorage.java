@@ -394,7 +394,9 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 
 	@Override
 	public @NotNull List<@NotNull ClaimableReward> listRewards(@NotNull OfflinePlayer player) throws IllegalStateException {
+		UUID uuid = player.getUniqueId();
 		try (PreparedStatement listRewards = this.prepareSQL("SELECT `id`, `reward` FROM `prefix_crate_claimed_rewards` WHERE `player` = UUID_TO_BIN(?)")) {
+			listRewards.setString(1, uuid.toString());
 			ResultSet result = listRewards.executeQuery();
 			List<ClaimableReward> rewards = new ArrayList<>();
 			while (result.next()) {
@@ -403,10 +405,10 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 				JsonObject rewardData = GSON.fromJson(reward, JsonObject.class);
 				rewards.add(new ClaimableReward(Integer.toString(id), this.deserializeReward(rewardData)));
 			}
-			this.rewardsCountCache.put(player.getUniqueId(), rewards.size());
+			this.rewardsCountCache.put(uuid, rewards.size());
 			return rewards;
 		} catch (SQLException e) {
-			throw new IllegalStateException("Unable to list namespaces", e);
+			throw new IllegalStateException("Unable to list rewards", e);
 		}
 	}
 

@@ -28,13 +28,10 @@ public class CrateExpressHistorySubCommand extends CrateExpressSubCommand {
 	public boolean canExecute(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
 		if (!(sender instanceof Player))
 			return false;
-		if (args.length == 1)
-			return sender.hasPermission(CratePermission.Command.History.OTHER);
-		return sender.hasPermission(CratePermission.Command.History.SELF);
+		return sender.hasPermission(args.length == 0 ? CratePermission.Command.History.SELF : CratePermission.Command.History.OTHER);
 	}
 
 	@Override
-	@SuppressWarnings("ConstantValue")
 	public boolean onCommand(@NotNull CommandSender sender, @NotNull CrateExpressCommand command, @NotNull String alias, @NotNull String subAlias, @NotNull String @NotNull[] args) {
 		if (args.length > 2)
 			return false;
@@ -47,7 +44,7 @@ public class CrateExpressHistorySubCommand extends CrateExpressSubCommand {
 		} else {
 			String playerName = args[0];
 			player = Bukkit.getOfflinePlayer(playerName);
-			if (player == null || !player.hasPlayedBefore()) {
+			if (!this.players().exists(player)) {
 				this.i18nMessage(sender, "command.unknown-player", "player", playerName);
 				return true;
 			}

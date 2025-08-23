@@ -3,6 +3,7 @@ package fr.theoszanto.mc.crateexpress.utils;
 import fr.theoszanto.mc.crateexpress.CrateExpress;
 import fr.theoszanto.mc.crateexpress.managers.ExportManager;
 import fr.theoszanto.mc.crateexpress.managers.MoneyManager;
+import fr.theoszanto.mc.crateexpress.managers.PlayersManager;
 import fr.theoszanto.mc.crateexpress.managers.RewardsManager;
 import fr.theoszanto.mc.crateexpress.managers.StatsManager;
 import fr.theoszanto.mc.crateexpress.managers.StorageManager;
@@ -41,6 +42,10 @@ public abstract class PluginObject extends ExpressObject<CrateExpress> implement
 
 	public final @NotNull ExportManager export() {
 		return this.plugin.export();
+	}
+
+	public final @NotNull PlayersManager players() {
+		return this.plugin.players();
 	}
 
 	public final void store(@NotNull Consumer<@NotNull CrateStorage> action) {

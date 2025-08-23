@@ -90,6 +90,10 @@ public class CrateConfig extends PluginObject {
 		return new Export(this);
 	}
 
+	public @NotNull Players getPlayersConfig() {
+		return new Players(this);
+	}
+
 	private @NotNull ConfigurationSection getSection(@NotNull String path) {
 		ConfigurationSection section = this.config.getConfigurationSection(path);
 		if (section == null)
@@ -321,30 +325,14 @@ public class CrateConfig extends PluginObject {
 		public void setRewardsGUI(@NotNull Map<@NotNull String, @NotNull RewardGUI> rewards) {
 			rewards.forEach((type, gui) -> {
 				ConfigurationSection guiConfig = this.section.createSection(type);
-				guiConfig.set("gui-class", gui.getGuiClass());
-				guiConfig.set("gui-icon", gui.getGuiIcon());
+				guiConfig.set("gui-class", gui.guiClass());
+				guiConfig.set("gui-icon", gui.guiIcon());
 			});
 		}
 
-		public static class RewardGUI {
-			private final @NotNull String guiClass;
-			private final @NotNull String guiIcon;
-
-			public RewardGUI(@NotNull String guiClass, @NotNull String guiIcon) {
-				this.guiClass = guiClass;
-				this.guiIcon = guiIcon;
-			}
-
+		public record RewardGUI(@NotNull String guiClass, @NotNull String guiIcon) {
 			public RewardGUI(@NotNull Class<? extends CrateRewardGUI<?>> guiClass, @NotNull Material guiIcon) {
 				this(guiClass.getName(), guiIcon.name());
-			}
-
-			public @NotNull String getGuiClass() {
-				return this.guiClass;
-			}
-
-			public @NotNull String getGuiIcon() {
-				return this.guiIcon;
 			}
 		}
 	}
@@ -369,6 +357,20 @@ public class CrateConfig extends PluginObject {
 
 		public void setExporters(@NotNull List<@NotNull SerializedPluginObject> exporters) {
 			this.setSerializedPluginObjects("exporters", exporters);
+		}
+	}
+
+	public static class Players extends Section {
+		public Players(@NotNull CrateConfig config) {
+			super(config, "players");
+		}
+
+		public @NotNull SerializedPluginObject getProvider() {
+			return this.getSerializedPluginObject("provider");
+		}
+
+		public void setProvider(@NotNull SerializedPluginObject provider) {
+			this.setSerializedPluginObject("provider", provider);
 		}
 	}
 
