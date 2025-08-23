@@ -414,16 +414,19 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 
 	@Override
 	public int countRewards(@NotNull OfflinePlayer player) throws IllegalStateException {
-		return this.rewardsCountCache.computeIfAbsent(player.getUniqueId(), uuid -> {
-			try (PreparedStatement countRewards = this.prepareSQL("SELECT COUNT(`id`) AS `total` FROM `prefix_crate_claimed_rewards` WHERE `player` = UUID_TO_BIN(?)")) {
-				countRewards.setString(1, uuid.toString());
-				ResultSet result = countRewards.executeQuery();
-				return result.next() ? result.getInt("total") : 0;
-			} catch (SQLException e) {
-				throw new IllegalStateException("Unable to count player rewards: " + uuid, e);
-			}
-		});
-
+		UUID uuid = player.getUniqueId();
+		Integer count = this.rewardsCountCache.get(uuid);
+		if (count != null)
+			return count;
+		try (PreparedStatement countRewards = this.prepareSQL("SELECT COUNT(`id`) AS `total` FROM `prefix_crate_claimed_rewards` WHERE `player` = UUID_TO_BIN(?)")) {
+			countRewards.setString(1, uuid.toString());
+			ResultSet result = countRewards.executeQuery();
+			int total = result.next() ? result.getInt("total") : 0;
+			this.rewardsCountCache.put(uuid, total);
+			return total;
+		} catch (SQLException e) {
+			throw new IllegalStateException("Unable to count player rewards: " + uuid, e);
+		}
 	}
 
 	@Override
