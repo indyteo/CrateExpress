@@ -547,6 +547,11 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
+	public void invalidateCache(@NotNull UUID uuid) throws IllegalStateException {
+		this.rewardsCountCache.remove(uuid);
+	}
+
+	@Override
 	public @NotNull List<@NotNull RawStatsRecord> listRawStats() throws IllegalStateException {
 		File[] playersStatsDir = this.statsDir.listFiles((dir, name) -> name.matches("[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}"));
 		if (playersStatsDir == null)

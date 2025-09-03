@@ -82,6 +82,8 @@ public interface CrateStorage extends Logged {
 
 	void clearPlayerStats(@NotNull UUID uuid) throws IllegalStateException;
 
+	void invalidateCache(@NotNull UUID uuid) throws IllegalStateException;
+
 	@NotNull List<@NotNull RawStatsRecord> listRawStats() throws IllegalStateException;
 
 	void saveRawStats(@NotNull List<@NotNull RawStatsRecord> stats) throws IllegalStateException;

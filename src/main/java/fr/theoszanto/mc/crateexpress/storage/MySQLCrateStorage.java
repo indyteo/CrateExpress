@@ -558,6 +558,11 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 	}
 
 	@Override
+	public void invalidateCache(@NotNull UUID uuid) throws IllegalStateException {
+		this.rewardsCountCache.remove(uuid);
+	}
+
+	@Override
 	public @NotNull List<@NotNull RawStatsRecord> listRawStats() throws IllegalStateException {
 		return List.of(); // Not implemented
 	}

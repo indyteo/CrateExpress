@@ -123,6 +123,11 @@ public class NoopCrateStorage extends PluginObject implements CrateStorage {
 	}
 
 	@Override
+	public void invalidateCache(@NotNull UUID uuid) throws IllegalStateException {
+		this.notice();
+	}
+
+	@Override
 	public @NotNull List<@NotNull RawStatsRecord> listRawStats() throws IllegalStateException {
 		this.notice();
 		return List.of();

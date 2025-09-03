@@ -173,6 +173,12 @@ public class ReplicationCrateStorage extends PluginObject implements CrateStorag
 	}
 
 	@Override
+	public void invalidateCache(@NotNull UUID uuid) throws IllegalStateException {
+		this.from.invalidateCache(uuid);
+		this.replicate(() -> this.to.invalidateCache(uuid));
+	}
+
+	@Override
 	public @NotNull List<@NotNull RawStatsRecord> listRawStats() throws IllegalStateException {
 		return this.from.listRawStats();
 	}
