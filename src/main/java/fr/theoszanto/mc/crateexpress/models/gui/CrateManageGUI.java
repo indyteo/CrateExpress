@@ -124,7 +124,7 @@ public class CrateManageGUI extends ExpressGUI<CrateExpress> {
 	public boolean onClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
 		if (data == null)
 			return true;
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "back" -> new CrateEditGUI(this.plugin, this.crate).showToPlayer(player);
 			case "status" -> {
 				this.crate.setDisabled(!this.crate.isDisabled());

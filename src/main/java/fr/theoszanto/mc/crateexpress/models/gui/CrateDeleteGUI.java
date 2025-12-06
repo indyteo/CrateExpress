@@ -32,7 +32,7 @@ public class CrateDeleteGUI extends ExpressGUI<CrateExpress> {
 	public boolean onClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
 		if (data == null)
 			return true;
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "cancel" -> {
 				if (this.returnTo == null)
 					player.closeInventory();

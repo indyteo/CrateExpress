@@ -65,6 +65,7 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 		return sql.replace("prefix_", this.tablePrefix);
 	}
 
+	@SuppressWarnings("SqlSourceToSinkFlow") // tablePrefix is considered safe
 	protected @NotNull PreparedStatement prepareSQL(@NotNull @Language("SQL") String sql) throws SQLException {
 		return this.getConnection().prepareStatement(this.formatWithTablePrefix(sql));
 	}
@@ -213,13 +214,15 @@ public abstract class MySQLCrateStorage extends PluginObject implements CrateSto
 						if (sound == null) {
 							try {
 								// Old format - Try to update value
-								sound = Sound.valueOf(crateSound.toUpperCase());
+								@SuppressWarnings({ "UnstableApiUsage", "removal" })
+								Sound oldSound = Sound.valueOf(crateSound.toUpperCase());
 								try (PreparedStatement migrateSound = this.prepareSQL("UPDATE `prefix_crates` SET `sound` = ? WHERE `id` = ?")) {
-									migrateSound.setString(1, Registry.SOUNDS.getKeyOrThrow(sound).getKey());
+									migrateSound.setString(1, Registry.SOUNDS.getKeyOrThrow(oldSound).getKey());
 									migrateSound.setString(2, id);
 									migrateSound.executeUpdate();
 								}
-							} catch (SQLException | IllegalArgumentException ignored) {}
+								sound = oldSound;
+							} catch (Exception ignored) {}
 						}
 						if (sound == null)
 							this.warn("Unable to parse crate sound: " + crateSound + " (#" + id + ")");

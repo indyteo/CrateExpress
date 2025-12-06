@@ -90,7 +90,7 @@ public abstract class CrateRewardGUI<T extends CrateReward> extends ExpressGUI<C
 	public boolean onClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
 		if (data == null)
 			return true;
-		switch (data.getName()) {
+		switch (data.name()) {
 		case "confirm":
 			CrateReward reward;
 			try {

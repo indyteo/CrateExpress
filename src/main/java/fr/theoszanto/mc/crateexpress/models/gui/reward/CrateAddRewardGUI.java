@@ -17,7 +17,12 @@ import org.jetbrains.annotations.Nullable;
 public class CrateAddRewardGUI extends ExpressPaginatedGUI<CrateExpress, CrateRewardType> {
 	private final @NotNull Crate crate;
 
-	private static final int[] contentSlots = { slot(1, 2), slot(1, 4), slot(2, 3), slot(1, 6), slot(2, 5) };
+	private static final int[] contentSlots = {
+			/**//**//**//**//**//**//**//**//**/
+			/**/ 10, 11, 12, 13, 14, 15, 16,/**/
+			/**/ 19, 20, 21, 22, 23, 24, 25,/**/
+			/**//**//**//**//**//**//**//**//**/
+	};
 
 	public CrateAddRewardGUI(@NotNull CrateExpress plugin, @NotNull Crate crate) {
 		super(plugin, plugin.rewards().getRewardsType(), 4, "menu.reward.new.title", "crate", crate.getName());
@@ -41,7 +46,7 @@ public class CrateAddRewardGUI extends ExpressPaginatedGUI<CrateExpress, CrateRe
 
 		// Go back & pagination buttons
 		this.set(slot(3, 0), new ItemBuilder(Material.ARROW, 1, this.i18n("menu.back")), "back");
-		this.setButtons(slot(2, 1), slot(2, 7), slot(3, 4), slot(3, 8));
+		this.setButtons(slot(3, 2), slot(3, 6), slot(3, 4), slot(3, 8));
 		this.setEmptyIndicator(slot(1, 4), "menu.reward.new.empty");
 	}
 
@@ -64,7 +69,7 @@ public class CrateAddRewardGUI extends ExpressPaginatedGUI<CrateExpress, CrateRe
 
 	@Override
 	protected boolean onOtherClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
-		if (data != null && data.getName().equals("back"))
+		if (data != null && data.name().equals("back"))
 			new CrateEditGUI(this.plugin, this.crate).showToPlayer(player);
 		return true;
 	}

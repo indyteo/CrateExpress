@@ -123,7 +123,7 @@ public class CrateMoneyRewardGUI extends CrateRewardGUI<CrateMoneyReward> {
 
 	@Override
 	protected boolean onButtonClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull SlotData data) {
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "random" -> {
 				if (this.reward == null) {
 					this.random = !this.random;

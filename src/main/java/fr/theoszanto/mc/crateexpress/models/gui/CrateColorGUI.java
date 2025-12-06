@@ -70,14 +70,14 @@ public class CrateColorGUI extends ExpressGUI<CrateExpress> {
 	public boolean onClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
 		if (data == null)
 			return true;
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "back" -> player.closeInventory();
 			case "none" -> {
 				this.onSelect.accept(null);
 				player.closeInventory();
 			}
 			case "dye" -> {
-				DyeColor color = data.getUserData();
+				DyeColor color = data.userData();
 				this.onSelect.accept(color);
 				player.closeInventory();
 			}

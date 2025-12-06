@@ -98,7 +98,7 @@ public class CrateSoundGUI extends ExpressPaginatedGUI<CrateExpress, CrateSoundG
 	protected boolean onOtherClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
 		if (data == null)
 			return true;
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "parent" -> {
 				if (!this.namespace.isRoot())
 					this.openNamespace(player, this.namespace.getParent());

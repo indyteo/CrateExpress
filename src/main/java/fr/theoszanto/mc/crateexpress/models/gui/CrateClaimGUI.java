@@ -76,7 +76,7 @@ public class CrateClaimGUI extends ExpressPaginatedGUI<CrateExpress, ClaimableRe
 			return true;
 		}
 		this.processing = true;
-		if (data != null && data.getName().equalsIgnoreCase("all")) {
+		if (data != null && data.name().equalsIgnoreCase("all")) {
 			if (click == ClickType.DROP || click == ClickType.CONTROL_DROP) {
 				this.list.clear();
 				this.plugin.store(storage -> storage.clearRewards(player));

@@ -81,7 +81,7 @@ public class CrateItemRewardGUI extends CrateRewardGUI<CrateItemReward> {
 
 	@Override
 	protected boolean onButtonClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull SlotData data) {
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "item" -> {
 				if (this.reward == null && action == InventoryAction.SWAP_WITH_CURSOR) {
 					ItemStack item = player.getItemOnCursor();

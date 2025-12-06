@@ -72,7 +72,7 @@ public class CrateExpRewardGUI extends CrateRewardGUI<CrateExpReward> {
 
 	@Override
 	protected boolean onButtonClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull SlotData data) {
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "levels" -> {
 				this.setLevels(!this.isLevels());
 				this.refresh(player);

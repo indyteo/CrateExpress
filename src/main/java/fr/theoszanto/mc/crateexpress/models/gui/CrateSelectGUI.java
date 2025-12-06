@@ -19,9 +19,9 @@ import java.util.function.Consumer;
 public class CrateSelectGUI extends CrateListGUI {
 	private final boolean withKeyOnly;
 	private final @NotNull ExpressGUI<CrateExpress> returnTo;
-	private final @NotNull Consumer<@NotNull String> onSelect;
+	private final @NotNull Consumer<@NotNull Crate> onSelect;
 
-	public CrateSelectGUI(@NotNull CrateExpress plugin, boolean withKeyOnly, @NotNull ExpressGUI<CrateExpress> returnTo, @NotNull Consumer<@NotNull String> onSelect) {
+	public CrateSelectGUI(@NotNull CrateExpress plugin, boolean withKeyOnly, @NotNull ExpressGUI<CrateExpress> returnTo, @NotNull Consumer<@NotNull Crate> onSelect) {
 		super(plugin, "menu.select.title");
 		this.withKeyOnly = withKeyOnly;
 		this.returnTo = returnTo;
@@ -61,7 +61,7 @@ public class CrateSelectGUI extends CrateListGUI {
 
 	@Override
 	protected boolean onClickOnCrate(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull Crate crate) {
-		this.onSelect.accept(crate.getId());
+		this.onSelect.accept(crate);
 		player.closeInventory();
 		return true;
 	}

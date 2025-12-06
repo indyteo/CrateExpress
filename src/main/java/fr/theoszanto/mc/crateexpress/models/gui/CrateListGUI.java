@@ -165,7 +165,7 @@ public class CrateListGUI extends ExpressPaginatedGUI<CrateExpress, CrateElement
 	@Override
 	protected boolean onOtherClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
 		if (data != null && !this.namespace.isRoot()) {
-			switch (data.getName()) {
+			switch (data.name()) {
 				case "parent" -> this.openNamespace(player, this.namespace.getParent());
 				case "manage" -> {
 					if (this.isAllowedToManageNamespace(player))

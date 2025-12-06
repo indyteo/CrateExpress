@@ -74,9 +74,9 @@ public class CrateEditGUI extends ExpressGUI<CrateExpress> {
 	public boolean onClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
 		if (data == null)
 			return true;
-		int slot = data.getSlot();
+		int slot = data.slot();
 		if (slot < 5 * 9) {
-			Optional<CrateReward> optionalReward = data.getOptionalUserData();
+			Optional<CrateReward> optionalReward = data.optionalUserData();
 			if (action == InventoryAction.DROP_ONE_SLOT || action == InventoryAction.DROP_ALL_SLOT) {
 				if (optionalReward.isPresent())
 					this.run(() -> new CrateDeleteRewardGUI(this.plugin, this.crate, slot, this).showToPlayer(player));
@@ -121,7 +121,7 @@ public class CrateEditGUI extends ExpressGUI<CrateExpress> {
 				CrateReward reward = optionalReward.get();
 				if (click == ClickType.RIGHT) {
 					try {
-						this.plugin.rewards().getRewardType(reward.getType()).createNewGUI(this.crate, reward, data.getSlot()).showToPlayer(player);
+						this.plugin.rewards().getRewardType(reward.getType()).createNewGUI(this.crate, reward, data.slot()).showToPlayer(player);
 					} catch (IllegalArgumentException e) {
 						this.i18nMessage(player, "menu.edit.reward.unknown");
 					}
@@ -130,7 +130,7 @@ public class CrateEditGUI extends ExpressGUI<CrateExpress> {
 			}
 			return true;
 		}
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "back" -> new CrateListGUI(this.plugin, this.crate.getNamespace()).showToPlayer(player);
 			case "add" -> new CrateAddRewardGUI(this.plugin, this.crate).showToPlayer(player);
 			case "manage" -> new CrateManageGUI(this.plugin, this.crate).showToPlayer(player);

@@ -77,7 +77,7 @@ public class CrateLocationsGUI extends ExpressPaginatedGUI<CrateExpress, Unloada
 
 	@Override
 	protected boolean onOtherClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
-		if (data != null && data.getName().equalsIgnoreCase("add")) {
+		if (data != null && data.name().equalsIgnoreCase("add")) {
 			Block block = player.getTargetBlockExact(15);
 			Location loc = block == null ? player.getLocation() : block.getLocation();
 			UnloadableWorldLocation location = new UnloadableWorldLocation(player.getWorld(), loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());

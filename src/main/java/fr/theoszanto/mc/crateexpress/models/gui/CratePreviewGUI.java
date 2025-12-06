@@ -64,7 +64,7 @@ public class CratePreviewGUI extends ExpressGUI<CrateExpress> {
 	public boolean onClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
 		if (data == null)
 			return true;
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "key" -> {
 				if (player.hasPermission(CratePermission.Command.GIVE)) {
 					CrateKey key = this.crate.getKey();

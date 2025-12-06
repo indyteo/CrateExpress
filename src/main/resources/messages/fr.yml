@@ -676,11 +676,21 @@ menu:
       command:
         name: "§bCommande exécutée : §3#{command}"
         lore: |-
+          §7Commande actuelle : §e/#{command}
           §7Ce paramètre défini la commande à exécuter lorsqu'un
           §7joueur obtient cette récompense
           §7Ce paramètre n'est modifiable qu'à la création de la
           §7récompense
-        set: "§6»§e Déposez le bloc de commande ici pour la définir"
+        none: "§cAucune"
+        set: "§6»§e Clic pour la définir"
+        request: |-
+          Veuillez écrire la commande à exécuter
+          Variables :
+          <player> : Pseudo du joueur
+          <display> : Nom d'affichage du joueur
+          <uuid> : UUID du joueur
+        invalid: "§cLa commande saisie n'est pas valide"
+        timeout: "§cLe délai d'attente a été dépassé..."
       physical:
         name: "§bRécompense physique : §3#{physical}"
         lore: |-
@@ -709,6 +719,7 @@ menu:
           §7récompense
           §6»§e Clic pour sélectionner la caisse
         none: "§cAucune"
+        id: "§8##{id}"
     exp:
       header:
         name: "§eGestion de la récompense de type expérience"

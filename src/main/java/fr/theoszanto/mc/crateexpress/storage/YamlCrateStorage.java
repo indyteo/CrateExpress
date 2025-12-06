@@ -170,10 +170,12 @@ public class YamlCrateStorage extends PluginObject implements CrateStorage {
 						if (sound == null) {
 							try {
 								// Old format - Try to update value
-								sound = Sound.valueOf(crateSound.toUpperCase());
-								data.set("sound", Registry.SOUNDS.getKeyOrThrow(sound).getKey());
+								@SuppressWarnings({ "UnstableApiUsage", "removal" })
+								Sound oldSound = Sound.valueOf(crateSound.toUpperCase());
+								data.set("sound", Registry.SOUNDS.getKeyOrThrow(oldSound).getKey());
 								data.save(file);
-							} catch (IllegalArgumentException ignored) {}
+								sound = oldSound;
+							} catch (Exception ignored) {}
 						}
 						if (sound == null)
 							this.warn("Unable to parse crate sound: " + crateSound + " (#" + id + ")");

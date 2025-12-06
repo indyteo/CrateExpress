@@ -249,17 +249,17 @@ public class CrateHistoryGUI extends ExpressGUI<CrateExpress> {
 	public boolean onClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @Nullable SlotData data) {
 		if (data == null)
 			return true;
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "day" -> {
-				this.date = data.getUserData();
+				this.date = data.userData();
 				this.fetchData(player);
 			}
 			case "vScroll" -> {
-				this.vScroll = data.getUserData();
+				this.vScroll = data.userData();
 				this.refresh(player);
 			}
 			case "hScroll" -> {
-				Pair<Integer, Integer> pair = data.getUserData();
+				Pair<Integer, Integer> pair = data.userData();
 				this.hScrolls[pair.first()] = pair.second();
 				this.refresh(player);
 			}

@@ -37,8 +37,8 @@ public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 			this.reward.setAmount(amount);
 	}
 
-	private void selectCrate(@NotNull String key) {
-		this.key = key;
+	private void selectCrate(@NotNull Crate crate) {
+		this.key = crate.getId();
 		this.amount = Math.min(this.amount, this.getMaxAmount());
 	}
 
@@ -83,7 +83,7 @@ public class CrateKeyRewardGUI extends CrateRewardGUI<CrateKeyReward> {
 
 	@Override
 	protected boolean onButtonClick(@NotNull Player player, @NotNull ClickType click, @NotNull InventoryAction action, @NotNull SlotData data) {
-		switch (data.getName()) {
+		switch (data.name()) {
 			case "key" -> {
 				if (this.reward == null)
 					new CrateSelectGUI(this.plugin, true, this, this::selectCrate).showToPlayer(player);
